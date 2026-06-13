@@ -8,5 +8,5 @@ interface UserRepository {
     fun getTokens(): Flow<Tokens?>
     suspend fun clearTokens()
 
-    suspend fun checkEmailAvailability(email: String): Boolean
+    suspend fun checkEmailAvailability(email: String): Result<Boolean>
 }

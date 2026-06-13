@@ -7,10 +7,13 @@ import live.lb_trip.data.dto.request.EmailVerificationResendRequestDto
 import live.lb_trip.data.dto.request.LoginRequestDto
 import live.lb_trip.data.dto.request.SignupRequestDto
 import live.lb_trip.data.mapper.toDomain
+import live.lb_trip.domain.exception.auth.LbTripAuthException
 import live.lb_trip.domain.model.Gender
 import live.lb_trip.domain.model.Tokens
 import live.lb_trip.domain.model.User
 import live.lb_trip.domain.repository.AuthRepository
+import live.lb_trip.domain.util.mapApiFailure
+import live.lb_trip.domain.util.suspendRunCatching
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -29,39 +32,59 @@ class AuthRepositoryImpl @Inject constructor(
         termsAgreed: Boolean,
         privacyAgreed: Boolean,
         marketingAgreed: Boolean,
-    ): User = authRemoteDataSource.signup(
-        SignupRequestDto(
-            name = name,
-            email = email,
-            password = password,
-            passwordConfirm = passwordConfirm,
-            phoneNumber = phoneNumber,
-            birthDate = birthDate,
-            gender = gender.name,
-            termsAgreed = termsAgreed,
-            privacyAgreed = privacyAgreed,
-            marketingAgreed = marketingAgreed,
-        ),
-    ).toDomain()
-
-    override suspend fun login(email: String, password: String): Tokens {
-        val dto = authRemoteDataSource.login(LoginRequestDto(email = email, password = password))
-        tokenDataStore.save(dto.accessToken, dto.refreshToken)
-        return Tokens(accessToken = dto.accessToken, refreshToken = dto.refreshToken)
+    ): Result<User> = suspendRunCatching {
+        authRemoteDataSource.signup(
+            SignupRequestDto(
+                name = name,
+                email = email,
+                password = password,
+                passwordConfirm = passwordConfirm,
+                phoneNumber = phoneNumber,
+                birthDate = birthDate,
+                gender = gender.name,
+                termsAgreed = termsAgreed,
+                privacyAgreed = privacyAgreed,
+                marketingAgreed = marketingAgreed,
+            ),
+        ).toDomain()
+    }.mapApiFailure {
+        on(409, "EMAIL_ALREADY_EXISTS") throws LbTripAuthException.EmailAlreadyExistsException()
     }
 
-    override suspend fun logout() {
-        authRemoteDataSource.logout()
-        tokenDataStore.clear()
-    }
+    override suspend fun login(email: String, password: String): Result<Tokens> =
+        suspendRunCatching {
+            val dto = authRemoteDataSource.login(LoginRequestDto(email = email, password = password))
+            tokenDataStore.save(dto.accessToken, dto.refreshToken)
+            Tokens(accessToken = dto.accessToken, refreshToken = dto.refreshToken)
+        }.mapApiFailure {
+            on(400, "INVALID_PASSWORD") throws LbTripAuthException.InvalidCredentialsException()
+            on(401) throws LbTripAuthException.UnauthorizedException()
+            on(404, "USER_NOT_FOUND") throws LbTripAuthException.UserNotFoundException()
+        }
 
-    override suspend fun resendEmailVerification(email: String): User =
-        authRemoteDataSource.resendEmailVerification(
-            EmailVerificationResendRequestDto(email = email),
-        ).toDomain()
+    override suspend fun logout(): Result<Unit> =
+        suspendRunCatching {
+            authRemoteDataSource.logout()
+        }.mapApiFailure {
+            on(401) throws LbTripAuthException.UnauthorizedException()
+        }
 
-    override suspend fun confirmEmailVerification(code: String): User =
-        authRemoteDataSource.confirmEmailVerification(
-            EmailVerificationConfirmRequestDto(code = code),
-        ).toDomain()
+    override suspend fun resendEmailVerification(email: String): Result<User> =
+        suspendRunCatching {
+            authRemoteDataSource.resendEmailVerification(
+                EmailVerificationResendRequestDto(email = email),
+            ).toDomain()
+        }.mapApiFailure {
+            on(404, "USER_NOT_FOUND") throws LbTripAuthException.UserNotFoundException()
+        }
+
+    override suspend fun confirmEmailVerification(code: String): Result<User> =
+        suspendRunCatching {
+            authRemoteDataSource.confirmEmailVerification(
+                EmailVerificationConfirmRequestDto(code = code),
+            ).toDomain()
+        }.mapApiFailure {
+            on(400, "EMAIL_VERIFICATION_CODE_INVALID") throws LbTripAuthException.EmailVerificationCodeInvalidException()
+            on(400, "EMAIL_VERIFICATION_CODE_EXPIRED") throws LbTripAuthException.EmailVerificationCodeExpiredException()
+        }
 }

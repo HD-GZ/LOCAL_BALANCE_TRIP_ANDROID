@@ -16,13 +16,13 @@ interface AuthRepository {
         termsAgreed: Boolean,
         privacyAgreed: Boolean,
         marketingAgreed: Boolean,
-    ): User
+    ): Result<User>
 
-    suspend fun login(email: String, password: String): Tokens
+    suspend fun login(email: String, password: String): Result<Tokens>
 
-    suspend fun logout()
+    suspend fun logout(): Result<Unit>
 
-    suspend fun resendEmailVerification(email: String): User
+    suspend fun resendEmailVerification(email: String): Result<User>
 
-    suspend fun confirmEmailVerification(code: String): User
+    suspend fun confirmEmailVerification(code: String): Result<User>
 }

@@ -3,8 +3,11 @@ package live.lb_trip.data.repository
 import kotlinx.coroutines.flow.Flow
 import live.lb_trip.data.datasource.local.TokenDataStore
 import live.lb_trip.data.datasource.remote.UserRemoteDataSource
+import live.lb_trip.domain.exception.user.LbTripUserException
 import live.lb_trip.domain.model.Tokens
 import live.lb_trip.domain.repository.UserRepository
+import live.lb_trip.domain.util.mapApiFailure
+import live.lb_trip.domain.util.suspendRunCatching
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -22,6 +25,10 @@ class UserRepositoryImpl @Inject constructor(
         tokenDataStore.clear()
     }
 
-    override suspend fun checkEmailAvailability(email: String): Boolean =
-        userRemoteDataSource.checkEmailAvailability(email)
+    override suspend fun checkEmailAvailability(email: String): Result<Boolean> =
+        suspendRunCatching {
+            userRemoteDataSource.checkEmailAvailability(email)
+        }.mapApiFailure {
+            on(409, "EMAIL_UNAVAILABLE") throws LbTripUserException.EmailUnavailableException()
+        }
 }
