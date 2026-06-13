@@ -13,11 +13,13 @@ import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
+import io.ktor.client.statement.bodyAsText
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
@@ -37,6 +39,7 @@ import live.lb_trip.data.di.qualifier.NoAuth
 import live.lb_trip.data.dto.request.TokenRefreshRequestDto
 import live.lb_trip.data.dto.response.ApiResponse
 import live.lb_trip.data.dto.response.TokenResponseDto
+import live.lb_trip.domain.exception.ApiException
 import live.lb_trip.data.di.qualifier.Auth as AuthQualifier
 
 @Module
@@ -103,6 +106,8 @@ object DataModule {
     }
 }
 
+private val validatorJson = Json { ignoreUnknownKeys = true }
+
 private fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
     defaultRequest { url(baseUrl) }
     install(ContentNegotiation) {
@@ -113,4 +118,18 @@ private fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
         })
     }
     install(Logging) { level = LogLevel.INFO }
+    HttpResponseValidator {
+        validateResponse { response ->
+            if (response.status.isSuccess()) return@validateResponse
+            val body = response.bodyAsText()
+            val apiError = runCatching {
+                validatorJson.decodeFromString<ApiResponse<Unit>>(body).error
+            }.getOrNull()
+            throw ApiException(
+                statusCode = response.status.value,
+                code = apiError?.code ?: "",
+                message = apiError?.message ?: response.status.description,
+            )
+        }
+    }
 }

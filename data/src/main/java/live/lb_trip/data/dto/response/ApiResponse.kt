@@ -1,7 +1,10 @@
 package live.lb_trip.data.dto.response
 
+import io.ktor.client.call.body
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import kotlinx.serialization.Serializable
-import live.lb_trip.data.exception.NetworkException
+import live.lb_trip.domain.exception.ApiException
 
 @Serializable
 data class ApiResponse<T>(
@@ -23,19 +26,23 @@ data class ApiFieldError(
     val message: String,
 )
 
-fun <T> ApiResponse<T>.getOrThrow(): T {
-    if (result == "SUCCESS" && data != null) return data
-    throw NetworkException(
-        code = error?.code ?: "UNKNOWN_ERROR",
-        message = error?.message ?: "Unknown error occurred",
+suspend inline fun <reified T> HttpResponse.bodyOrThrow(): T {
+    val apiResponse = body<ApiResponse<T>>()
+    if (apiResponse.result == "SUCCESS" && apiResponse.data != null) return apiResponse.data
+    throw ApiException(
+        statusCode = status.value,
+        code = apiResponse.error?.code ?: "",
+        message = apiResponse.error?.message ?: "",
     )
 }
 
-fun ApiResponse<Unit>.checkOrThrow() {
-    if (result != "SUCCESS") {
-        throw NetworkException(
-            code = error?.code ?: "UNKNOWN_ERROR",
-            message = error?.message ?: "Unknown error occurred",
+suspend fun HttpResponse.checkOrThrow() {
+    val apiResponse = body<ApiResponse<Unit>>()
+    if (apiResponse.result != "SUCCESS") {
+        throw ApiException(
+            statusCode = status.value,
+            code = apiResponse.error?.code ?: "",
+            message = apiResponse.error?.message ?: "",
         )
     }
 }
