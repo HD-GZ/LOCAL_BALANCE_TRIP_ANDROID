@@ -9,6 +9,8 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.application")
+                apply("live.lb_trip.ktlint")
+                apply("live.lb_trip.detekt")
             }
 
             extensions.configure<ApplicationExtension> {

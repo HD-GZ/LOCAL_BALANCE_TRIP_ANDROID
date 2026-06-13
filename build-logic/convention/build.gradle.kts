@@ -13,6 +13,8 @@ dependencies {
     compileOnly(libs.android.gradle.tool)
     compileOnly(libs.ksp.gradle)
     compileOnly(libs.hilt.gradle)
+    compileOnly(libs.ktlint.gradle)
+    compileOnly(libs.detekt.gradle)
 }
 
 gradlePlugin {
@@ -40,6 +42,14 @@ gradlePlugin {
         register("androidFeatureApi") {
             id = "live.lb_trip.android.feature.api"
             implementationClass = "AndroidFeatureApiConventionPlugin"
+        }
+        register("ktlint") {
+            id = "live.lb_trip.ktlint"
+            implementationClass = "KtlintConventionPlugin"
+        }
+        register("detekt") {
+            id = "live.lb_trip.detekt"
+            implementationClass = "DetektConventionPlugin"
         }
     }
 }
