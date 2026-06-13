@@ -4,13 +4,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Named
+import live.lb_trip.data.di.qualifier.BaseUrl
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Provides
-    @Named("baseUrl")
+    @BaseUrl
     fun provideBaseUrl(): String = BuildConfig.BASE_URL
 }
