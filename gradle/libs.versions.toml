@@ -21,6 +21,7 @@ serialization = "1.11.0"
 ktlint = "12.2.0"
 detekt = "1.23.8"
 datastore = "1.1.4"
+annotation-experimental = "1.5.1"
 
 [libraries]
 android-gradle-tool = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -68,6 +69,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+androidx-annotation-experimental = { module = "androidx.annotation:annotation-experimental", version.ref = "annotation-experimental" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
