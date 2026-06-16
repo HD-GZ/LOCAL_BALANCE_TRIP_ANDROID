@@ -22,11 +22,16 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -82,6 +87,14 @@ private fun SigninScreen(
     state: SigninState,
     modifier: Modifier = Modifier,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.errorMessage) {
+        if (state.errorMessage != null) {
+            snackbarHostState.showSnackbar(state.errorMessage)
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -116,10 +129,29 @@ private fun SigninScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             SigninBottomAction(
+                isLoading = state.isLoading,
                 onLoginClick = { state.eventSink(SigninEvent.Login) },
                 onForgotPasswordClick = { state.eventSink(SigninEvent.NavigateToForgotPassword) },
                 onSignupClick = { state.eventSink(SigninEvent.NavigateToSignup) },
             )
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .windowInsetsPadding(WindowInsets.navigationBars),
+        )
+
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = Color(0xFF2F6F4F))
+            }
         }
     }
 }
@@ -301,6 +333,7 @@ private fun LbInputField(
 
 @Composable
 private fun SigninBottomAction(
+    isLoading: Boolean,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
     onSignupClick: () -> Unit,
@@ -317,6 +350,7 @@ private fun SigninBottomAction(
     ) {
         LbButton(
             onClick = onLoginClick,
+            enabled = !isLoading,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(54.dp),
