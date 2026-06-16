@@ -3,5 +3,9 @@ package live.lb_trip.feature.signin
 import com.slack.circuit.runtime.CircuitUiState
 
 data class SigninState(
-    val eventSink: (SigninEvent) -> Unit = {}
+    val email: String = "",
+    val password: String = "",
+    val isPasswordVisible: Boolean = false,
+    val isLoading: Boolean = false,
+    val eventSink: (SigninEvent) -> Unit = {},
 ) : CircuitUiState

@@ -1,6 +1,10 @@
 package live.lb_trip.feature.signin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import dagger.assisted.Assisted
@@ -19,6 +23,24 @@ class SigninPresenter @AssistedInject constructor(
 
     @Composable
     override fun present(): SigninState {
-        return SigninState()
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+        var isPasswordVisible by remember { mutableStateOf(false) }
+
+        return SigninState(
+            email = email,
+            password = password,
+            isPasswordVisible = isPasswordVisible,
+        ) { event ->
+            when (event) {
+                SigninEvent.NavigateBack -> navigator.pop()
+                is SigninEvent.UpdateEmail -> email = event.email
+                is SigninEvent.UpdatePassword -> password = event.password
+                SigninEvent.TogglePasswordVisibility -> isPasswordVisible = !isPasswordVisible
+                SigninEvent.Login -> Unit // TODO
+                SigninEvent.NavigateToForgotPassword -> Unit // TODO
+                SigninEvent.NavigateToSignup -> Unit // TODO
+            }
+        }
     }
 }
