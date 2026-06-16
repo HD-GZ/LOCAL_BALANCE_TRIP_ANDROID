@@ -7,6 +7,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import live.lb_trip.feature.settings.SettingsScreen
+import live.lb_trip.feature.signin.SigninScreen
 import live.lb_trip.feature.signup.SignupScreen
 
 class HomePresenter @AssistedInject constructor(
@@ -27,7 +28,7 @@ class HomePresenter @AssistedInject constructor(
             when (event) {
                 HomeEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
                 HomeEvent.NavigateToSignup -> navigator.goTo(SignupScreen)
-                HomeEvent.NavigateToLogin -> Unit // TODO: navigate to login
+                HomeEvent.NavigateToLogin -> navigator.goTo(SigninScreen)
             }
         }
     }
