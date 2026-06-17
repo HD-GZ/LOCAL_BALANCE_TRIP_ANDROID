@@ -14,6 +14,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
 import live.lb_trip.domain.exception.auth.LbTripAuthException
 import live.lb_trip.domain.usecase.LoginUseCase
+import live.lb_trip.feature.home.HomeScreen
 import live.lb_trip.feature.signup.SignupScreen
 
 class SigninPresenter @AssistedInject constructor(
@@ -54,7 +55,7 @@ class SigninPresenter @AssistedInject constructor(
                     errorMessage = null
                     loginUseCase(email = email, password = password)
                         .onSuccess {
-                            navigator.pop()
+                            navigator.resetRoot(HomeScreen)
                         }
                         .onFailure { throwable ->
                             errorMessage = when (throwable) {
