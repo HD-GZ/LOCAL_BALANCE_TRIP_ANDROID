@@ -10,7 +10,6 @@ interface AuthRepository {
         email: String,
         password: String,
         passwordConfirm: String,
-        phoneNumber: String,
         birthDate: String,
         gender: Gender,
         termsAgreed: Boolean,

@@ -8,7 +8,6 @@ data class SignupRequestDto(
     val email: String,
     val password: String,
     val passwordConfirm: String,
-    val phoneNumber: String,
     val birthDate: String,
     val gender: String,
     val termsAgreed: Boolean,

@@ -22,7 +22,9 @@ import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
+import android.util.Log
 import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -117,7 +119,14 @@ private fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
             isLenient = true
         })
     }
-    install(Logging) { level = LogLevel.INFO }
+    install(Logging) {
+        level = LogLevel.ALL
+        logger = object : Logger {
+            override fun log(message: String) {
+                Log.d("Ktor", message)
+            }
+        }
+    }
     HttpResponseValidator {
         validateResponse { response ->
             if (response.status.isSuccess()) return@validateResponse
@@ -129,6 +138,7 @@ private fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
                 statusCode = response.status.value,
                 code = apiError?.code ?: "",
                 message = apiError?.message ?: response.status.description,
+                fieldErrors = apiError?.data?.map { it.field to it.message } ?: emptyList(),
             )
         }
     }

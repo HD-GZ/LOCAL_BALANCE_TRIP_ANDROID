@@ -23,6 +23,9 @@ class ApiExceptionMapper(private val exception: ApiException) {
     fun on(statusRange: IntRange) = OnBuilder(exception.statusCode in statusRange)
     fun on(status: Int, code: String) = OnBuilder(exception.statusCode == status && exception.code == code)
     fun on(statusRange: IntRange, code: String) = OnBuilder(exception.statusCode in statusRange && exception.code == code)
+    fun on(status: Int, code: String, transform: (ApiException) -> LbTripException) {
+        if (exception.statusCode == status && exception.code == code) mapped = transform(exception)
+    }
 
     internal fun map(): LbTripException = mapped ?: exception
 }

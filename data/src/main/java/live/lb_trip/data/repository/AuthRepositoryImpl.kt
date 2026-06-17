@@ -26,7 +26,6 @@ class AuthRepositoryImpl @Inject constructor(
         email: String,
         password: String,
         passwordConfirm: String,
-        phoneNumber: String,
         birthDate: String,
         gender: Gender,
         termsAgreed: Boolean,
@@ -39,7 +38,6 @@ class AuthRepositoryImpl @Inject constructor(
                 email = email,
                 password = password,
                 passwordConfirm = passwordConfirm,
-                phoneNumber = phoneNumber,
                 birthDate = birthDate,
                 gender = gender.name,
                 termsAgreed = termsAgreed,
@@ -48,7 +46,12 @@ class AuthRepositoryImpl @Inject constructor(
             ),
         ).toDomain()
     }.mapApiFailure {
-        on(409, "EMAIL_ALREADY_EXISTS") throws LbTripAuthException.EmailAlreadyExistsException()
+        on(400, "INVALID_INPUT_VALUE") { ex ->
+            LbTripAuthException.InvalidInputValueException(fields = ex.fieldErrors.map { it.first })
+        }
+        on(400, "PASSWORD_CONFIRM_MISMATCH") throws LbTripAuthException.PasswordConfirmMismatchException()
+        on(400, "REQUIRED_AGREEMENT_NOT_ACCEPTED") throws LbTripAuthException.RequiredAgreementNotAcceptedException()
+        on(409, "DUPLICATE_EMAIL") throws LbTripAuthException.DuplicateEmailException()
     }
 
     override suspend fun login(email: String, password: String): Result<Tokens> =
@@ -57,8 +60,8 @@ class AuthRepositoryImpl @Inject constructor(
             tokenDataStore.save(dto.accessToken, dto.refreshToken)
             Tokens(accessToken = dto.accessToken, refreshToken = dto.refreshToken)
         }.mapApiFailure {
-            on(400, "INVALID_PASSWORD") throws LbTripAuthException.InvalidCredentialsException()
-            on(401) throws LbTripAuthException.UnauthorizedException()
+            on(401, "INVALID_LOGIN_CREDENTIALS") throws LbTripAuthException.InvalidCredentialsException()
+            on(403, "EMAIL_NOT_VERIFIED") throws LbTripAuthException.EmailNotVerifiedException()
             on(404, "USER_NOT_FOUND") throws LbTripAuthException.UserNotFoundException()
         }
 
@@ -84,7 +87,8 @@ class AuthRepositoryImpl @Inject constructor(
                 EmailVerificationConfirmRequestDto(code = code),
             ).toDomain()
         }.mapApiFailure {
-            on(400, "EMAIL_VERIFICATION_CODE_INVALID") throws LbTripAuthException.EmailVerificationCodeInvalidException()
             on(400, "EMAIL_VERIFICATION_CODE_EXPIRED") throws LbTripAuthException.EmailVerificationCodeExpiredException()
+            on(400, "EMAIL_VERIFICATION_CODE_USED") throws LbTripAuthException.EmailVerificationCodeUsedException()
+            on(404, "EMAIL_VERIFICATION_CODE_NOT_FOUND") throws LbTripAuthException.EmailVerificationCodeNotFoundException()
         }
 }

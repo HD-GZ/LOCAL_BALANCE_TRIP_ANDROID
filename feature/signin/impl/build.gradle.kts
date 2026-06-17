@@ -9,5 +9,6 @@ android {
 dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.feature.signin.api)
+    implementation(projects.feature.signup.api)
     implementation(projects.domain)
 }
