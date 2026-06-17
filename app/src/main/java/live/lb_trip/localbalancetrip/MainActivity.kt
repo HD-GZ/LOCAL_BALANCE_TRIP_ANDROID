@@ -19,6 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeScreen
+import live.lb_trip.feature.onboarding.OnboardingScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        val navStack = rememberSaveableBackStack(HomeScreen)
+                        val navStack = rememberSaveableBackStack(OnboardingScreen)
                         val navigator = rememberCircuitNavigator(navStack)
                         NavigableCircuitContent(
                             navigator = navigator,

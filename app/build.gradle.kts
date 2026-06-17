@@ -38,6 +38,8 @@ dependencies {
     implementation(projects.data)
     implementation(projects.feature.home.api)
     implementation(projects.feature.home.impl)
+    implementation(projects.feature.onboarding.api)
+    implementation(projects.feature.onboarding.impl)
     implementation(projects.feature.signup.api)
     implementation(projects.feature.signup.impl)
     implementation(projects.feature.signin.api)
