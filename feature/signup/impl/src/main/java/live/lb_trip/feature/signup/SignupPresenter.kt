@@ -17,6 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import live.lb_trip.domain.exception.auth.LbTripAuthException
 import live.lb_trip.domain.model.Gender
+import live.lb_trip.domain.usecase.CheckEmailAvailabilityUseCase
 import live.lb_trip.domain.usecase.ConfirmEmailVerificationUseCase
 import live.lb_trip.domain.usecase.ResendEmailVerificationUseCase
 import live.lb_trip.domain.usecase.SignupUseCase
@@ -26,6 +27,7 @@ class SignupPresenter @AssistedInject constructor(
     @Assisted private val screen: SignupScreen,
     @Assisted private val navigator: Navigator,
     private val signupUseCase: SignupUseCase,
+    private val checkEmailAvailabilityUseCase: CheckEmailAvailabilityUseCase,
     private val confirmEmailVerificationUseCase: ConfirmEmailVerificationUseCase,
     private val resendEmailVerificationUseCase: ResendEmailVerificationUseCase,
 ) : Presenter<SignupState> {
@@ -100,7 +102,22 @@ class SignupPresenter @AssistedInject constructor(
                 SignupEvent.TogglePasswordVisibility -> isPasswordVisible = !isPasswordVisible
                 SignupEvent.ToggleConfirmPasswordVisibility -> isConfirmPasswordVisible = !isConfirmPasswordVisible
                 SignupEvent.NextStep -> when (step) {
-                    SignupStep.AccountInfo -> step = SignupStep.PersonalInfo
+                    SignupStep.AccountInfo -> scope.launch {
+                        isLoading = true
+                        errorMessage = null
+                        checkEmailAvailabilityUseCase(email = email)
+                            .onSuccess { available ->
+                                if (available) {
+                                    step = SignupStep.PersonalInfo
+                                } else {
+                                    errorMessage = "이미 사용 중인 이메일이에요."
+                                }
+                            }
+                            .onFailure {
+                                errorMessage = "이메일 확인에 실패했어요. 잠시 후 다시 시도해 주세요."
+                            }
+                        isLoading = false
+                    }
                     SignupStep.PersonalInfo -> scope.launch {
                         isLoading = true
                         errorMessage = null
