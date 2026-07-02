@@ -58,6 +58,7 @@ dependencies {
 
     implementation(libs.circuit.foundation)
     implementation(libs.circuit.runtime)
+    implementation(libs.circuitx.gesture.navigation)
 
     implementation(libs.hilt.navigation.compose)
 
