@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -20,7 +19,6 @@ import com.slack.circuit.foundation.NavigableCircuitContent
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
-import com.slack.circuitx.gesturenavigation.GestureNavigationDecorationFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
@@ -67,9 +65,6 @@ class MainActivity : ComponentActivity() {
                         NavigableCircuitContent(
                             navigator = navigator,
                             navStack = navStack,
-                            decoratorFactory = remember(navigator) {
-                                GestureNavigationDecorationFactory(onBackInvoked = navigator::pop)
-                            }
                         )
                     }
                 }
