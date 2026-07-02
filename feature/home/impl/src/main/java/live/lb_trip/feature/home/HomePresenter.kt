@@ -6,6 +6,7 @@ import com.slack.circuit.runtime.presenter.Presenter
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import live.lb_trip.feature.propensity.PropensityScreen
 import live.lb_trip.feature.settings.SettingsScreen
 
 class HomePresenter @AssistedInject constructor(
@@ -20,10 +21,9 @@ class HomePresenter @AssistedInject constructor(
 
     @Composable
     override fun present(): HomeState {
-        return HomeState(
-            title = "Home Screen Skeleton"
-        ) { event ->
+        return HomeState { event ->
             when (event) {
+                HomeEvent.StartPropensityDiagnosis -> navigator.goTo(PropensityScreen)
                 HomeEvent.NavigateToSettings -> navigator.goTo(SettingsScreen)
             }
         }

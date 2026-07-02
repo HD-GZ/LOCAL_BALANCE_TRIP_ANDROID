@@ -10,5 +10,6 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.feature.home.api)
     implementation(projects.feature.settings.api)
+    implementation(projects.feature.propensity.api)
     implementation(projects.domain)
 }
