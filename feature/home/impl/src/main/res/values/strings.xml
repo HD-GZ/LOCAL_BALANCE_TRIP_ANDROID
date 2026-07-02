@@ -1,0 +1,8 @@
+<resources>
+    <string name="home_brand_prefix">로컬</string>
+    <string name="home_brand_highlight">밸런스</string>
+    <string name="home_brand_suffix">" 트립"</string>
+    <string name="home_cta_start_diagnosis">취향 진단 시작하기</string>
+    <string name="home_tab_main">메인</string>
+    <string name="home_tab_my_info">나의 정보</string>
+</resources>

@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -39,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.slack.circuit.runtime.ui.Ui
-import live.lb_trip.core.designsystem.R
+import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 
@@ -89,7 +90,11 @@ private fun HomeScreenContent(
                 colors = LbButtonDefaults.greenColors(),
                 modifier = Modifier.height(56.dp),
             ) {
-                Text(text = "취향 진단 시작하기", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = stringResource(R.string.home_cta_start_diagnosis),
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         }
 
@@ -108,16 +113,19 @@ private fun HomeBrandBar(modifier: Modifier = Modifier) {
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_balance_mark),
+                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_balance_mark),
                         contentDescription = null,
                         tint = Brand,
                         modifier = Modifier.size(26.dp),
                     )
+                    val brandPrefix = stringResource(R.string.home_brand_prefix)
+                    val brandHighlight = stringResource(R.string.home_brand_highlight)
+                    val brandSuffix = stringResource(R.string.home_brand_suffix)
                     Text(
                         text = buildAnnotatedString {
-                            append("로컬")
-                            withStyle(SpanStyle(color = Brand)) { append("밸런스") }
-                            append(" 트립")
+                            append(brandPrefix)
+                            withStyle(SpanStyle(color = Brand)) { append(brandHighlight) }
+                            append(brandSuffix)
                         },
                         color = TextPrimary,
                         fontSize = 16.5.sp,
@@ -133,21 +141,24 @@ private fun HomeBrandBar(modifier: Modifier = Modifier) {
 
 @Composable
 private fun HomeBottomTabs(onMyInfoClick: () -> Unit, modifier: Modifier = Modifier) {
+    val mainTabLabel = stringResource(R.string.home_tab_main)
+    val myInfoTabLabel = stringResource(R.string.home_tab_my_info)
+
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(color = Border, thickness = 1.dp)
         NavigationBar(containerColor = Color.White) {
             NavigationBarItem(
                 selected = true,
                 onClick = {},
-                icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = "메인") },
-                label = { Text(text = "메인", fontSize = 11.sp) },
+                icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = mainTabLabel) },
+                label = { Text(text = mainTabLabel, fontSize = 11.sp) },
                 colors = HomeNavigationBarItemColors,
             )
             NavigationBarItem(
                 selected = false,
                 onClick = onMyInfoClick,
-                icon = { Icon(imageVector = Icons.Outlined.Person, contentDescription = "나의 정보") },
-                label = { Text(text = "나의 정보", fontSize = 11.sp) },
+                icon = { Icon(imageVector = Icons.Outlined.Person, contentDescription = myInfoTabLabel) },
+                label = { Text(text = myInfoTabLabel, fontSize = 11.sp) },
                 colors = HomeNavigationBarItemColors,
             )
         }
