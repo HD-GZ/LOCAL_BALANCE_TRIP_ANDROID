@@ -23,7 +23,8 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://api.stage.lb-trip.live\"")
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
