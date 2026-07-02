@@ -91,7 +91,7 @@ private fun PropensityScreenContent(state: PropensityState, modifier: Modifier =
     }
 
     LaunchedEffect(state.step) {
-        scrollState.scrollTo(0)
+        scrollState.animateScrollTo(0)
     }
 
     val title = when (state.step) {
