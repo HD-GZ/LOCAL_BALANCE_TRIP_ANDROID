@@ -87,7 +87,7 @@ private fun HeroSection(modifier: Modifier = Modifier) {
             sizes = LbChipDefaults.glassSizes(),
             leading = {
                 Icon(
-                    imageVector = ImageVector.vectorResource(R.drawable.ic_balance_mark),
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_hero_mark),
                     contentDescription = null,
                     tint = Color(0xFFDFF0E6),
                     modifier = Modifier.size(14.dp),
@@ -109,7 +109,7 @@ private fun HeroSection(modifier: Modifier = Modifier) {
         )
 
         Icon(
-            imageVector = ImageVector.vectorResource(R.drawable.ic_balance_mark),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_hero_mark),
             contentDescription = null,
             tint = Color.Unspecified,
             modifier = Modifier
