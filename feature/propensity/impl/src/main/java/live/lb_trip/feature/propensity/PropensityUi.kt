@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,7 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import com.slack.circuit.runtime.ui.Ui
-import live.lb_trip.core.designsystem.R
+import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbScaleSelector
@@ -94,9 +95,9 @@ private fun PropensityScreenContent(state: PropensityState, modifier: Modifier =
     }
 
     val title = when (state.step) {
-        PropensityStep.Preference -> "취향 진단"
-        PropensityStep.ValueConsumption -> "가치소비"
-        PropensityStep.Result -> "코스 추천"
+        PropensityStep.Preference -> stringResource(R.string.propensity_title_preference)
+        PropensityStep.ValueConsumption -> stringResource(R.string.propensity_title_value_consumption)
+        PropensityStep.Result -> stringResource(R.string.propensity_title_result)
     }
     val currentStepNumber = when (state.step) {
         PropensityStep.Preference -> 1
@@ -188,8 +189,8 @@ private fun PropensityBrandBar(
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        imageVector = ImageVector.vectorResource(R.drawable.ic_back),
-                        contentDescription = "뒤로",
+                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
+                        contentDescription = stringResource(R.string.propensity_back_content_description),
                         tint = Color.Unspecified,
                     )
                 }
@@ -203,9 +204,15 @@ private fun PropensityBrandBar(
 @Composable
 private fun PropensityHeader(step: PropensityStep, modifier: Modifier = Modifier) {
     val (title, subtitle) = when (step) {
-        PropensityStep.Preference -> "어떤 여행을 좋아하세요?" to "각 축에서 나에게 더 가까운 단계를 골라 주세요."
-        PropensityStep.ValueConsumption -> "어디에 아끼고, 어디에 투자할까요?" to "항목마다 아끼기 ↔ 투자를 조정해 주세요."
-        PropensityStep.Result -> "당신의 여행 프로필이 완성됐어요" to "취향 진단과 가치소비를 하나로 모은 결과예요."
+        PropensityStep.Preference ->
+            stringResource(R.string.propensity_header_preference_title) to
+                stringResource(R.string.propensity_header_preference_subtitle)
+        PropensityStep.ValueConsumption ->
+            stringResource(R.string.propensity_header_value_consumption_title) to
+                stringResource(R.string.propensity_header_value_consumption_subtitle)
+        PropensityStep.Result ->
+            stringResource(R.string.propensity_header_result_title) to
+                stringResource(R.string.propensity_header_result_subtitle)
     }
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -233,51 +240,51 @@ private fun PropensityHeader(step: PropensityStep, modifier: Modifier = Modifier
 private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         AxisRow(
-            title = "여행지 선택",
-            leftLabel = "핫플",
-            leftSub = "유명·인기 명소",
-            rightLabel = "로컬",
-            rightSub = "골목·생활 상권",
+            title = stringResource(R.string.propensity_axis_locality_title),
+            leftLabel = stringResource(R.string.propensity_axis_locality_left),
+            leftSub = stringResource(R.string.propensity_axis_locality_left_sub),
+            rightLabel = stringResource(R.string.propensity_axis_locality_right),
+            rightSub = stringResource(R.string.propensity_axis_locality_right_sub),
             value = state.locality,
             onValueChange = { state.eventSink(PropensityEvent.UpdateLocality(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "소비 기준",
-            leftLabel = "럭셔리",
-            leftSub = "프리미엄·고급",
-            rightLabel = "실속",
-            rightSub = "합리적 가성비",
+            title = stringResource(R.string.propensity_axis_frugality_title),
+            leftLabel = stringResource(R.string.propensity_axis_frugality_left),
+            leftSub = stringResource(R.string.propensity_axis_frugality_left_sub),
+            rightLabel = stringResource(R.string.propensity_axis_frugality_right),
+            rightSub = stringResource(R.string.propensity_axis_frugality_right_sub),
             value = state.frugality,
             onValueChange = { state.eventSink(PropensityEvent.UpdateFrugality(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "활동 방식",
-            leftLabel = "관람형",
-            leftSub = "보고 즐기기",
-            rightLabel = "생활 체험",
-            rightSub = "직접 해보기",
+            title = stringResource(R.string.propensity_axis_experientiality_title),
+            leftLabel = stringResource(R.string.propensity_axis_experientiality_left),
+            leftSub = stringResource(R.string.propensity_axis_experientiality_left_sub),
+            rightLabel = stringResource(R.string.propensity_axis_experientiality_right),
+            rightSub = stringResource(R.string.propensity_axis_experientiality_right_sub),
             value = state.experientiality,
             onValueChange = { state.eventSink(PropensityEvent.UpdateExperientiality(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "여행 스타일",
-            leftLabel = "휴식형",
-            leftSub = "느긋한 쉼",
-            rightLabel = "활동형",
-            rightSub = "부지런한 일정",
+            title = stringResource(R.string.propensity_axis_vitality_title),
+            leftLabel = stringResource(R.string.propensity_axis_vitality_left),
+            leftSub = stringResource(R.string.propensity_axis_vitality_left_sub),
+            rightLabel = stringResource(R.string.propensity_axis_vitality_right),
+            rightSub = stringResource(R.string.propensity_axis_vitality_right_sub),
             value = state.vitality,
             onValueChange = { state.eventSink(PropensityEvent.UpdateVitality(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "동행 유형",
-            leftLabel = "혼행",
-            leftSub = "나 홀로",
-            rightLabel = "세대 동행",
-            rightSub = "가족·세대",
+            title = stringResource(R.string.propensity_axis_sociality_title),
+            leftLabel = stringResource(R.string.propensity_axis_sociality_left),
+            leftSub = stringResource(R.string.propensity_axis_sociality_left_sub),
+            rightLabel = stringResource(R.string.propensity_axis_sociality_right),
+            rightSub = stringResource(R.string.propensity_axis_sociality_right_sub),
             value = state.sociality,
             onValueChange = { state.eventSink(PropensityEvent.UpdateSociality(it)) },
         )
@@ -291,60 +298,69 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
             colors = LbButtonDefaults.greenColors(),
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
-            Text(text = "가치소비 설정", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = stringResource(R.string.propensity_cta_set_value_consumption),
+                fontSize = 15.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
         }
     }
 }
 
 @Composable
 private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifier = Modifier) {
+    val save = stringResource(R.string.propensity_save)
+    val saveEn = stringResource(R.string.propensity_save_en)
+    val spend = stringResource(R.string.propensity_spend)
+    val spendEn = stringResource(R.string.propensity_spend_en)
+
     Column(modifier = modifier.fillMaxWidth()) {
         AxisRow(
-            title = "숙소",
-            leftLabel = "아끼기",
-            leftSub = "SAVE",
-            rightLabel = "투자",
-            rightSub = "SPEND",
+            title = stringResource(R.string.propensity_item_accommodation),
+            leftLabel = save,
+            leftSub = saveEn,
+            rightLabel = spend,
+            rightSub = spendEn,
             value = state.accommodation,
             onValueChange = { state.eventSink(PropensityEvent.UpdateAccommodation(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "음식",
-            leftLabel = "아끼기",
-            leftSub = "SAVE",
-            rightLabel = "투자",
-            rightSub = "SPEND",
+            title = stringResource(R.string.propensity_item_food),
+            leftLabel = save,
+            leftSub = saveEn,
+            rightLabel = spend,
+            rightSub = spendEn,
             value = state.food,
             onValueChange = { state.eventSink(PropensityEvent.UpdateFood(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "체험",
-            leftLabel = "아끼기",
-            leftSub = "SAVE",
-            rightLabel = "투자",
-            rightSub = "SPEND",
+            title = stringResource(R.string.propensity_item_experience),
+            leftLabel = save,
+            leftSub = saveEn,
+            rightLabel = spend,
+            rightSub = spendEn,
             value = state.experience,
             onValueChange = { state.eventSink(PropensityEvent.UpdateExperience(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "이동",
-            leftLabel = "아끼기",
-            leftSub = "SAVE",
-            rightLabel = "투자",
-            rightSub = "SPEND",
+            title = stringResource(R.string.propensity_item_transportation),
+            leftLabel = save,
+            leftSub = saveEn,
+            rightLabel = spend,
+            rightSub = spendEn,
             value = state.transportation,
             onValueChange = { state.eventSink(PropensityEvent.UpdateTransportation(it)) },
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
-            title = "카페·전시",
-            leftLabel = "아끼기",
-            leftSub = "SAVE",
-            rightLabel = "투자",
-            rightSub = "SPEND",
+            title = stringResource(R.string.propensity_item_cafe_exhibition),
+            leftLabel = save,
+            leftSub = saveEn,
+            rightLabel = spend,
+            rightSub = spendEn,
             value = state.cafeExhibition,
             onValueChange = { state.eventSink(PropensityEvent.UpdateCafeExhibition(it)) },
         )
@@ -363,7 +379,11 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
                 modifier = Modifier.weight(1f).height(52.dp),
             ) {
-                Text(text = "이전 단계", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = stringResource(R.string.propensity_cta_previous_step),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
             LbButton(
                 onClick = { state.eventSink(PropensityEvent.NextStep) },
@@ -374,7 +394,11 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
-                    Text(text = "결과 보기", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        text = stringResource(R.string.propensity_cta_view_result),
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
@@ -418,14 +442,22 @@ private fun ResultStepContent(state: PropensityState, modifier: Modifier = Modif
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
                 modifier = Modifier.weight(1f).height(52.dp),
             ) {
-                Text(text = "처음부터 다시", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = stringResource(R.string.propensity_cta_restart),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
             LbButton(
                 onClick = { state.eventSink(PropensityEvent.CourseRecommendationClicked) },
                 colors = LbButtonDefaults.greenColors(),
                 modifier = Modifier.weight(1f).height(52.dp),
             ) {
-                Text(text = "코스 추천받기", fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                Text(
+                    text = stringResource(R.string.propensity_cta_course_recommendation),
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
         }
     }

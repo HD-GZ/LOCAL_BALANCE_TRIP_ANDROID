@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.presenter.Presenter
 import dagger.assisted.Assisted
@@ -47,6 +48,9 @@ class PropensityPresenter @AssistedInject constructor(
         var resultType by remember { mutableStateOf<String?>(null) }
         var resultDescription by remember { mutableStateOf<String?>(null) }
         val scope = rememberCoroutineScope()
+        val invalidInputErrorMessage = stringResource(R.string.propensity_error_invalid_input)
+        val genericErrorMessage = stringResource(R.string.propensity_error_generic)
+        val courseComingSoonMessage = stringResource(R.string.propensity_course_coming_soon)
 
         return PropensityState(
             step = step,
@@ -110,8 +114,8 @@ class PropensityPresenter @AssistedInject constructor(
                             step = PropensityStep.Result
                         }.onFailure { throwable ->
                             errorMessage = when (throwable) {
-                                is LbTripPropensityException.InvalidInputException -> "입력값을 다시 확인해 주세요."
-                                else -> "진단 결과를 가져오지 못했어요. 잠시 후 다시 시도해 주세요."
+                                is LbTripPropensityException.InvalidInputException -> invalidInputErrorMessage
+                                else -> genericErrorMessage
                             }
                         }
                         isLoading = false
@@ -136,7 +140,7 @@ class PropensityPresenter @AssistedInject constructor(
                 }
 
                 PropensityEvent.CourseRecommendationClicked ->
-                    errorMessage = "코스 추천 기능은 준비 중이에요."
+                    errorMessage = courseComingSoonMessage
             }
         }
     }
