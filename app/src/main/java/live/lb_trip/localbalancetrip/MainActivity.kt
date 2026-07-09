@@ -27,7 +27,8 @@ import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.homeScreen
 import live.lb_trip.feature.onboarding.OnboardingScreen
-import live.lb_trip.feature.propensity.PropensityScreen
+import live.lb_trip.feature.propensity.PropensityRoute
+import live.lb_trip.feature.propensity.propensityScreen
 import live.lb_trip.feature.settings.SettingsScreen
 import live.lb_trip.feature.signin.SigninScreen
 import live.lb_trip.feature.signup.SignupScreen
@@ -88,9 +89,9 @@ class MainActivity : ComponentActivity() {
                             composable<OnboardingRoute> {
                                 CircuitContent(OnboardingScreen, navigator = bridgeNavigator)
                             }
-                            composable<PropensityRoute> {
-                                CircuitContent(PropensityScreen, navigator = bridgeNavigator)
-                            }
+                            propensityScreen(
+                                onBack = navController::popBackStack,
+                            )
                         }
                     }
                 }

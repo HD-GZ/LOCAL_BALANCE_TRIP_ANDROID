@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.convention.android.feature.impl)
+    alias(libs.plugins.convention.android.feature)
 }
 
 android {
@@ -8,6 +8,5 @@ android {
 
 dependencies {
     implementation(projects.core.designsystem)
-    implementation(projects.feature.propensity.api)
     implementation(projects.domain)
 }

@@ -13,6 +13,3 @@ object SignupRoute
 
 @Serializable
 object OnboardingRoute
-
-@Serializable
-object PropensityRoute

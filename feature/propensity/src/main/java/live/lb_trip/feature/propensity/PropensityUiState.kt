@@ -1,10 +1,8 @@
 package live.lb_trip.feature.propensity
 
-import com.slack.circuit.runtime.CircuitUiState
-
 enum class PropensityStep { Preference, ValueConsumption, Result }
 
-data class PropensityState(
+data class PropensityUiState(
     val step: PropensityStep = PropensityStep.Preference,
     val locality: Int = 3,
     val frugality: Int = 3,
@@ -20,5 +18,8 @@ data class PropensityState(
     val errorMessage: String? = null,
     val resultType: String? = null,
     val resultDescription: String? = null,
-    val eventSink: (PropensityEvent) -> Unit = {},
-) : CircuitUiState
+)
+
+sealed interface PropensityEffect {
+    data object NavigateBack : PropensityEffect
+}
