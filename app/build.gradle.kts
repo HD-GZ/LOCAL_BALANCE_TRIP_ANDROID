@@ -39,7 +39,7 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.data)
     implementation(projects.feature.home.api)
-    implementation(projects.feature.home.impl)
+    implementation(projects.feature.home)
     implementation(projects.feature.onboarding.api)
     implementation(projects.feature.onboarding.impl)
     implementation(projects.feature.propensity.api)

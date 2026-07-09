@@ -39,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.slack.circuit.runtime.ui.Ui
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
@@ -50,31 +49,20 @@ private val Border = Color(0xFFEBE7DF)
 private val BodyBackground = Color(0xFFF3F1EC)
 private val TabInactive = Color(0xFF9A958C)
 
-class HomeUi : Ui<HomeState> {
-    @Composable
-    override fun Content(state: HomeState, modifier: Modifier) {
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-            }
-        }
-
-        HomeScreenContent(
-            onStartDiagnosisClick = { state.eventSink(HomeEvent.StartPropensityDiagnosis) },
-            onMyInfoClick = { state.eventSink(HomeEvent.NavigateToSettings) },
-            modifier = modifier,
-        )
-    }
-}
-
 @Composable
-private fun HomeScreenContent(
+internal fun HomeScreen(
     onStartDiagnosisClick: () -> Unit,
     onMyInfoClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
     Column(modifier = modifier.fillMaxSize()) {
         HomeBrandBar()
 
@@ -177,5 +165,5 @@ private val HomeNavigationBarItemColors
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreenContent(onStartDiagnosisClick = {}, onMyInfoClick = {})
+    HomeScreen(onStartDiagnosisClick = {}, onMyInfoClick = {})
 }

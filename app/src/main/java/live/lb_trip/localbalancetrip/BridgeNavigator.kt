@@ -5,6 +5,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.navigation.NavStackList
 import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
+import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.HomeScreen
 import live.lb_trip.feature.onboarding.OnboardingScreen
 import live.lb_trip.feature.propensity.PropensityScreen

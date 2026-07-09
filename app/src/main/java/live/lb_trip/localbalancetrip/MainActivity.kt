@@ -24,7 +24,8 @@ import com.slack.circuit.runtime.ui.Ui
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
-import live.lb_trip.feature.home.HomeScreen
+import live.lb_trip.feature.home.HomeRoute
+import live.lb_trip.feature.home.homeScreen
 import live.lb_trip.feature.onboarding.OnboardingScreen
 import live.lb_trip.feature.propensity.PropensityScreen
 import live.lb_trip.feature.settings.SettingsScreen
@@ -71,9 +72,10 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startDestination = if (isLoggedIn == true) HomeRoute else OnboardingRoute,
                         ) {
-                            composable<HomeRoute> {
-                                CircuitContent(HomeScreen, navigator = bridgeNavigator)
-                            }
+                            homeScreen(
+                                onStartDiagnosis = { navController.navigate(PropensityRoute) },
+                                onNavigateToSettings = { navController.navigate(SettingsRoute) },
+                            )
                             composable<SettingsRoute> {
                                 CircuitContent(SettingsScreen, navigator = bridgeNavigator)
                             }

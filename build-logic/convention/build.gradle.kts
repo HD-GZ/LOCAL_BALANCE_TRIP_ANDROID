@@ -43,6 +43,10 @@ gradlePlugin {
             id = "live.lb_trip.android.feature.api"
             implementationClass = "AndroidFeatureApiConventionPlugin"
         }
+        register("androidFeature") {
+            id = "live.lb_trip.android.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
         register("ktlint") {
             id = "live.lb_trip.ktlint"
             implementationClass = "KtlintConventionPlugin"

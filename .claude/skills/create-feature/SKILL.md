@@ -1,17 +1,20 @@
 ---
 name: create-feature
 description: |
-  Scaffolds a new Circuit feature module for the LocalBalanceTrip project.
-  Creates the api (Screen) and impl (State, Event, Presenter, Ui, Module) modules
-  and registers them in settings.gradle.kts. Usage: /create-feature <featureName>
+  Scaffolds a new feature module for the LocalBalanceTrip project using ViewModel,
+  StateFlow, and Navigation-Compose. Creates a single module with a composable screen
+  and navigation extension, registered in settings.gradle.kts.
+  Usage: /create-feature <featureName>
   Example: /create-feature login
 license: n/a
 metadata:
   author: WooJin Kong
-  last-updated: '2026-06-13'
+  last-updated: '2026-07-10'
   keywords:
   - android
-  - circuit
+  - viewmodel
+  - stateflow
+  - navigation-compose
   - feature module
   - scaffold
   - hilt
@@ -32,41 +35,15 @@ From the argument, derive:
 
 If the input is already multi-word (e.g. `tripDetail`), convert to lowercase `tripdetail` for `<name>` and `TripDetail` for `<Name>`.
 
-## Step 2: Create the api module
+## Step 2: Create the module directory structure
 
-Create the following two files:
+Create the following files for a single module at `feature/<name>/`:
 
-**`feature/<name>/api/build.gradle.kts`**
+**`feature/<name>/build.gradle.kts`**
 ```kotlin
 plugins {
-    alias(libs.plugins.convention.android.feature.api)
-}
-
-android {
-    namespace = "live.lb_trip.feature.<name>.api"
-}
-```
-
-**`feature/<name>/api/src/main/java/live/lb_trip/feature/<name>/<Name>Screen.kt`**
-```kotlin
-package live.lb_trip.feature.<name>
-
-import android.os.Parcelable
-import com.slack.circuit.runtime.screen.Screen
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
-object <Name>Screen : Screen, Parcelable
-```
-
-## Step 3: Create the impl module
-
-Create the following six files:
-
-**`feature/<name>/impl/build.gradle.kts`**
-```kotlin
-plugins {
-    alias(libs.plugins.convention.android.feature.impl)
+    alias(libs.plugins.convention.android.feature)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -74,142 +51,129 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.<name>.api)
-    implementation(projects.domain)
+    implementation(projects.core.designsystem)
 }
 ```
 
-**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>State.kt`**
-```kotlin
-package live.lb_trip.feature.<name>
-
-import com.slack.circuit.runtime.CircuitUiState
-
-data class <Name>State(
-    val eventSink: (<Name>Event) -> Unit = {}
-) : CircuitUiState
+**`feature/<name>/src/main/AndroidManifest.xml`**
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+</manifest>
 ```
 
-**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Event.kt`**
-```kotlin
-package live.lb_trip.feature.<name>
+**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>Screen.kt`**
 
-import com.slack.circuit.runtime.CircuitUiEvent
+Start with a minimal placeholder:
 
-sealed interface <Name>Event : CircuitUiEvent
-```
-
-**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Presenter.kt`**
-```kotlin
-package live.lb_trip.feature.<name>
-
-import androidx.compose.runtime.Composable
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-
-class <Name>Presenter @AssistedInject constructor(
-    @Assisted private val screen: <Name>Screen,
-    @Assisted private val navigator: Navigator,
-) : Presenter<<Name>State> {
-
-    @AssistedFactory
-    interface Factory {
-        fun create(screen: <Name>Screen, navigator: Navigator): <Name>Presenter
-    }
-
-    @Composable
-    override fun present(): <Name>State {
-        return <Name>State()
-    }
-}
-```
-
-**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Ui.kt`**
 ```kotlin
 package live.lb_trip.feature.<name>
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.slack.circuit.runtime.ui.Ui
 
-class <Name>Ui : Ui<<Name>State> {
-    @Composable
-    override fun Content(state: <Name>State, modifier: Modifier) {
-        Box(modifier = modifier.fillMaxSize())
+@Composable
+internal fun <Name>Screen(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text("<Name> Screen")
     }
 }
 ```
 
-**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Module.kt`**
+If the user specifies that the feature needs to trigger navigation, add lambda parameters to `<Name>Screen`, e.g.:
+```kotlin
+@Composable
+internal fun <Name>Screen(
+    onNavigateToHome: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    modifier: Modifier = Modifier,
+)
+```
+
+**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>Navigation.kt`**
 ```kotlin
 package live.lb_trip.feature.<name>
 
-import com.slack.circuit.runtime.CircuitContext
-import com.slack.circuit.runtime.Navigator
-import com.slack.circuit.runtime.presenter.Presenter
-import com.slack.circuit.runtime.screen.Screen
-import com.slack.circuit.runtime.ui.Ui
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
-import javax.inject.Inject
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import kotlinx.serialization.Serializable
 
-class <Name>PresenterFactory @Inject constructor(
-    private val presenterFactory: <Name>Presenter.Factory,
-) : Presenter.Factory {
-    override fun create(
-        screen: Screen,
-        navigator: Navigator,
-        context: CircuitContext,
-    ): Presenter<*>? =
-        when (screen) {
-            is <Name>Screen -> presenterFactory.create(screen, navigator)
-            else -> null
-        }
-}
+@Serializable
+object <Name>Route
 
-class <Name>UiFactory @Inject constructor() : Ui.Factory {
-    override fun create(
-        screen: Screen,
-        context: CircuitContext,
-    ): Ui<*>? =
-        when (screen) {
-            is <Name>Screen -> <Name>Ui()
-            else -> null
-        }
-}
-
-@Module
-@InstallIn(SingletonComponent::class)
-interface <Name>Module {
-    @Binds
-    @IntoSet
-    fun bind<Name>PresenterFactory(factory: <Name>PresenterFactory): Presenter.Factory
-
-    @Binds
-    @IntoSet
-    fun bind<Name>UiFactory(factory: <Name>UiFactory): Ui.Factory
+fun NavGraphBuilder.<name>Screen(
+    // Add parameters here if navigation callbacks are needed, e.g.
+    // onNavigateToHome: () -> Unit,
+    // onNavigateToSettings: () -> Unit,
+) {
+    composable<<Name>Route> {
+        <Name>Screen(
+            // Pass navigation callbacks here if present
+        )
+    }
 }
 ```
 
+## Step 3 (Optional): Create ViewModel and state classes
+
+Only create these files if the user says the feature needs state management or business logic:
+
+**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>ViewModel.kt`**
+```kotlin
+package live.lb_trip.feature.<name>
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
+
+@HiltViewModel
+class <Name>ViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
+    private val _uiState = MutableStateFlow(<Name>UiState())
+    val uiState: StateFlow<<Name>UiState> = _uiState
+}
+```
+
+**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>UiState.kt`**
+```kotlin
+package live.lb_trip.feature.<name>
+
+data class <Name>UiState(
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
+```
+
+If the feature does NOT need ViewModel, mention that state/business logic can be added later using the pattern shown above.
+
 ## Step 4: Register in settings.gradle.kts
 
-Append these two lines to `settings.gradle.kts` (after the last existing `include` line):
+Append exactly one line to `settings.gradle.kts` (after the last existing `include` line):
 
 ```kotlin
-include(":feature:<name>:api")
-include(":feature:<name>:impl")
+include(":feature:<name>")
 ```
 
 ## Step 5: Report
 
 List all files created. Then remind the user:
 
-> To navigate **to** `<Name>Screen` from another feature, add `implementation(projects.feature.<name>.api)` to that feature's `impl/build.gradle.kts` dependencies.
+> To integrate this feature into the app:
+> 1. Wire `<name>Screen(...)` into the `NavHost` in `app/src/main/java/live/lb_trip/localbalancetrip/MainActivity.kt` by calling the extension function you added, e.g.:
+>    ```kotlin
+>    <name>Screen(
+>        onNavigateToHome = { navController.navigate(HomeRoute) },
+>        // ... other navigation lambdas as needed
+>    )
+>    ```
+> 2. Add `implementation(projects.feature.<name>)` to `app/build.gradle.kts` dependencies.
