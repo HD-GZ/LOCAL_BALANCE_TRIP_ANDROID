@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +54,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.slack.circuit.runtime.ui.Ui
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 
@@ -64,27 +66,53 @@ private val BottomFadeGradient = Brush.verticalGradient(
     ),
 )
 
-class SigninUi : Ui<SigninState> {
-    @Composable
-    override fun Content(state: SigninState, modifier: Modifier) {
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+@Composable
+internal fun SigninScreen(
+    onBack: () -> Unit,
+    onNavigateToSignup: () -> Unit,
+    onLoginSuccess: () -> Unit,
+    viewModel: SigninViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val view = LocalView.current
+
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                SigninEffect.LoginSucceeded -> onLoginSuccess()
             }
         }
-
-        SigninScreen(
-            state = state,
-            modifier = modifier,
-        )
     }
+
+    SigninScreenContent(
+        state = state,
+        onBack = onBack,
+        onEmailChange = viewModel::updateEmail,
+        onPasswordChange = viewModel::updatePassword,
+        onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
+        onLoginClick = viewModel::login,
+        onNavigateToSignup = onNavigateToSignup,
+        modifier = modifier,
+    )
 }
 
 @Composable
-private fun SigninScreen(
-    state: SigninState,
+private fun SigninScreenContent(
+    state: SigninUiState,
+    onBack: () -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onTogglePasswordVisibility: () -> Unit,
+    onLoginClick: () -> Unit,
+    onNavigateToSignup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -105,7 +133,7 @@ private fun SigninScreen(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars),
         ) {
-            SigninAppBar(onBackClick = { state.eventSink(SigninEvent.NavigateBack) })
+            SigninAppBar(onBackClick = onBack)
 
             Column(
                 modifier = Modifier
@@ -120,9 +148,9 @@ private fun SigninScreen(
                     email = state.email,
                     password = state.password,
                     isPasswordVisible = state.isPasswordVisible,
-                    onEmailChange = { state.eventSink(SigninEvent.UpdateEmail(it)) },
-                    onPasswordChange = { state.eventSink(SigninEvent.UpdatePassword(it)) },
-                    onTogglePasswordVisibility = { state.eventSink(SigninEvent.TogglePasswordVisibility) },
+                    onEmailChange = onEmailChange,
+                    onPasswordChange = onPasswordChange,
+                    onTogglePasswordVisibility = onTogglePasswordVisibility,
                 )
             }
 
@@ -130,9 +158,9 @@ private fun SigninScreen(
 
             SigninBottomAction(
                 isLoading = state.isLoading,
-                onLoginClick = { state.eventSink(SigninEvent.Login) },
-                onForgotPasswordClick = { state.eventSink(SigninEvent.NavigateToForgotPassword) },
-                onSignupClick = { state.eventSink(SigninEvent.NavigateToSignup) },
+                onLoginClick = onLoginClick,
+                onForgotPasswordClick = {},
+                onSignupClick = onNavigateToSignup,
             )
         }
 
@@ -395,7 +423,13 @@ private fun SigninBottomAction(
 @Preview(showBackground = true)
 @Composable
 private fun SigninScreenPreview() {
-    SigninScreen(
-        state = SigninState(),
+    SigninScreenContent(
+        state = SigninUiState(),
+        onBack = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onTogglePasswordVisibility = {},
+        onLoginClick = {},
+        onNavigateToSignup = {},
     )
 }

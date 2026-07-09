@@ -6,9 +6,6 @@ import kotlinx.serialization.Serializable
 object SettingsRoute
 
 @Serializable
-object SigninRoute
-
-@Serializable
 object SignupRoute
 
 @Serializable
