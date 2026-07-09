@@ -23,6 +23,7 @@ detekt = "1.23.8"
 datastore = "1.1.4"
 annotation-experimental = "1.5.1"
 splash-screen = "1.0.1"
+navigationCompose = "2.9.5"
 
 [libraries]
 android-gradle-tool = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -74,6 +75,7 @@ javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-annotation-experimental = { module = "androidx.annotation:annotation-experimental", version.ref = "annotation-experimental" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash-screen" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

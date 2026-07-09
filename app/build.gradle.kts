@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.convention.android.application)
     alias(libs.plugins.convention.android.compose)
     alias(libs.plugins.convention.android.hilt)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -61,6 +62,8 @@ dependencies {
     implementation(libs.circuit.runtime)
 
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

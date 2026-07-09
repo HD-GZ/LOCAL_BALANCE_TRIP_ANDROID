@@ -9,14 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.slack.circuit.backstack.rememberSaveableBackStack
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
-import com.slack.circuit.foundation.NavigableCircuitContent
-import com.slack.circuit.foundation.rememberCircuitNavigator
+import com.slack.circuit.foundation.CircuitContent
 import com.slack.circuit.runtime.presenter.Presenter
 import com.slack.circuit.runtime.ui.Ui
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +26,10 @@ import javax.inject.Inject
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeScreen
 import live.lb_trip.feature.onboarding.OnboardingScreen
+import live.lb_trip.feature.propensity.PropensityScreen
+import live.lb_trip.feature.settings.SettingsScreen
+import live.lb_trip.feature.signin.SigninScreen
+import live.lb_trip.feature.signup.SignupScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -59,13 +65,31 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        val initialScreen = if (isLoggedIn == true) HomeScreen else OnboardingScreen
-                        val navStack = rememberSaveableBackStack(initialScreen)
-                        val navigator = rememberCircuitNavigator(navStack)
-                        NavigableCircuitContent(
-                            navigator = navigator,
-                            navStack = navStack,
-                        )
+                        val navController = rememberNavController()
+                        val bridgeNavigator = remember(navController) { BridgeNavigator(navController) }
+                        NavHost(
+                            navController = navController,
+                            startDestination = if (isLoggedIn == true) HomeRoute else OnboardingRoute,
+                        ) {
+                            composable<HomeRoute> {
+                                CircuitContent(HomeScreen, navigator = bridgeNavigator)
+                            }
+                            composable<SettingsRoute> {
+                                CircuitContent(SettingsScreen, navigator = bridgeNavigator)
+                            }
+                            composable<SigninRoute> {
+                                CircuitContent(SigninScreen, navigator = bridgeNavigator)
+                            }
+                            composable<SignupRoute> {
+                                CircuitContent(SignupScreen, navigator = bridgeNavigator)
+                            }
+                            composable<OnboardingRoute> {
+                                CircuitContent(OnboardingScreen, navigator = bridgeNavigator)
+                            }
+                            composable<PropensityRoute> {
+                                CircuitContent(PropensityScreen, navigator = bridgeNavigator)
+                            }
+                        }
                     }
                 }
             }
