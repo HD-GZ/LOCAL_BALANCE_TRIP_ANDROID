@@ -7,9 +7,7 @@ import com.slack.circuit.runtime.screen.PopResult
 import com.slack.circuit.runtime.screen.Screen
 import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.HomeScreen
-import live.lb_trip.feature.onboarding.OnboardingScreen
 import live.lb_trip.feature.propensity.PropensityScreen
-import live.lb_trip.feature.settings.SettingsScreen
 import live.lb_trip.feature.signin.SigninScreen
 import live.lb_trip.feature.signup.SignupScreen
 
@@ -49,10 +47,8 @@ class BridgeNavigator(private val navController: NavController) : Navigator {
 
     private fun routeFor(screen: Screen): Any = when (screen) {
         is HomeScreen -> HomeRoute
-        is SettingsScreen -> SettingsRoute
         is SigninScreen -> SigninRoute
         is SignupScreen -> SignupRoute
-        is OnboardingScreen -> OnboardingRoute
         is PropensityScreen -> PropensityRoute
         else -> error("BridgeNavigator: unmapped screen $screen")
     }

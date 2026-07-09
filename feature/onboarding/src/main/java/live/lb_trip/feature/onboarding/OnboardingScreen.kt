@@ -37,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.slack.circuit.runtime.ui.Ui
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbChip
@@ -53,24 +52,26 @@ private val GreenGradient = Brush.linearGradient(
     end = Offset(0f, Float.POSITIVE_INFINITY),
 )
 
-class OnboardingUi : Ui<OnboardingState> {
-    @Composable
-    override fun Content(state: OnboardingState, modifier: Modifier) {
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-            }
+@Composable
+internal fun OnboardingScreen(
+    onSignupClick: () -> Unit,
+    onSigninClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
+    }
 
-        Column(modifier = modifier.fillMaxSize()) {
-            HeroSection(modifier = Modifier.weight(1f))
-            ActionSection(
-                onSignupClick = { state.eventSink(OnboardingEvent.NavigateToSignup) },
-                onSigninClick = { state.eventSink(OnboardingEvent.NavigateToSignin) },
-            )
-        }
+    Column(modifier = modifier.fillMaxSize()) {
+        HeroSection(modifier = Modifier.weight(1f))
+        ActionSection(
+            onSignupClick = onSignupClick,
+            onSigninClick = onSigninClick,
+        )
     }
 }
 
@@ -203,5 +204,5 @@ private fun ActionSection(
 @Preview(showBackground = true)
 @Composable
 private fun OnboardingPreview() {
-    OnboardingUi().Content(state = OnboardingState(), modifier = Modifier)
+    OnboardingScreen(onSignupClick = {}, onSigninClick = {})
 }

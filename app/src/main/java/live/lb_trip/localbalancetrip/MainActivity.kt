@@ -26,9 +26,11 @@ import javax.inject.Inject
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.homeScreen
-import live.lb_trip.feature.onboarding.OnboardingScreen
+import live.lb_trip.feature.onboarding.OnboardingRoute
+import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityScreen
-import live.lb_trip.feature.settings.SettingsScreen
+import live.lb_trip.feature.settings.SettingsRoute
+import live.lb_trip.feature.settings.settingsScreen
 import live.lb_trip.feature.signin.SigninScreen
 import live.lb_trip.feature.signup.SignupScreen
 
@@ -76,18 +78,17 @@ class MainActivity : ComponentActivity() {
                                 onStartDiagnosis = { navController.navigate(PropensityRoute) },
                                 onNavigateToSettings = { navController.navigate(SettingsRoute) },
                             )
-                            composable<SettingsRoute> {
-                                CircuitContent(SettingsScreen, navigator = bridgeNavigator)
-                            }
+                            settingsScreen()
                             composable<SigninRoute> {
                                 CircuitContent(SigninScreen, navigator = bridgeNavigator)
                             }
                             composable<SignupRoute> {
                                 CircuitContent(SignupScreen, navigator = bridgeNavigator)
                             }
-                            composable<OnboardingRoute> {
-                                CircuitContent(OnboardingScreen, navigator = bridgeNavigator)
-                            }
+                            onboardingScreen(
+                                onNavigateToSignup = { navController.navigate(SignupRoute) },
+                                onNavigateToSignin = { navController.navigate(SigninRoute) },
+                            )
                             composable<PropensityRoute> {
                                 CircuitContent(PropensityScreen, navigator = bridgeNavigator)
                             }
