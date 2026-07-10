@@ -1,16 +1,10 @@
 package live.lb_trip.feature.propensity
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.propensity.LbTripPropensityException
 import live.lb_trip.domain.model.Preference
 import live.lb_trip.domain.model.ValueConsumption
@@ -19,43 +13,33 @@ import live.lb_trip.domain.usecase.SubmitPropensityUseCase
 @HiltViewModel
 class PropensityViewModel @Inject constructor(
     private val submitPropensityUseCase: SubmitPropensityUseCase,
-) : ViewModel() {
+) : BaseViewModel<PropensityUiState, PropensitySideEffect>(PropensityUiState()) {
 
-    private val _uiState = MutableStateFlow(PropensityUiState())
-    val uiState: StateFlow<PropensityUiState> = _uiState.asStateFlow()
-
-    private val _sideEffect = Channel<PropensitySideEffect>(Channel.BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
-
-    private fun postSideEffect(sideEffect: PropensitySideEffect) {
-        viewModelScope.launch { _sideEffect.send(sideEffect) }
-    }
-
-    fun updateLocality(value: Int) = _uiState.update { it.copy(locality = value) }
-    fun updateFrugality(value: Int) = _uiState.update { it.copy(frugality = value) }
-    fun updateExperientiality(value: Int) = _uiState.update { it.copy(experientiality = value) }
-    fun updateVitality(value: Int) = _uiState.update { it.copy(vitality = value) }
-    fun updateSociality(value: Int) = _uiState.update { it.copy(sociality = value) }
-    fun updateAccommodation(value: Int) = _uiState.update { it.copy(accommodation = value) }
-    fun updateFood(value: Int) = _uiState.update { it.copy(food = value) }
-    fun updateExperience(value: Int) = _uiState.update { it.copy(experience = value) }
-    fun updateTransportation(value: Int) = _uiState.update { it.copy(transportation = value) }
-    fun updateCafeExhibition(value: Int) = _uiState.update { it.copy(cafeExhibition = value) }
+    fun updateLocality(value: Int) = updateState { it.copy(locality = value) }
+    fun updateFrugality(value: Int) = updateState { it.copy(frugality = value) }
+    fun updateExperientiality(value: Int) = updateState { it.copy(experientiality = value) }
+    fun updateVitality(value: Int) = updateState { it.copy(vitality = value) }
+    fun updateSociality(value: Int) = updateState { it.copy(sociality = value) }
+    fun updateAccommodation(value: Int) = updateState { it.copy(accommodation = value) }
+    fun updateFood(value: Int) = updateState { it.copy(food = value) }
+    fun updateExperience(value: Int) = updateState { it.copy(experience = value) }
+    fun updateTransportation(value: Int) = updateState { it.copy(transportation = value) }
+    fun updateCafeExhibition(value: Int) = updateState { it.copy(cafeExhibition = value) }
 
     fun navigateBack() {
-        when (_uiState.value.step) {
+        when (currentState.step) {
             PropensityStep.Preference -> postSideEffect(PropensitySideEffect.NavigateBack)
-            PropensityStep.ValueConsumption -> _uiState.update { it.copy(step = PropensityStep.Preference) }
-            PropensityStep.Result -> _uiState.update { it.copy(step = PropensityStep.ValueConsumption) }
+            PropensityStep.ValueConsumption -> updateState { it.copy(step = PropensityStep.Preference) }
+            PropensityStep.Result -> updateState { it.copy(step = PropensityStep.ValueConsumption) }
         }
     }
 
     fun nextStep() {
-        when (_uiState.value.step) {
-            PropensityStep.Preference -> _uiState.update { it.copy(step = PropensityStep.ValueConsumption) }
+        when (currentState.step) {
+            PropensityStep.Preference -> updateState { it.copy(step = PropensityStep.ValueConsumption) }
             PropensityStep.ValueConsumption -> viewModelScope.launch {
-                val current = _uiState.value
-                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                val current = currentState
+                updateState { it.copy(isLoading = true, errorMessage = null) }
                 submitPropensityUseCase(
                     preference = Preference(
                         locality = current.locality,
@@ -72,7 +56,7 @@ class PropensityViewModel @Inject constructor(
                         cafeExhibition = current.cafeExhibition,
                     ),
                 ).onSuccess { result ->
-                    _uiState.update {
+                    updateState {
                         it.copy(
                             resultType = result.type,
                             resultDescription = result.description,
@@ -84,16 +68,16 @@ class PropensityViewModel @Inject constructor(
                         is LbTripPropensityException.InvalidInputException -> "입력값을 다시 확인해 주세요."
                         else -> "진단 결과를 가져오지 못했어요. 잠시 후 다시 시도해 주세요."
                     }
-                    _uiState.update { it.copy(errorMessage = message) }
+                    updateState { it.copy(errorMessage = message) }
                 }
-                _uiState.update { it.copy(isLoading = false) }
+                updateState { it.copy(isLoading = false) }
             }
             PropensityStep.Result -> Unit
         }
     }
 
     fun restartDiagnosis() {
-        _uiState.update {
+        updateState {
             it.copy(
                 step = PropensityStep.Preference,
                 locality = 3, frugality = 3, experientiality = 3, vitality = 3, sociality = 3,
@@ -104,6 +88,6 @@ class PropensityViewModel @Inject constructor(
     }
 
     fun onCourseRecommendationClicked() {
-        _uiState.update { it.copy(errorMessage = "코스 추천 기능은 준비 중이에요.") }
+        updateState { it.copy(errorMessage = "코스 추천 기능은 준비 중이에요.") }
     }
 }

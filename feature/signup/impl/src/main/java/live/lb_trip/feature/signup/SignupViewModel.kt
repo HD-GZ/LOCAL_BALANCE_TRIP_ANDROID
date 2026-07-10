@@ -1,18 +1,12 @@
 package live.lb_trip.feature.signup
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.auth.LbTripAuthException
 import live.lb_trip.domain.model.Gender
 import live.lb_trip.domain.usecase.CheckEmailAvailabilityUseCase
@@ -26,66 +20,56 @@ class SignupViewModel @Inject constructor(
     private val checkEmailAvailabilityUseCase: CheckEmailAvailabilityUseCase,
     private val confirmEmailVerificationUseCase: ConfirmEmailVerificationUseCase,
     private val resendEmailVerificationUseCase: ResendEmailVerificationUseCase,
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(SignupUiState())
-    val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
-
-    private val _sideEffect = Channel<SignupSideEffect>(Channel.BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
-
-    private fun postSideEffect(sideEffect: SignupSideEffect) {
-        viewModelScope.launch { _sideEffect.send(sideEffect) }
-    }
+) : BaseViewModel<SignupUiState, SignupSideEffect>(SignupUiState()) {
 
     private var timerJob: Job? = null
 
     fun navigateBack() {
-        when (_uiState.value.step) {
+        when (currentState.step) {
             SignupStep.AccountInfo -> postSideEffect(SignupSideEffect.NavigateBack)
-            SignupStep.PersonalInfo -> _uiState.update { it.copy(step = SignupStep.AccountInfo) }
+            SignupStep.PersonalInfo -> updateState { it.copy(step = SignupStep.AccountInfo) }
             SignupStep.EmailVerify -> {
                 timerJob?.cancel()
-                _uiState.update { it.copy(step = SignupStep.PersonalInfo) }
+                updateState { it.copy(step = SignupStep.PersonalInfo) }
             }
             SignupStep.Complete -> postSideEffect(SignupSideEffect.NavigateBack)
         }
     }
 
-    fun updateEmail(email: String) = _uiState.update { it.copy(email = email) }
+    fun updateEmail(email: String) = updateState { it.copy(email = email) }
 
-    fun updatePassword(password: String) = _uiState.update { it.copy(password = password) }
+    fun updatePassword(password: String) = updateState { it.copy(password = password) }
 
     fun updatePasswordConfirm(passwordConfirm: String) =
-        _uiState.update { it.copy(passwordConfirm = passwordConfirm) }
+        updateState { it.copy(passwordConfirm = passwordConfirm) }
 
     fun togglePasswordVisibility() =
-        _uiState.update { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+        updateState { it.copy(isPasswordVisible = !it.isPasswordVisible) }
 
     fun toggleConfirmPasswordVisibility() =
-        _uiState.update { it.copy(isConfirmPasswordVisible = !it.isConfirmPasswordVisible) }
+        updateState { it.copy(isConfirmPasswordVisible = !it.isConfirmPasswordVisible) }
 
     fun nextStep() {
-        when (_uiState.value.step) {
+        when (currentState.step) {
             SignupStep.AccountInfo -> viewModelScope.launch {
-                val email = _uiState.value.email
-                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                val email = currentState.email
+                updateState { it.copy(isLoading = true, errorMessage = null) }
                 checkEmailAvailabilityUseCase(email = email)
                     .onSuccess { available ->
                         if (available) {
-                            _uiState.update { it.copy(step = SignupStep.PersonalInfo) }
+                            updateState { it.copy(step = SignupStep.PersonalInfo) }
                         } else {
-                            _uiState.update { it.copy(errorMessage = "이미 사용 중인 이메일이에요.") }
+                            updateState { it.copy(errorMessage = "이미 사용 중인 이메일이에요.") }
                         }
                     }
                     .onFailure {
-                        _uiState.update { it.copy(errorMessage = "이메일 확인에 실패했어요. 잠시 후 다시 시도해 주세요.") }
+                        updateState { it.copy(errorMessage = "이메일 확인에 실패했어요. 잠시 후 다시 시도해 주세요.") }
                     }
-                _uiState.update { it.copy(isLoading = false) }
+                updateState { it.copy(isLoading = false) }
             }
             SignupStep.PersonalInfo -> viewModelScope.launch {
-                val current = _uiState.value
-                _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+                val current = currentState
+                updateState { it.copy(isLoading = true, errorMessage = null) }
                 val y = current.birthYear.toIntOrNull() ?: 0
                 val m = current.birthMonth
                 val d = current.birthDay.toIntOrNull() ?: 0
@@ -101,7 +85,7 @@ class SignupViewModel @Inject constructor(
                     privacyAgreed = current.privacyAgreed,
                     marketingAgreed = current.marketingAgreed,
                 ).onSuccess {
-                    _uiState.update { it.copy(step = SignupStep.EmailVerify, code = "", remainingSeconds = 300) }
+                    updateState { it.copy(step = SignupStep.EmailVerify, code = "", remainingSeconds = 300) }
                     startTimer()
                 }.onFailure { throwable ->
                     val message = when (throwable) {
@@ -120,61 +104,61 @@ class SignupViewModel @Inject constructor(
                         is LbTripAuthException.DuplicateEmailException -> "이미 사용 중인 이메일이에요."
                         else -> "회원가입에 실패했어요. 잠시 후 다시 시도해 주세요."
                     }
-                    _uiState.update { it.copy(errorMessage = message) }
+                    updateState { it.copy(errorMessage = message) }
                 }
-                _uiState.update { it.copy(isLoading = false) }
+                updateState { it.copy(isLoading = false) }
             }
             else -> Unit
         }
     }
 
-    fun updateName(name: String) = _uiState.update { it.copy(name = name) }
+    fun updateName(name: String) = updateState { it.copy(name = name) }
 
-    fun updateBirthYear(year: String) = _uiState.update { it.copy(birthYear = year) }
+    fun updateBirthYear(year: String) = updateState { it.copy(birthYear = year) }
 
-    fun updateBirthMonth(month: Int) = _uiState.update { it.copy(birthMonth = month) }
+    fun updateBirthMonth(month: Int) = updateState { it.copy(birthMonth = month) }
 
-    fun updateBirthDay(day: String) = _uiState.update { it.copy(birthDay = day) }
+    fun updateBirthDay(day: String) = updateState { it.copy(birthDay = day) }
 
-    fun updateGender(gender: Gender) = _uiState.update { it.copy(gender = gender) }
+    fun updateGender(gender: Gender) = updateState { it.copy(gender = gender) }
 
-    fun toggleTos() = _uiState.update { it.copy(termsAgreed = !it.termsAgreed) }
+    fun toggleTos() = updateState { it.copy(termsAgreed = !it.termsAgreed) }
 
-    fun togglePrivacy() = _uiState.update { it.copy(privacyAgreed = !it.privacyAgreed) }
+    fun togglePrivacy() = updateState { it.copy(privacyAgreed = !it.privacyAgreed) }
 
-    fun toggleMarketing() = _uiState.update { it.copy(marketingAgreed = !it.marketingAgreed) }
+    fun toggleMarketing() = updateState { it.copy(marketingAgreed = !it.marketingAgreed) }
 
-    fun toggleAllTerms() = _uiState.update {
+    fun toggleAllTerms() = updateState {
         val allOn = it.termsAgreed && it.privacyAgreed && it.marketingAgreed
         it.copy(termsAgreed = !allOn, privacyAgreed = !allOn, marketingAgreed = !allOn)
     }
 
-    fun updateCode(code: String) = _uiState.update { it.copy(code = code) }
+    fun updateCode(code: String) = updateState { it.copy(code = code) }
 
     fun resendCode() {
         viewModelScope.launch {
-            val email = _uiState.value.email
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            val email = currentState.email
+            updateState { it.copy(isLoading = true, errorMessage = null) }
             resendEmailVerificationUseCase(email = email)
                 .onSuccess {
-                    _uiState.update { it.copy(remainingSeconds = 300) }
+                    updateState { it.copy(remainingSeconds = 300) }
                     startTimer()
                 }
                 .onFailure {
-                    _uiState.update { it.copy(errorMessage = "코드 재전송에 실패했어요.") }
+                    updateState { it.copy(errorMessage = "코드 재전송에 실패했어요.") }
                 }
-            _uiState.update { it.copy(isLoading = false) }
+            updateState { it.copy(isLoading = false) }
         }
     }
 
     fun confirmCode() {
         viewModelScope.launch {
-            val code = _uiState.value.code
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            val code = currentState.code
+            updateState { it.copy(isLoading = true, errorMessage = null) }
             confirmEmailVerificationUseCase(code = code)
                 .onSuccess {
                     timerJob?.cancel()
-                    _uiState.update { it.copy(step = SignupStep.Complete) }
+                    updateState { it.copy(step = SignupStep.Complete) }
                 }
                 .onFailure { throwable ->
                     val message = when (throwable) {
@@ -183,9 +167,9 @@ class SignupViewModel @Inject constructor(
                         is LbTripAuthException.EmailVerificationCodeNotFoundException -> "인증 코드가 올바르지 않아요."
                         else -> "인증에 실패했어요. 잠시 후 다시 시도해 주세요."
                     }
-                    _uiState.update { it.copy(errorMessage = message) }
+                    updateState { it.copy(errorMessage = message) }
                 }
-            _uiState.update { it.copy(isLoading = false) }
+            updateState { it.copy(isLoading = false) }
         }
     }
 
@@ -194,9 +178,9 @@ class SignupViewModel @Inject constructor(
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
-            while (_uiState.value.remainingSeconds > 0) {
+            while (currentState.remainingSeconds > 0) {
                 delay(1_000)
-                _uiState.update { it.copy(remainingSeconds = (it.remainingSeconds - 1).coerceAtLeast(0)) }
+                updateState { it.copy(remainingSeconds = (it.remainingSeconds - 1).coerceAtLeast(0)) }
             }
         }
     }
