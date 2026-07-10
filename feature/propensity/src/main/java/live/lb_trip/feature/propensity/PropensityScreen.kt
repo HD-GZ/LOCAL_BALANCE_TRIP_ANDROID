@@ -35,6 +35,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,7 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.slack.circuit.runtime.ui.Ui
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
@@ -64,23 +66,69 @@ private val Border = Color(0xFFEBE7DF)
 private val OutlineBorder = Color(0xFFC3BDB3)
 private val BodyBackground = Color(0xFFF3F1EC)
 
-class PropensityUi : Ui<PropensityState> {
-    @Composable
-    override fun Content(state: PropensityState, modifier: Modifier) {
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+@Composable
+internal fun PropensityScreen(
+    onBack: () -> Unit,
+    viewModel: PropensityViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                PropensityEffect.NavigateBack -> onBack()
             }
         }
-
-        PropensityScreenContent(state = state, modifier = modifier)
     }
+
+    PropensityScreenContent(
+        state = state,
+        onBack = viewModel::navigateBack,
+        onLocalityChange = viewModel::updateLocality,
+        onFrugalityChange = viewModel::updateFrugality,
+        onExperientialityChange = viewModel::updateExperientiality,
+        onVitalityChange = viewModel::updateVitality,
+        onSocialityChange = viewModel::updateSociality,
+        onAccommodationChange = viewModel::updateAccommodation,
+        onFoodChange = viewModel::updateFood,
+        onExperienceChange = viewModel::updateExperience,
+        onTransportationChange = viewModel::updateTransportation,
+        onCafeExhibitionChange = viewModel::updateCafeExhibition,
+        onNextStep = viewModel::nextStep,
+        onRestartDiagnosis = viewModel::restartDiagnosis,
+        onCourseRecommendationClicked = viewModel::onCourseRecommendationClicked,
+        modifier = modifier,
+    )
 }
 
 @Composable
-private fun PropensityScreenContent(state: PropensityState, modifier: Modifier = Modifier) {
+private fun PropensityScreenContent(
+    state: PropensityUiState,
+    onBack: () -> Unit,
+    onLocalityChange: (Int) -> Unit,
+    onFrugalityChange: (Int) -> Unit,
+    onExperientialityChange: (Int) -> Unit,
+    onVitalityChange: (Int) -> Unit,
+    onSocialityChange: (Int) -> Unit,
+    onAccommodationChange: (Int) -> Unit,
+    onFoodChange: (Int) -> Unit,
+    onExperienceChange: (Int) -> Unit,
+    onTransportationChange: (Int) -> Unit,
+    onCafeExhibitionChange: (Int) -> Unit,
+    onNextStep: () -> Unit,
+    onRestartDiagnosis: () -> Unit,
+    onCourseRecommendationClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scrollState = rememberScrollState()
 
@@ -109,7 +157,7 @@ private fun PropensityScreenContent(state: PropensityState, modifier: Modifier =
         Column(modifier = Modifier.fillMaxSize()) {
             PropensityBrandBar(
                 title = title,
-                onBackClick = { state.eventSink(PropensityEvent.NavigateBack) },
+                onBackClick = onBack,
             )
 
             Column(
@@ -141,9 +189,30 @@ private fun PropensityScreenContent(state: PropensityState, modifier: Modifier =
                         .padding(16.dp),
                 ) {
                     when (state.step) {
-                        PropensityStep.Preference -> PreferenceStepContent(state = state)
-                        PropensityStep.ValueConsumption -> ValueConsumptionStepContent(state = state)
-                        PropensityStep.Result -> ResultStepContent(state = state)
+                        PropensityStep.Preference -> PreferenceStepContent(
+                            state = state,
+                            onLocalityChange = onLocalityChange,
+                            onFrugalityChange = onFrugalityChange,
+                            onExperientialityChange = onExperientialityChange,
+                            onVitalityChange = onVitalityChange,
+                            onSocialityChange = onSocialityChange,
+                            onNextStep = onNextStep,
+                        )
+                        PropensityStep.ValueConsumption -> ValueConsumptionStepContent(
+                            state = state,
+                            onAccommodationChange = onAccommodationChange,
+                            onFoodChange = onFoodChange,
+                            onExperienceChange = onExperienceChange,
+                            onTransportationChange = onTransportationChange,
+                            onCafeExhibitionChange = onCafeExhibitionChange,
+                            onBack = onBack,
+                            onNextStep = onNextStep,
+                        )
+                        PropensityStep.Result -> ResultStepContent(
+                            state = state,
+                            onRestartDiagnosis = onRestartDiagnosis,
+                            onCourseRecommendationClicked = onCourseRecommendationClicked,
+                        )
                     }
                 }
             }
@@ -237,7 +306,16 @@ private fun PropensityHeader(step: PropensityStep, modifier: Modifier = Modifier
 }
 
 @Composable
-private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = Modifier) {
+private fun PreferenceStepContent(
+    state: PropensityUiState,
+    onLocalityChange: (Int) -> Unit,
+    onFrugalityChange: (Int) -> Unit,
+    onExperientialityChange: (Int) -> Unit,
+    onVitalityChange: (Int) -> Unit,
+    onSocialityChange: (Int) -> Unit,
+    onNextStep: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         AxisRow(
             title = stringResource(R.string.propensity_axis_locality_title),
@@ -246,7 +324,7 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
             rightLabel = stringResource(R.string.propensity_axis_locality_right),
             rightSub = stringResource(R.string.propensity_axis_locality_right_sub),
             value = state.locality,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateLocality(it)) },
+            onValueChange = onLocalityChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -256,7 +334,7 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
             rightLabel = stringResource(R.string.propensity_axis_frugality_right),
             rightSub = stringResource(R.string.propensity_axis_frugality_right_sub),
             value = state.frugality,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateFrugality(it)) },
+            onValueChange = onFrugalityChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -266,7 +344,7 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
             rightLabel = stringResource(R.string.propensity_axis_experientiality_right),
             rightSub = stringResource(R.string.propensity_axis_experientiality_right_sub),
             value = state.experientiality,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateExperientiality(it)) },
+            onValueChange = onExperientialityChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -276,7 +354,7 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
             rightLabel = stringResource(R.string.propensity_axis_vitality_right),
             rightSub = stringResource(R.string.propensity_axis_vitality_right_sub),
             value = state.vitality,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateVitality(it)) },
+            onValueChange = onVitalityChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -286,7 +364,7 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
             rightLabel = stringResource(R.string.propensity_axis_sociality_right),
             rightSub = stringResource(R.string.propensity_axis_sociality_right_sub),
             value = state.sociality,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateSociality(it)) },
+            onValueChange = onSocialityChange,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -294,7 +372,7 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
         Spacer(modifier = Modifier.height(16.dp))
 
         LbButton(
-            onClick = { state.eventSink(PropensityEvent.NextStep) },
+            onClick = onNextStep,
             colors = LbButtonDefaults.greenColors(),
             modifier = Modifier.fillMaxWidth().height(52.dp),
         ) {
@@ -308,7 +386,17 @@ private fun PreferenceStepContent(state: PropensityState, modifier: Modifier = M
 }
 
 @Composable
-private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifier = Modifier) {
+private fun ValueConsumptionStepContent(
+    state: PropensityUiState,
+    onAccommodationChange: (Int) -> Unit,
+    onFoodChange: (Int) -> Unit,
+    onExperienceChange: (Int) -> Unit,
+    onTransportationChange: (Int) -> Unit,
+    onCafeExhibitionChange: (Int) -> Unit,
+    onBack: () -> Unit,
+    onNextStep: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val save = stringResource(R.string.propensity_save)
     val saveEn = stringResource(R.string.propensity_save_en)
     val spend = stringResource(R.string.propensity_spend)
@@ -322,7 +410,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
             rightLabel = spend,
             rightSub = spendEn,
             value = state.accommodation,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateAccommodation(it)) },
+            onValueChange = onAccommodationChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -332,7 +420,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
             rightLabel = spend,
             rightSub = spendEn,
             value = state.food,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateFood(it)) },
+            onValueChange = onFoodChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -342,7 +430,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
             rightLabel = spend,
             rightSub = spendEn,
             value = state.experience,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateExperience(it)) },
+            onValueChange = onExperienceChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -352,7 +440,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
             rightLabel = spend,
             rightSub = spendEn,
             value = state.transportation,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateTransportation(it)) },
+            onValueChange = onTransportationChange,
         )
         HorizontalDivider(color = Border, thickness = 1.dp)
         AxisRow(
@@ -362,7 +450,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
             rightLabel = spend,
             rightSub = spendEn,
             value = state.cafeExhibition,
-            onValueChange = { state.eventSink(PropensityEvent.UpdateCafeExhibition(it)) },
+            onValueChange = onCafeExhibitionChange,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -374,7 +462,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             LbButton(
-                onClick = { state.eventSink(PropensityEvent.NavigateBack) },
+                onClick = onBack,
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
                 modifier = Modifier.weight(1f).height(52.dp),
@@ -386,7 +474,7 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
                 )
             }
             LbButton(
-                onClick = { state.eventSink(PropensityEvent.NextStep) },
+                onClick = onNextStep,
                 colors = LbButtonDefaults.greenColors(),
                 modifier = Modifier.weight(1f).height(52.dp),
             ) {
@@ -411,7 +499,12 @@ private fun ValueConsumptionStepContent(state: PropensityState, modifier: Modifi
 }
 
 @Composable
-private fun ResultStepContent(state: PropensityState, modifier: Modifier = Modifier) {
+private fun ResultStepContent(
+    state: PropensityUiState,
+    onRestartDiagnosis: () -> Unit,
+    onCourseRecommendationClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.fillMaxWidth().padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -437,7 +530,7 @@ private fun ResultStepContent(state: PropensityState, modifier: Modifier = Modif
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             LbButton(
-                onClick = { state.eventSink(PropensityEvent.RestartDiagnosis) },
+                onClick = onRestartDiagnosis,
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
                 modifier = Modifier.weight(1f).height(52.dp),
@@ -449,7 +542,7 @@ private fun ResultStepContent(state: PropensityState, modifier: Modifier = Modif
                 )
             }
             LbButton(
-                onClick = { state.eventSink(PropensityEvent.CourseRecommendationClicked) },
+                onClick = onCourseRecommendationClicked,
                 colors = LbButtonDefaults.greenColors(),
                 modifier = Modifier.weight(1f).height(52.dp),
             ) {
@@ -526,23 +619,69 @@ private fun AxisRow(
 @Preview(showBackground = true)
 @Composable
 private fun PropensityPreferencePreview() {
-    PropensityScreenContent(state = PropensityState(step = PropensityStep.Preference))
+    PropensityScreenContent(
+        state = PropensityUiState(step = PropensityStep.Preference),
+        onBack = {},
+        onLocalityChange = {},
+        onFrugalityChange = {},
+        onExperientialityChange = {},
+        onVitalityChange = {},
+        onSocialityChange = {},
+        onAccommodationChange = {},
+        onFoodChange = {},
+        onExperienceChange = {},
+        onTransportationChange = {},
+        onCafeExhibitionChange = {},
+        onNextStep = {},
+        onRestartDiagnosis = {},
+        onCourseRecommendationClicked = {},
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PropensityValueConsumptionPreview() {
-    PropensityScreenContent(state = PropensityState(step = PropensityStep.ValueConsumption))
+    PropensityScreenContent(
+        state = PropensityUiState(step = PropensityStep.ValueConsumption),
+        onBack = {},
+        onLocalityChange = {},
+        onFrugalityChange = {},
+        onExperientialityChange = {},
+        onVitalityChange = {},
+        onSocialityChange = {},
+        onAccommodationChange = {},
+        onFoodChange = {},
+        onExperienceChange = {},
+        onTransportationChange = {},
+        onCafeExhibitionChange = {},
+        onNextStep = {},
+        onRestartDiagnosis = {},
+        onCourseRecommendationClicked = {},
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun PropensityResultPreview() {
     PropensityScreenContent(
-        state = PropensityState(
+        state = PropensityUiState(
             step = PropensityStep.Result,
             resultType = "실속형 로컬 체험 여행자",
             resultDescription = "럭셔리보다 실속을, 유명 명소보다 골목 상권을, 눈으로 보는 관람보다 직접 해보는 체험을 즐기는 홀로 떠나는 1인 여행자예요.",
         ),
+        onBack = {},
+        onLocalityChange = {},
+        onFrugalityChange = {},
+        onExperientialityChange = {},
+        onVitalityChange = {},
+        onSocialityChange = {},
+        onAccommodationChange = {},
+        onFoodChange = {},
+        onExperienceChange = {},
+        onTransportationChange = {},
+        onCafeExhibitionChange = {},
+        onNextStep = {},
+        onRestartDiagnosis = {},
+        onCourseRecommendationClicked = {},
     )
 }
