@@ -86,4 +86,5 @@ convention-android-application = { id = "live.lb_trip.android.application" }
 convention-android-library = { id = "live.lb_trip.android.library" }
 convention-android-compose = { id = "live.lb_trip.android.compose" }
 convention-android-hilt = { id = "live.lb_trip.android.hilt" }
-convention-android-feature = { id = "live.lb_trip.android.feature" }
+convention-android-feature-api = { id = "live.lb_trip.android.feature.api" }
+convention-android-feature-impl = { id = "live.lb_trip.android.feature.impl" }

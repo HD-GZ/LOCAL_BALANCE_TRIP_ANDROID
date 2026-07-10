@@ -2,8 +2,9 @@
 name: create-feature
 description: |
   Scaffolds a new feature module for the LocalBalanceTrip project using ViewModel,
-  StateFlow, and Navigation-Compose. Creates a single module with a composable screen
-  and navigation extension, registered in settings.gradle.kts.
+  StateFlow, and Navigation-Compose. Creates an api module (Route only) and an impl
+  module (ViewModel, Screen, NavGraphBuilder extension), registered in
+  settings.gradle.kts.
   Usage: /create-feature <featureName>
   Example: /create-feature login
 license: n/a
@@ -35,14 +36,47 @@ From the argument, derive:
 
 If the input is already multi-word (e.g. `tripDetail`), convert to lowercase `tripdetail` for `<name>` and `TripDetail` for `<Name>`.
 
-## Step 2: Create the module directory structure
+## Step 2: Create the api module (Route only)
 
-Create the following files for a single module at `feature/<name>/`:
+The api module's only job is to publish the feature's `@Serializable` route object — the
+one thing other modules (mainly `:app`) need to reference this screen without depending
+on its implementation.
 
-**`feature/<name>/build.gradle.kts`**
+**`feature/<name>/api/build.gradle.kts`**
 ```kotlin
 plugins {
-    alias(libs.plugins.convention.android.feature)
+    alias(libs.plugins.convention.android.feature.api)
+    alias(libs.plugins.kotlin.serialization)
+}
+
+android {
+    namespace = "live.lb_trip.feature.<name>.api"
+}
+```
+
+**`feature/<name>/api/src/main/AndroidManifest.xml`**
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+</manifest>
+```
+
+**`feature/<name>/api/src/main/java/live/lb_trip/feature/<name>/<Name>Route.kt`**
+```kotlin
+package live.lb_trip.feature.<name>
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+object <Name>Route
+```
+
+## Step 3: Create the impl module (ViewModel, Screen, navigation wiring)
+
+**`feature/<name>/impl/build.gradle.kts`**
+```kotlin
+plugins {
+    alias(libs.plugins.convention.android.feature.impl)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -51,18 +85,20 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.<name>.api)
     implementation(projects.core.designsystem)
 }
 ```
+Add `implementation(projects.domain)` too if the feature calls a UseCase.
 
-**`feature/<name>/src/main/AndroidManifest.xml`**
+**`feature/<name>/impl/src/main/AndroidManifest.xml`**
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 </manifest>
 ```
 
-**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>Screen.kt`**
+**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Screen.kt`**
 
 Start with a minimal placeholder:
 
@@ -96,16 +132,17 @@ internal fun <Name>Screen(
 )
 ```
 
-**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>Navigation.kt`**
+**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Navigation.kt`**
+
+Note: `<Name>Route` is not imported here — it lives in the `api` module but shares the
+same Kotlin package (`live.lb_trip.feature.<name>`), so it's visible without an import
+as long as `impl`'s `build.gradle.kts` depends on the `api` module (already set up in Step 3).
+
 ```kotlin
 package live.lb_trip.feature.<name>
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import kotlinx.serialization.Serializable
-
-@Serializable
-object <Name>Route
 
 fun NavGraphBuilder.<name>Screen(
     // Add parameters here if navigation callbacks are needed, e.g.
@@ -120,11 +157,11 @@ fun NavGraphBuilder.<name>Screen(
 }
 ```
 
-## Step 3 (Optional): Create ViewModel and state classes
+## Step 4 (Optional): Create ViewModel and state classes
 
-Only create these files if the user says the feature needs state management or business logic:
+Only create these files if the user says the feature needs state management or business logic. Both go in the `impl` module.
 
-**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>ViewModel.kt`**
+**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>ViewModel.kt`**
 ```kotlin
 package live.lb_trip.feature.<name>
 
@@ -144,7 +181,7 @@ class <Name>ViewModel @Inject constructor(
 }
 ```
 
-**`feature/<name>/src/main/java/live/lb_trip/feature/<name>/<Name>UiState.kt`**
+**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>UiState.kt`**
 ```kotlin
 package live.lb_trip.feature.<name>
 
@@ -156,15 +193,16 @@ data class <Name>UiState(
 
 If the feature does NOT need ViewModel, mention that state/business logic can be added later using the pattern shown above.
 
-## Step 4: Register in settings.gradle.kts
+## Step 5: Register in settings.gradle.kts
 
-Append exactly one line to `settings.gradle.kts` (after the last existing `include` line):
+Append these two lines to `settings.gradle.kts` (after the last existing `include` line):
 
 ```kotlin
-include(":feature:<name>")
+include(":feature:<name>:api")
+include(":feature:<name>:impl")
 ```
 
-## Step 5: Report
+## Step 6: Report
 
 List all files created. Then remind the user:
 
@@ -176,4 +214,16 @@ List all files created. Then remind the user:
 >        // ... other navigation lambdas as needed
 >    )
 >    ```
-> 2. Add `implementation(projects.feature.<name>)` to `app/build.gradle.kts` dependencies.
+> 2. Add both of these to `app/build.gradle.kts` dependencies:
+>    ```kotlin
+>    implementation(projects.feature.<name>.api)
+>    implementation(projects.feature.<name>.impl)
+>    ```
+
+## Cross-feature navigation
+
+If a feature needs a lambda that navigates to a route owned by a *different* feature
+(e.g. onboarding navigating to signup), that lambda's implementation lives in `:app`'s
+`MainActivity.kt`, not inside the feature module itself — features never depend on each
+other's `api` or `impl` modules. `:app` already depends on every feature's `api` module,
+so it can reference any `<Name>Route` directly when wiring the NavHost.
