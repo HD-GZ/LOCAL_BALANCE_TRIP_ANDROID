@@ -35,13 +35,13 @@ gradlePlugin {
             id = "live.lb_trip.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
         }
-        register("androidFeatureImpl") {
-            id = "live.lb_trip.android.feature.impl"
-            implementationClass = "AndroidFeatureImplConventionPlugin"
-        }
         register("androidFeatureApi") {
             id = "live.lb_trip.android.feature.api"
             implementationClass = "AndroidFeatureApiConventionPlugin"
+        }
+        register("androidFeatureImpl") {
+            id = "live.lb_trip.android.feature.impl"
+            implementationClass = "AndroidFeatureImplConventionPlugin"
         }
         register("ktlint") {
             id = "live.lb_trip.ktlint"

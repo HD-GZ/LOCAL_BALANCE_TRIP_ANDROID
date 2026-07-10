@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.convention.android.feature.impl)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -7,9 +8,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.designsystem)
     implementation(projects.feature.signin.api)
-    implementation(projects.feature.signup.api)
-    implementation(projects.feature.home.api)
+    implementation(projects.core.designsystem)
+    implementation(projects.core)
     implementation(projects.domain)
 }
