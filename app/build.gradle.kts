@@ -44,7 +44,7 @@ dependencies {
     implementation(projects.feature.propensity.api)
     implementation(projects.feature.propensity.impl)
     implementation(projects.feature.signup.api)
-    implementation(projects.feature.signup.impl)
+    implementation(projects.feature.signup)
     implementation(projects.feature.signin.api)
     implementation(projects.feature.signin)
     implementation(projects.feature.settings)

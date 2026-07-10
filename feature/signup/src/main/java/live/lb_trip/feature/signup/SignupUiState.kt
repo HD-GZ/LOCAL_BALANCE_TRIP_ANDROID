@@ -1,9 +1,32 @@
 package live.lb_trip.feature.signup
 
-import com.slack.circuit.runtime.CircuitUiEvent
 import live.lb_trip.domain.model.Gender
 
-sealed interface SignupEvent : CircuitUiEvent {
+enum class SignupStep { AccountInfo, PersonalInfo, EmailVerify, Complete }
+
+data class SignupUiState(
+    val step: SignupStep = SignupStep.AccountInfo,
+    val email: String = "",
+    val password: String = "",
+    val passwordConfirm: String = "",
+    val isPasswordVisible: Boolean = false,
+    val isConfirmPasswordVisible: Boolean = false,
+    val name: String = "",
+    val birthYear: String = "",
+    val birthMonth: Int = 0,
+    val birthDay: String = "",
+    val gender: Gender = Gender.NOT_SPECIFIED,
+    val termsAgreed: Boolean = false,
+    val privacyAgreed: Boolean = false,
+    val marketingAgreed: Boolean = false,
+    val code: String = "",
+    val remainingSeconds: Int = 300,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val eventSink: (SignupEvent) -> Unit = {},
+)
+
+sealed interface SignupEvent {
     data object NavigateBack : SignupEvent
     data class UpdateEmail(val email: String) : SignupEvent
     data class UpdatePassword(val password: String) : SignupEvent
@@ -24,4 +47,9 @@ sealed interface SignupEvent : CircuitUiEvent {
     data object ResendCode : SignupEvent
     data object ConfirmCode : SignupEvent
     data object NavigateToSignin : SignupEvent
+}
+
+sealed interface SignupEffect {
+    data object NavigateBack : SignupEffect
+    data object NavigateToSignin : SignupEffect
 }

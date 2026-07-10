@@ -64,7 +64,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import com.slack.circuit.runtime.ui.Ui
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.domain.model.Gender
@@ -76,52 +77,67 @@ private val BottomFadeGradient = Brush.verticalGradient(
     ),
 )
 
-class SignupUi : Ui<SignupState> {
-    @Composable
-    override fun Content(state: SignupState, modifier: Modifier) {
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+@Composable
+internal fun SignupScreen(
+    onBack: () -> Unit,
+    onNavigateToSignin: () -> Unit,
+    viewModel: SignupViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.effects.collect { effect ->
+            when (effect) {
+                SignupEffect.NavigateBack -> onBack()
+                SignupEffect.NavigateToSignin -> onNavigateToSignin()
             }
         }
+    }
 
-        val snackbarHostState = remember { SnackbarHostState() }
-        LaunchedEffect(state.errorMessage) {
-            if (state.errorMessage != null) {
-                snackbarHostState.showSnackbar(state.errorMessage)
-            }
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    LaunchedEffect(state.errorMessage) {
+        val message = state.errorMessage
+        if (message != null) {
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White),
+    ) {
+        when (state.step) {
+            SignupStep.AccountInfo -> SignupAccountInfoScreen(state = state)
+            SignupStep.PersonalInfo -> SignupPersonalInfoScreen(state = state)
+            SignupStep.EmailVerify -> SignupEmailVerifyScreen(state = state)
+            SignupStep.Complete -> SignupCompleteScreen(state = state)
         }
 
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color.White),
-        ) {
-            when (state.step) {
-                SignupStep.AccountInfo -> SignupAccountInfoScreen(state = state)
-                SignupStep.PersonalInfo -> SignupPersonalInfoScreen(state = state)
-                SignupStep.EmailVerify -> SignupEmailVerifyScreen(state = state)
-                SignupStep.Complete -> SignupCompleteScreen(state = state)
-            }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .windowInsetsPadding(WindowInsets.navigationBars),
+        )
 
-            SnackbarHost(
-                hostState = snackbarHostState,
+        if (state.isLoading) {
+            Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .windowInsetsPadding(WindowInsets.navigationBars),
-            )
-
-            if (state.isLoading) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = 0.3f)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(color = Color(0xFF2F6F4F))
-                }
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = Color(0xFF2F6F4F))
             }
         }
     }
@@ -129,7 +145,7 @@ class SignupUi : Ui<SignupState> {
 
 @Composable
 private fun SignupAccountInfoScreen(
-    state: SignupState,
+    state: SignupUiState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -264,7 +280,7 @@ private fun SignupAccountInfoScreen(
 
 @Composable
 private fun SignupPersonalInfoScreen(
-    state: SignupState,
+    state: SignupUiState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -675,7 +691,7 @@ private fun AgreeCheckbox(checked: Boolean) {
 
 @Composable
 private fun SignupEmailVerifyScreen(
-    state: SignupState,
+    state: SignupUiState,
     modifier: Modifier = Modifier,
 ) {
     val minutes = state.remainingSeconds / 60
@@ -785,7 +801,7 @@ private fun SignupEmailVerifyScreen(
 
 @Composable
 private fun SignupCompleteScreen(
-    state: SignupState,
+    state: SignupUiState,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -1084,25 +1100,25 @@ private fun OtpBox(
 @Preview(showBackground = true)
 @Composable
 private fun SignupAccountInfoPreview() {
-    SignupAccountInfoScreen(state = SignupState())
+    SignupAccountInfoScreen(state = SignupUiState())
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignupPersonalInfoPreview() {
-    SignupPersonalInfoScreen(state = SignupState(step = SignupStep.PersonalInfo))
+    SignupPersonalInfoScreen(state = SignupUiState(step = SignupStep.PersonalInfo))
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignupEmailVerifyPreview() {
     SignupEmailVerifyScreen(
-        state = SignupState(step = SignupStep.EmailVerify, email = "local@email.com"),
+        state = SignupUiState(step = SignupStep.EmailVerify, email = "local@email.com"),
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignupCompletePreview() {
-    SignupCompleteScreen(state = SignupState(step = SignupStep.Complete, name = "여행자"))
+    SignupCompleteScreen(state = SignupUiState(step = SignupStep.Complete, name = "여행자"))
 }

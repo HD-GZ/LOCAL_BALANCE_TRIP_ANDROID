@@ -33,7 +33,8 @@ import live.lb_trip.feature.settings.SettingsRoute
 import live.lb_trip.feature.settings.settingsScreen
 import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
-import live.lb_trip.feature.signup.SignupScreen
+import live.lb_trip.feature.signup.SignupRoute
+import live.lb_trip.feature.signup.signupScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -89,9 +90,10 @@ class MainActivity : ComponentActivity() {
                                     }
                                 },
                             )
-                            composable<SignupRoute> {
-                                CircuitContent(SignupScreen, navigator = bridgeNavigator)
-                            }
+                            signupScreen(
+                                onBack = navController::popBackStack,
+                                onNavigateToSignin = { navController.navigate(SigninRoute) },
+                            )
                             onboardingScreen(
                                 onNavigateToSignup = { navController.navigate(SignupRoute) },
                                 onNavigateToSignin = { navController.navigate(SigninRoute) },
