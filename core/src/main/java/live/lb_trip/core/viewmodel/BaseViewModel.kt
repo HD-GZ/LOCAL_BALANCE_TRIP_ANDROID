@@ -11,10 +11,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * Orbit-MVI-style base: a single [State] StateFlow plus a one-shot [SideEffect] channel,
- * without pulling in the Orbit-MVI library itself.
- */
 abstract class BaseViewModel<State, SideEffect>(initialState: State) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialState)
