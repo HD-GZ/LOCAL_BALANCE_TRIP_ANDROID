@@ -38,13 +38,10 @@ android {
 dependencies {
     implementation(projects.domain)
     implementation(projects.data)
-    implementation(projects.feature.home.api)
     implementation(projects.feature.home)
     implementation(projects.feature.onboarding)
     implementation(projects.feature.propensity)
-    implementation(projects.feature.signup.api)
     implementation(projects.feature.signup)
-    implementation(projects.feature.signin.api)
     implementation(projects.feature.signin)
     implementation(projects.feature.settings)
     implementation(projects.core.designsystem)
@@ -54,9 +51,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.activity.compose)
-
-    implementation(libs.circuit.foundation)
-    implementation(libs.circuit.runtime)
 
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
