@@ -46,7 +46,7 @@ dependencies {
     implementation(projects.feature.signup.api)
     implementation(projects.feature.signup.impl)
     implementation(projects.feature.signin.api)
-    implementation(projects.feature.signin.impl)
+    implementation(projects.feature.signin)
     implementation(projects.feature.settings)
     implementation(projects.core.designsystem)
 

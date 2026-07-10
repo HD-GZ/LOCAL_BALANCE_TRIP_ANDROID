@@ -8,6 +8,7 @@ import com.slack.circuit.runtime.screen.Screen
 import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.HomeScreen
 import live.lb_trip.feature.propensity.PropensityScreen
+import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.SigninScreen
 import live.lb_trip.feature.signup.SignupScreen
 
