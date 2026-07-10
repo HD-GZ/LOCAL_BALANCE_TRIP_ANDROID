@@ -9,9 +9,6 @@ object SettingsRoute
 object SigninRoute
 
 @Serializable
-object SignupRoute
-
-@Serializable
 object OnboardingRoute
 
 @Serializable
