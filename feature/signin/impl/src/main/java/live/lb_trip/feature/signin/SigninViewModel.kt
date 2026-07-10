@@ -22,8 +22,12 @@ class SigninViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SigninUiState())
     val uiState: StateFlow<SigninUiState> = _uiState.asStateFlow()
 
-    private val _effects = Channel<SigninEffect>(Channel.BUFFERED)
-    val effects = _effects.receiveAsFlow()
+    private val _sideEffect = Channel<SigninSideEffect>(Channel.BUFFERED)
+    val sideEffect = _sideEffect.receiveAsFlow()
+
+    private fun postSideEffect(sideEffect: SigninSideEffect) {
+        viewModelScope.launch { _sideEffect.send(sideEffect) }
+    }
 
     fun updateEmail(email: String) {
         _uiState.update { it.copy(email = email) }
@@ -42,7 +46,7 @@ class SigninViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             loginUseCase(email = _uiState.value.email, password = _uiState.value.password)
                 .onSuccess {
-                    _effects.send(SigninEffect.LoginSucceeded)
+                    postSideEffect(SigninSideEffect.LoginSucceeded)
                 }
                 .onFailure { throwable ->
                     val message = when (throwable) {

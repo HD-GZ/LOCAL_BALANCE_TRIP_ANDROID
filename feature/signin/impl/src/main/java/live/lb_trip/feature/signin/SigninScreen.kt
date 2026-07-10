@@ -54,7 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
@@ -85,9 +85,9 @@ internal fun SigninScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                SigninEffect.LoginSucceeded -> onLoginSuccess()
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                SigninSideEffect.LoginSucceeded -> onLoginSuccess()
             }
         }
     }

@@ -8,6 +8,6 @@ data class SigninUiState(
     val errorMessage: String? = null,
 )
 
-sealed interface SigninEffect {
-    data object LoginSucceeded : SigninEffect
+sealed interface SigninSideEffect {
+    data object LoginSucceeded : SigninSideEffect
 }

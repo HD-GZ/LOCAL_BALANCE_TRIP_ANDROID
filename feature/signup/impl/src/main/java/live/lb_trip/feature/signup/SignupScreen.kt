@@ -64,7 +64,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
@@ -87,10 +87,10 @@ internal fun SignupScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                SignupEffect.NavigateBack -> onBack()
-                SignupEffect.NavigateToSignin -> onNavigateToSignin()
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                SignupSideEffect.NavigateBack -> onBack()
+                SignupSideEffect.NavigateToSignin -> onNavigateToSignin()
             }
         }
     }
@@ -117,10 +117,42 @@ internal fun SignupScreen(
             .background(Color.White),
     ) {
         when (state.step) {
-            SignupStep.AccountInfo -> SignupAccountInfoScreen(state = state)
-            SignupStep.PersonalInfo -> SignupPersonalInfoScreen(state = state)
-            SignupStep.EmailVerify -> SignupEmailVerifyScreen(state = state)
-            SignupStep.Complete -> SignupCompleteScreen(state = state)
+            SignupStep.AccountInfo -> SignupAccountInfoScreen(
+                state = state,
+                onBack = viewModel::navigateBack,
+                onEmailChange = viewModel::updateEmail,
+                onPasswordChange = viewModel::updatePassword,
+                onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
+                onPasswordConfirmChange = viewModel::updatePasswordConfirm,
+                onToggleConfirmPasswordVisibility = viewModel::toggleConfirmPasswordVisibility,
+                onNextStep = viewModel::nextStep,
+                onNavigateToSignin = viewModel::navigateToSignin,
+            )
+            SignupStep.PersonalInfo -> SignupPersonalInfoScreen(
+                state = state,
+                onBack = viewModel::navigateBack,
+                onNameChange = viewModel::updateName,
+                onBirthYearChange = viewModel::updateBirthYear,
+                onBirthMonthChange = viewModel::updateBirthMonth,
+                onBirthDayChange = viewModel::updateBirthDay,
+                onGenderChange = viewModel::updateGender,
+                onToggleTos = viewModel::toggleTos,
+                onTogglePrivacy = viewModel::togglePrivacy,
+                onToggleMarketing = viewModel::toggleMarketing,
+                onToggleAllTerms = viewModel::toggleAllTerms,
+                onNextStep = viewModel::nextStep,
+            )
+            SignupStep.EmailVerify -> SignupEmailVerifyScreen(
+                state = state,
+                onBack = viewModel::navigateBack,
+                onCodeChange = viewModel::updateCode,
+                onResendCode = viewModel::resendCode,
+                onConfirmCode = viewModel::confirmCode,
+            )
+            SignupStep.Complete -> SignupCompleteScreen(
+                state = state,
+                onNavigateToSignin = viewModel::navigateToSignin,
+            )
         }
 
         SnackbarHost(
@@ -146,6 +178,14 @@ internal fun SignupScreen(
 @Composable
 private fun SignupAccountInfoScreen(
     state: SignupUiState,
+    onBack: () -> Unit,
+    onEmailChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onTogglePasswordVisibility: () -> Unit,
+    onPasswordConfirmChange: (String) -> Unit,
+    onToggleConfirmPasswordVisibility: () -> Unit,
+    onNextStep: () -> Unit,
+    onNavigateToSignin: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -155,7 +195,7 @@ private fun SignupAccountInfoScreen(
     ) {
         SignupAppBar(
             title = "회원가입",
-            onBackClick = { state.eventSink(SignupEvent.NavigateBack) },
+            onBackClick = onBack,
         )
 
         Column(
@@ -185,14 +225,14 @@ private fun SignupAccountInfoScreen(
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 SignupInputField(
                     value = state.email,
-                    onValueChange = { state.eventSink(SignupEvent.UpdateEmail(it)) },
+                    onValueChange = onEmailChange,
                     label = "이메일",
                     placeholder = "local@email.com",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
                 SignupInputField(
                     value = state.password,
-                    onValueChange = { state.eventSink(SignupEvent.UpdatePassword(it)) },
+                    onValueChange = onPasswordChange,
                     label = "비밀번호",
                     placeholder = "영문·숫자 8자 이상",
                     hintText = "영문·숫자 포함 8자 이상",
@@ -200,7 +240,7 @@ private fun SignupAccountInfoScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
                         IconButton(
-                            onClick = { state.eventSink(SignupEvent.TogglePasswordVisibility) },
+                            onClick = onTogglePasswordVisibility,
                             modifier = Modifier.size(38.dp),
                         ) {
                             Icon(
@@ -213,14 +253,14 @@ private fun SignupAccountInfoScreen(
                 )
                 SignupInputField(
                     value = state.passwordConfirm,
-                    onValueChange = { state.eventSink(SignupEvent.UpdatePasswordConfirm(it)) },
+                    onValueChange = onPasswordConfirmChange,
                     label = "비밀번호 확인",
                     placeholder = "다시 입력",
                     visualTransformation = if (state.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
                         IconButton(
-                            onClick = { state.eventSink(SignupEvent.ToggleConfirmPasswordVisibility) },
+                            onClick = onToggleConfirmPasswordVisibility,
                             modifier = Modifier.size(38.dp),
                         ) {
                             Icon(
@@ -249,7 +289,7 @@ private fun SignupAccountInfoScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LbButton(
-                onClick = { state.eventSink(SignupEvent.NextStep) },
+                onClick = onNextStep,
                 enabled = isAccountInfoValid && !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -272,7 +312,7 @@ private fun SignupAccountInfoScreen(
                 },
                 color = Color(0xFF5F5B53),
                 fontSize = 13.sp,
-                modifier = Modifier.clickable { state.eventSink(SignupEvent.NavigateToSignin) },
+                modifier = Modifier.clickable(onClick = onNavigateToSignin),
             )
         }
     }
@@ -281,6 +321,17 @@ private fun SignupAccountInfoScreen(
 @Composable
 private fun SignupPersonalInfoScreen(
     state: SignupUiState,
+    onBack: () -> Unit,
+    onNameChange: (String) -> Unit,
+    onBirthYearChange: (String) -> Unit,
+    onBirthMonthChange: (Int) -> Unit,
+    onBirthDayChange: (String) -> Unit,
+    onGenderChange: (Gender) -> Unit,
+    onToggleTos: () -> Unit,
+    onTogglePrivacy: () -> Unit,
+    onToggleMarketing: () -> Unit,
+    onToggleAllTerms: () -> Unit,
+    onNextStep: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -290,7 +341,7 @@ private fun SignupPersonalInfoScreen(
     ) {
         SignupAppBar(
             title = "회원가입",
-            onBackClick = { state.eventSink(SignupEvent.NavigateBack) },
+            onBackClick = onBack,
         )
 
         Column(
@@ -321,7 +372,7 @@ private fun SignupPersonalInfoScreen(
 
             SignupInputField(
                 value = state.name,
-                onValueChange = { state.eventSink(SignupEvent.UpdateName(it)) },
+                onValueChange = onNameChange,
                 label = "이름",
                 placeholder = "홍길동",
             )
@@ -331,9 +382,9 @@ private fun SignupPersonalInfoScreen(
                 year = state.birthYear,
                 month = state.birthMonth,
                 day = state.birthDay,
-                onYearChange = { state.eventSink(SignupEvent.UpdateBirthYear(it)) },
-                onMonthChange = { state.eventSink(SignupEvent.UpdateBirthMonth(it)) },
-                onDayChange = { state.eventSink(SignupEvent.UpdateBirthDay(it)) },
+                onYearChange = onBirthYearChange,
+                onMonthChange = onBirthMonthChange,
+                onDayChange = onBirthDayChange,
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -350,7 +401,7 @@ private fun SignupPersonalInfoScreen(
                 )
                 GenderSegmented(
                     selected = state.gender,
-                    onSelect = { state.eventSink(SignupEvent.UpdateGender(it)) },
+                    onSelect = onGenderChange,
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -359,10 +410,10 @@ private fun SignupPersonalInfoScreen(
                 termsAgreed = state.termsAgreed,
                 privacyAgreed = state.privacyAgreed,
                 marketingAgreed = state.marketingAgreed,
-                onToggleTos = { state.eventSink(SignupEvent.ToggleTos) },
-                onTogglePrivacy = { state.eventSink(SignupEvent.TogglePrivacy) },
-                onToggleMarketing = { state.eventSink(SignupEvent.ToggleMarketing) },
-                onToggleAll = { state.eventSink(SignupEvent.ToggleAllTerms) },
+                onToggleTos = onToggleTos,
+                onTogglePrivacy = onTogglePrivacy,
+                onToggleMarketing = onToggleMarketing,
+                onToggleAll = onToggleAllTerms,
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -382,7 +433,7 @@ private fun SignupPersonalInfoScreen(
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         ) {
             LbButton(
-                onClick = { state.eventSink(SignupEvent.NextStep) },
+                onClick = onNextStep,
                 enabled = isPersonalInfoValid && !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -692,6 +743,10 @@ private fun AgreeCheckbox(checked: Boolean) {
 @Composable
 private fun SignupEmailVerifyScreen(
     state: SignupUiState,
+    onBack: () -> Unit,
+    onCodeChange: (String) -> Unit,
+    onResendCode: () -> Unit,
+    onConfirmCode: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val minutes = state.remainingSeconds / 60
@@ -704,7 +759,7 @@ private fun SignupEmailVerifyScreen(
     ) {
         SignupAppBar(
             title = "이메일 인증",
-            onBackClick = { state.eventSink(SignupEvent.NavigateBack) },
+            onBackClick = onBack,
         )
 
         Column(
@@ -739,7 +794,7 @@ private fun SignupEmailVerifyScreen(
             Spacer(modifier = Modifier.height(61.dp))
             OtpInputField(
                 code = state.code,
-                onCodeChange = { state.eventSink(SignupEvent.UpdateCode(it)) },
+                onCodeChange = onCodeChange,
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -765,7 +820,7 @@ private fun SignupEmailVerifyScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             LbButton(
-                onClick = { state.eventSink(SignupEvent.ResendCode) },
+                onClick = onResendCode,
                 enabled = !state.isLoading,
                 modifier = Modifier
                     .weight(1f)
@@ -781,7 +836,7 @@ private fun SignupEmailVerifyScreen(
                 )
             }
             LbButton(
-                onClick = { state.eventSink(SignupEvent.ConfirmCode) },
+                onClick = onConfirmCode,
                 enabled = isCodeComplete && !state.isLoading,
                 modifier = Modifier
                     .weight(1f)
@@ -802,6 +857,7 @@ private fun SignupEmailVerifyScreen(
 @Composable
 private fun SignupCompleteScreen(
     state: SignupUiState,
+    onNavigateToSignin: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -866,7 +922,7 @@ private fun SignupCompleteScreen(
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         ) {
             LbButton(
-                onClick = { state.eventSink(SignupEvent.NavigateToSignin) },
+                onClick = onNavigateToSignin,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
@@ -1100,13 +1156,36 @@ private fun OtpBox(
 @Preview(showBackground = true)
 @Composable
 private fun SignupAccountInfoPreview() {
-    SignupAccountInfoScreen(state = SignupUiState())
+    SignupAccountInfoScreen(
+        state = SignupUiState(),
+        onBack = {},
+        onEmailChange = {},
+        onPasswordChange = {},
+        onTogglePasswordVisibility = {},
+        onPasswordConfirmChange = {},
+        onToggleConfirmPasswordVisibility = {},
+        onNextStep = {},
+        onNavigateToSignin = {},
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignupPersonalInfoPreview() {
-    SignupPersonalInfoScreen(state = SignupUiState(step = SignupStep.PersonalInfo))
+    SignupPersonalInfoScreen(
+        state = SignupUiState(step = SignupStep.PersonalInfo),
+        onBack = {},
+        onNameChange = {},
+        onBirthYearChange = {},
+        onBirthMonthChange = {},
+        onBirthDayChange = {},
+        onGenderChange = {},
+        onToggleTos = {},
+        onTogglePrivacy = {},
+        onToggleMarketing = {},
+        onToggleAllTerms = {},
+        onNextStep = {},
+    )
 }
 
 @Preview(showBackground = true)
@@ -1114,11 +1193,18 @@ private fun SignupPersonalInfoPreview() {
 private fun SignupEmailVerifyPreview() {
     SignupEmailVerifyScreen(
         state = SignupUiState(step = SignupStep.EmailVerify, email = "local@email.com"),
+        onBack = {},
+        onCodeChange = {},
+        onResendCode = {},
+        onConfirmCode = {},
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun SignupCompletePreview() {
-    SignupCompleteScreen(state = SignupUiState(step = SignupStep.Complete, name = "여행자"))
+    SignupCompleteScreen(
+        state = SignupUiState(step = SignupStep.Complete, name = "여행자"),
+        onNavigateToSignin = {},
+    )
 }

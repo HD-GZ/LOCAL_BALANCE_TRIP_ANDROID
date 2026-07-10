@@ -24,8 +24,12 @@ class PropensityViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(PropensityUiState())
     val uiState: StateFlow<PropensityUiState> = _uiState.asStateFlow()
 
-    private val _effects = Channel<PropensityEffect>(Channel.BUFFERED)
-    val effects = _effects.receiveAsFlow()
+    private val _sideEffect = Channel<PropensitySideEffect>(Channel.BUFFERED)
+    val sideEffect = _sideEffect.receiveAsFlow()
+
+    private fun postSideEffect(sideEffect: PropensitySideEffect) {
+        viewModelScope.launch { _sideEffect.send(sideEffect) }
+    }
 
     fun updateLocality(value: Int) = _uiState.update { it.copy(locality = value) }
     fun updateFrugality(value: Int) = _uiState.update { it.copy(frugality = value) }
@@ -40,7 +44,7 @@ class PropensityViewModel @Inject constructor(
 
     fun navigateBack() {
         when (_uiState.value.step) {
-            PropensityStep.Preference -> viewModelScope.launch { _effects.send(PropensityEffect.NavigateBack) }
+            PropensityStep.Preference -> postSideEffect(PropensitySideEffect.NavigateBack)
             PropensityStep.ValueConsumption -> _uiState.update { it.copy(step = PropensityStep.Preference) }
             PropensityStep.Result -> _uiState.update { it.copy(step = PropensityStep.ValueConsumption) }
         }

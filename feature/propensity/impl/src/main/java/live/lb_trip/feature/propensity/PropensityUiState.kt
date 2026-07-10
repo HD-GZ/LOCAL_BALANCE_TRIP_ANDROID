@@ -20,6 +20,6 @@ data class PropensityUiState(
     val resultDescription: String? = null,
 )
 
-sealed interface PropensityEffect {
-    data object NavigateBack : PropensityEffect
+sealed interface PropensitySideEffect {
+    data object NavigateBack : PropensitySideEffect
 }

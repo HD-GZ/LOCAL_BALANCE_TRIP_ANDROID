@@ -75,9 +75,9 @@ internal fun PropensityScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.effects.collect { effect ->
-            when (effect) {
-                PropensityEffect.NavigateBack -> onBack()
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                PropensitySideEffect.NavigateBack -> onBack()
             }
         }
     }
