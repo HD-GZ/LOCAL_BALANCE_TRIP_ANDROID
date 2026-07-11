@@ -22,4 +22,5 @@ data class PropensityUiState(
 
 sealed interface PropensitySideEffect {
     data object NavigateBack : PropensitySideEffect
+    data object NavigateToRecommendation : PropensitySideEffect
 }

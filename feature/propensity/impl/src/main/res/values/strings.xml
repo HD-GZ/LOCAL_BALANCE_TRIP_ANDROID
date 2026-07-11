@@ -59,5 +59,4 @@
 
     <string name="propensity_error_invalid_input">입력값을 다시 확인해 주세요.</string>
     <string name="propensity_error_generic">진단 결과를 가져오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="propensity_course_coming_soon">코스 추천 기능은 준비 중이에요.</string>
 </resources>

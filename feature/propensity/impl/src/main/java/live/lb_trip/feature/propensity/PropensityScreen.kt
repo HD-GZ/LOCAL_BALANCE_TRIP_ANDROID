@@ -69,6 +69,7 @@ private val BodyBackground = Color(0xFFF3F1EC)
 @Composable
 internal fun PropensityScreen(
     onBack: () -> Unit,
+    onNavigateToRecommendation: () -> Unit,
     viewModel: PropensityViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
@@ -78,6 +79,7 @@ internal fun PropensityScreen(
         viewModel.sideEffect.collect { sideEffect ->
             when (sideEffect) {
                 PropensitySideEffect.NavigateBack -> onBack()
+                PropensitySideEffect.NavigateToRecommendation -> onNavigateToRecommendation()
             }
         }
     }
