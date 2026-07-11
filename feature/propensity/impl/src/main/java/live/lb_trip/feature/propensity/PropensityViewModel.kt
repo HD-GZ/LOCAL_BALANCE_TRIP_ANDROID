@@ -88,6 +88,6 @@ class PropensityViewModel @Inject constructor(
     }
 
     fun onCourseRecommendationClicked() {
-        updateState { it.copy(errorMessage = "코스 추천 기능은 준비 중이에요.") }
+        postSideEffect(PropensitySideEffect.NavigateToRecommendation)
     }
 }

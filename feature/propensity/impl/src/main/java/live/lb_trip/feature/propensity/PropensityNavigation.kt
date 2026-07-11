@@ -5,8 +5,9 @@ import androidx.navigation.compose.composable
 
 fun NavGraphBuilder.propensityScreen(
     onBack: () -> Unit,
+    onNavigateToRecommendation: () -> Unit,
 ) {
     composable<PropensityRoute> {
-        PropensityScreen(onBack = onBack)
+        PropensityScreen(onBack = onBack, onNavigateToRecommendation = onNavigateToRecommendation)
     }
 }
