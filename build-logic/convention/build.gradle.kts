@@ -27,6 +27,10 @@ gradlePlugin {
             id = "live.lb_trip.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("jvmLibrary") {
+            id = "live.lb_trip.jvm.library"
+            implementationClass = "JvmLibraryConventionPlugin"
+        }
         register("androidCompose") {
             id = "live.lb_trip.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"

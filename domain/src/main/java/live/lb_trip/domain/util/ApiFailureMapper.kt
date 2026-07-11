@@ -10,20 +10,40 @@ fun <T> Result<T>.mapApiFailure(block: ApiExceptionMapper.() -> Unit): Result<T>
     return Result.failure(mapper.map())
 }
 
-class ApiExceptionMapper(private val exception: ApiException) {
+class ApiExceptionMapper(
+    private val exception: ApiException,
+) {
     private var mapped: LbTripException? = null
 
-    inner class OnBuilder(private val matched: Boolean) {
+    inner class OnBuilder(
+        private val matched: Boolean,
+    ) {
         infix fun throws(e: LbTripException) {
             if (matched) mapped = e
         }
     }
 
     fun on(status: Int) = OnBuilder(exception.statusCode == status)
+
     fun on(statusRange: IntRange) = OnBuilder(exception.statusCode in statusRange)
-    fun on(status: Int, code: String) = OnBuilder(exception.statusCode == status && exception.code == code)
-    fun on(statusRange: IntRange, code: String) = OnBuilder(exception.statusCode in statusRange && exception.code == code)
-    fun on(status: Int, code: String, transform: (ApiException) -> LbTripException) {
+
+    fun on(
+        status: Int,
+        code: String,
+    ) = OnBuilder(exception.statusCode == status && exception.code == code)
+
+    fun on(
+        statusRange: IntRange,
+        code: String,
+    ) = OnBuilder(
+        exception.statusCode in statusRange && exception.code == code,
+    )
+
+    fun on(
+        status: Int,
+        code: String,
+        transform: (ApiException) -> LbTripException,
+    ) {
         if (exception.statusCode == status && exception.code == code) mapped = transform(exception)
     }
 

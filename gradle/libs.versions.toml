@@ -87,6 +87,7 @@ detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 convention-android-application = { id = "live.lb_trip.android.application" }
 convention-android-library = { id = "live.lb_trip.android.library" }
+convention-jvm-library = { id = "live.lb_trip.jvm.library" }
 convention-android-compose = { id = "live.lb_trip.android.compose" }
 convention-android-hilt = { id = "live.lb_trip.android.hilt" }
 convention-android-feature-api = { id = "live.lb_trip.android.feature.api" }

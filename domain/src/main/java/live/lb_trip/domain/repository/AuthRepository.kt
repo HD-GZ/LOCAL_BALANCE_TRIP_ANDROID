@@ -17,7 +17,10 @@ interface AuthRepository {
         marketingAgreed: Boolean,
     ): Result<User>
 
-    suspend fun login(email: String, password: String): Result<Tokens>
+    suspend fun login(
+        email: String,
+        password: String,
+    ): Result<Tokens>
 
     suspend fun logout(): Result<Unit>
 
