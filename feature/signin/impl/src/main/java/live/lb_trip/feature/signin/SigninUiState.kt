@@ -7,7 +7,3 @@ data class SigninUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
 )
-
-sealed interface SigninSideEffect {
-    data object LoginSucceeded : SigninSideEffect
-}

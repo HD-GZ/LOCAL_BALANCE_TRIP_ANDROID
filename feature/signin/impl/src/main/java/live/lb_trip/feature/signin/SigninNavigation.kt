@@ -6,13 +6,11 @@ import androidx.navigation.compose.composable
 fun NavGraphBuilder.signinScreen(
     onBack: () -> Unit,
     onNavigateToSignup: () -> Unit,
-    onLoginSuccess: () -> Unit,
 ) {
     composable<SigninRoute> {
         SigninScreen(
             onBack = onBack,
             onNavigateToSignup = onNavigateToSignup,
-            onLoginSuccess = onLoginSuccess,
         )
     }
 }

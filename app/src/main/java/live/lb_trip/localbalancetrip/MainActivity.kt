@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -49,46 +50,54 @@ class MainActivity : ComponentActivity() {
             LocalBalanceTripTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = if (isLoggedIn == true) HomeRoute else OnboardingRoute,
-                    ) {
-                        homeScreen(
-                            onStartDiagnosis = { navController.navigate(PropensityRoute) },
-                            onNavigateToSettings = { navController.navigate(SettingsRoute) },
-                        )
-                        settingsScreen()
-                        signinScreen(
-                            onBack = navController::popBackStack,
-                            onNavigateToSignup = { navController.navigate(SignupRoute) },
-                            onLoginSuccess = {
-                                navController.navigate(HomeRoute) {
-                                    popUpTo(navController.graph.id) { inclusive = true }
-                                }
-                            },
-                        )
-                        signupScreen(
-                            onBack = navController::popBackStack,
-                            onNavigateToSignin = { navController.navigate(SigninRoute) },
-                        )
-                        onboardingScreen(
-                            onNavigateToSignup = { navController.navigate(SignupRoute) },
-                            onNavigateToSignin = { navController.navigate(SigninRoute) },
-                        )
-                        propensityScreen(
-                            onBack = navController::popBackStack,
-                            onNavigateToRecommendation = { navController.navigate(RecommendationRoute) },
-                        )
-                        recommendationScreen(
-                            navController = navController,
-                            onBack = navController::popBackStack,
-                        )
+                    when (isLoggedIn) {
+                        true -> MainNavGraph()
+                        false -> AuthNavGraph()
+                        null -> Unit
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MainNavGraph() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = HomeRoute) {
+        homeScreen(
+            onStartDiagnosis = { navController.navigate(PropensityRoute) },
+            onNavigateToSettings = { navController.navigate(SettingsRoute) },
+        )
+        settingsScreen()
+        propensityScreen(
+            onBack = navController::popBackStack,
+            onNavigateToRecommendation = { navController.navigate(RecommendationRoute) },
+        )
+        recommendationScreen(
+            navController = navController,
+            onBack = navController::popBackStack,
+        )
+    }
+}
+
+@Composable
+private fun AuthNavGraph() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = OnboardingRoute) {
+        signinScreen(
+            onBack = navController::popBackStack,
+            onNavigateToSignup = { navController.navigate(SignupRoute) },
+        )
+        signupScreen(
+            onBack = navController::popBackStack,
+            onNavigateToSignin = { navController.navigate(SigninRoute) },
+        )
+        onboardingScreen(
+            onNavigateToSignup = { navController.navigate(SignupRoute) },
+            onNavigateToSignin = { navController.navigate(SigninRoute) },
+        )
     }
 }

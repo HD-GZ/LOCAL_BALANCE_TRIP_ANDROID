@@ -70,7 +70,6 @@ private val BottomFadeGradient = Brush.verticalGradient(
 internal fun SigninScreen(
     onBack: () -> Unit,
     onNavigateToSignup: () -> Unit,
-    onLoginSuccess: () -> Unit,
     viewModel: SigninViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
@@ -81,14 +80,6 @@ internal fun SigninScreen(
         SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.sideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                SigninSideEffect.LoginSucceeded -> onLoginSuccess()
-            }
         }
     }
 
