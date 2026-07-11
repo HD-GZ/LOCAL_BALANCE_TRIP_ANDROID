@@ -1,0 +1,32 @@
+<resources>
+    <string name="recommendation_title_region">추천 코스</string>
+    <string name="recommendation_title_course">%1$s %2$s 추천 코스</string>
+    <string name="recommendation_title_detail">코스 상세</string>
+    <string name="recommendation_back_content_description">뒤로</string>
+
+    <string name="recommendation_step_caption_region">추천</string>
+    <string name="recommendation_step_caption_course">선택</string>
+    <string name="recommendation_step_caption_detail">코스</string>
+
+    <string name="recommendation_header_region_title">성향에 맞는 추천 여행지</string>
+    <string name="recommendation_header_region_subtitle">취향 진단과 가치소비 성향에 꼭 맞는 여행지예요. 지역을 누르면 맞춤 추천 코스를 볼 수 있어요.</string>
+    <string name="recommendation_header_course_subtitle">%1$s에서 프로필과 가장 잘 맞는 코스예요. 코스를 누르면 상세 동선·오디오·혜택을 볼 수 있어요.</string>
+
+    <string name="recommendation_section_course_order">코스 순서</string>
+    <string name="recommendation_section_incentives">이 코스 적용 가능 혜택</string>
+
+    <string name="recommendation_audio_guide_label">오디오 가이드</string>
+    <string name="recommendation_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="recommendation_walk_time_template">도보 %1$s</string>
+
+    <string name="recommendation_cta_save">저장</string>
+    <string name="recommendation_cta_saved">저장됨</string>
+    <string name="recommendation_cta_tour_start">투어 시작</string>
+
+    <string name="recommendation_snackbar_save_confirmation">코스를 SAVE했습니다 · 마이 &gt; SAVE에서 다시 볼 수 있어요.</string>
+    <string name="recommendation_snackbar_tour_stub">GPS 슬로우 투어는 앱 전용 · 준비 중이에요.</string>
+    <string name="recommendation_snackbar_incentive_stub">공식 채널로 이동해요.</string>
+
+    <string name="recommendation_content_description_play">재생</string>
+    <string name="recommendation_content_description_pause">일시정지</string>
+</resources>
