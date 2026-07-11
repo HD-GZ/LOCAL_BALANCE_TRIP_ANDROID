@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>TooManyFunctions:PropensityScreen.kt$live.lb_trip.feature.propensity.PropensityScreen.kt</ID>
+    <ID>TooManyFunctions:PropensityViewModel.kt$PropensityViewModel : BaseViewModel</ID>
+  </CurrentIssues>
+</SmellBaseline>
