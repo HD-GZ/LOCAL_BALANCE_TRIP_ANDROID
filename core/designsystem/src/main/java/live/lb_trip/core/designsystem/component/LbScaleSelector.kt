@@ -19,11 +19,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
+import live.lb_trip.core.designsystem.LbColors
 
-private val Track = Color(0xFFEBE7DF)
-private val SelectedRing = Color(0xFFE7F0EA)
-private val Brand = Color(0xFF2F6F4F)
-private val UnselectedBorder = Color(0xFFC3BDB3)
+private val Track = LbColors.LineSoft
+private val SelectedRing = LbColors.GreenTint
+private val Brand = LbColors.Green
+private val UnselectedBorder = LbColors.Line2
 private val ThumbSize = 20.dp
 private val DotSize = 10.dp
 

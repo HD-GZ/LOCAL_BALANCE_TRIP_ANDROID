@@ -19,10 +19,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
@@ -35,15 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -56,15 +49,12 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
-
-private val BottomFadeGradient = Brush.verticalGradient(
-    colorStops = arrayOf(
-        0f to Color.Transparent,
-        0.28f to Color.White,
-    ),
-)
+import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 
 @Composable
 internal fun SigninScreen(
@@ -163,14 +153,7 @@ private fun SigninScreenContent(
         )
 
         if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(color = Color(0xFF2F6F4F))
-            }
+            LbLoadingOverlay()
         }
     }
 }
@@ -210,10 +193,10 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         Text(
             text = buildAnnotatedString {
                 append("로컬")
-                withStyle(SpanStyle(color = Color(0xFF2F6F4F))) { append("밸런스") }
+                withStyle(SpanStyle(color = LbColors.Green)) { append("밸런스") }
                 append(" 트립")
             },
-            color = Color(0xFF222019),
+            color = LbColors.Ink,
             fontSize = 23.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.345).sp,
@@ -221,7 +204,7 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(22.dp))
         Text(
             text = "로그인",
-            color = Color(0xFF2F6F4F),
+            color = LbColors.Green,
             fontSize = 11.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = 1.54.sp,
@@ -229,7 +212,7 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(11.dp))
         Text(
             text = "다시 오신 걸 환영해요",
-            color = Color(0xFF222019),
+            color = LbColors.Ink,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.528).sp,
@@ -237,7 +220,7 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "내 취향과 예산에 맞춘 로컬 슬로우 트립을 이어서 설계해요.",
-            color = Color(0xFF5F5B53),
+            color = LbColors.Ink2,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
             lineHeight = 22.4.sp,
@@ -290,67 +273,6 @@ private fun SigninForm(
 }
 
 @Composable
-private fun LbInputField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    placeholder: String,
-    modifier: Modifier = Modifier,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    trailingIcon: @Composable (() -> Unit)? = null,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
-    ) {
-        Text(
-            text = label,
-            color = Color(0xFF5F5B53),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            letterSpacing = (-0.065).sp,
-        )
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            cursorBrush = SolidColor(Color(0xFF2F6F4F)),
-            textStyle = TextStyle(
-                color = Color(0xFF222019),
-                fontSize = 15.5.sp,
-            ),
-            decorationBox = { innerTextField ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp)
-                        .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .padding(start = 15.dp, end = if (trailingIcon != null) 6.dp else 15.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        if (value.isEmpty()) {
-                            Text(
-                                text = placeholder,
-                                color = Color(0xFFB8B3AA),
-                                fontSize = 15.5.sp,
-                            )
-                        }
-                        innerTextField()
-                    }
-                    trailingIcon?.invoke()
-                }
-            },
-        )
-    }
-}
-
-@Composable
 private fun SigninBottomAction(
     isLoading: Boolean,
     onLoginClick: () -> Unit,
@@ -361,7 +283,7 @@ private fun SigninBottomAction(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(BottomFadeGradient)
+            .background(LbBrush.BottomFadeGradient)
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(start = 24.dp, end = 24.dp, top = 14.dp, bottom = 14.dp),
         verticalArrangement = Arrangement.spacedBy(13.dp),
@@ -388,7 +310,7 @@ private fun SigninBottomAction(
         ) {
             Text(
                 text = "비밀번호 찾기",
-                color = Color(0xFF5F5B53),
+                color = LbColors.Ink2,
                 fontSize = 13.5.sp,
                 modifier = Modifier.clickable(onClick = onForgotPasswordClick),
             )
@@ -397,12 +319,12 @@ private fun SigninBottomAction(
                 modifier = Modifier
                     .width(1.dp)
                     .height(12.dp)
-                    .background(Color(0xFFC3BDB3)),
+                    .background(LbColors.Line2),
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
                 text = "회원가입",
-                color = Color(0xFF2F6F4F),
+                color = LbColors.Green,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.clickable(onClick = onSignupClick),

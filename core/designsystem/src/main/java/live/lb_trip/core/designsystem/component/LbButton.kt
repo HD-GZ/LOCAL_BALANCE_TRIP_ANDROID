@@ -12,24 +12,24 @@ import androidx.compose.material3.ButtonElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import live.lb_trip.core.designsystem.LbColors
 
 object LbButtonDefaults {
     @Composable
     fun whiteColors(): ButtonColors {
         return ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFFFFFFF),
-            contentColor = Color(0xFF222019),
+            containerColor = LbColors.Paper,
+            contentColor = LbColors.Ink,
         )
     }
 
     @Composable
     fun greenColors(): ButtonColors {
         return ButtonDefaults.buttonColors(
-            containerColor = Color(0xFF2F6F4F),
-            contentColor = Color(0xFFFFFFFF),
+            containerColor = LbColors.Green,
+            contentColor = LbColors.Paper,
         )
     }
 
