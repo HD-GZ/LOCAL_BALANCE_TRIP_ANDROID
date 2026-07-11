@@ -1,9 +1,6 @@
 package live.lb_trip.feature.propensity
 
-enum class PropensityStep { Preference, ValueConsumption, Result }
-
 data class PropensityUiState(
-    val step: PropensityStep = PropensityStep.Preference,
     val locality: Int = 3,
     val frugality: Int = 3,
     val experientiality: Int = 3,
@@ -21,6 +18,6 @@ data class PropensityUiState(
 )
 
 sealed interface PropensitySideEffect {
-    data object NavigateBack : PropensitySideEffect
     data object NavigateToRecommendation : PropensitySideEffect
+    data object NavigateToResult : PropensitySideEffect
 }

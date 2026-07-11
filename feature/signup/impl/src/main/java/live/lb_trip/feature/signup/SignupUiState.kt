@@ -2,10 +2,7 @@ package live.lb_trip.feature.signup
 
 import live.lb_trip.domain.model.Gender
 
-enum class SignupStep { AccountInfo, PersonalInfo, EmailVerify, Complete }
-
 data class SignupUiState(
-    val step: SignupStep = SignupStep.AccountInfo,
     val email: String = "",
     val password: String = "",
     val passwordConfirm: String = "",
@@ -26,6 +23,8 @@ data class SignupUiState(
 )
 
 sealed interface SignupSideEffect {
-    data object NavigateBack : SignupSideEffect
     data object NavigateToSignin : SignupSideEffect
+    data object NavigateToPersonalInfo : SignupSideEffect
+    data object NavigateToEmailVerify : SignupSideEffect
+    data object NavigateToComplete : SignupSideEffect
 }
