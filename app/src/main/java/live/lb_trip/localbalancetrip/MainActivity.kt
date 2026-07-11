@@ -22,6 +22,8 @@ import live.lb_trip.feature.onboarding.OnboardingRoute
 import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
 import live.lb_trip.feature.propensity.propensityScreen
+import live.lb_trip.feature.recommendation.RecommendationRoute
+import live.lb_trip.feature.recommendation.recommendationScreen
 import live.lb_trip.feature.settings.SettingsRoute
 import live.lb_trip.feature.settings.settingsScreen
 import live.lb_trip.feature.signin.SigninRoute
@@ -43,8 +45,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
-
-            if (isLoggedIn == null) return@setContent
 
             LocalBalanceTripTheme {
                 Surface(
@@ -79,6 +79,11 @@ class MainActivity : ComponentActivity() {
                             onNavigateToSignin = { navController.navigate(SigninRoute) },
                         )
                         propensityScreen(
+                            onBack = navController::popBackStack,
+                            onNavigateToRecommendation = { navController.navigate(RecommendationRoute) },
+                        )
+                        recommendationScreen(
+                            navController = navController,
                             onBack = navController::popBackStack,
                         )
                     }

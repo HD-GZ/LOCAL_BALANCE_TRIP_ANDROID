@@ -44,6 +44,8 @@ dependencies {
     implementation(projects.feature.onboarding.impl)
     implementation(projects.feature.propensity.api)
     implementation(projects.feature.propensity.impl)
+    implementation(projects.feature.recommendation.api)
+    implementation(projects.feature.recommendation.impl)
     implementation(projects.feature.signup.api)
     implementation(projects.feature.signup.impl)
     implementation(projects.feature.signin.api)
