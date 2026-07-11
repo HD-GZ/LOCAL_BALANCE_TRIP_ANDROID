@@ -39,14 +39,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 
-private val TextPrimary = Color(0xFF222019)
-private val Brand = Color(0xFF2F6F4F)
-private val Border = Color(0xFFEBE7DF)
-private val BodyBackground = Color(0xFFF3F1EC)
+private val TextPrimary = LbColors.Ink
+private val Brand = LbColors.Green
+private val Border = LbColors.LineSoft
+private val BodyBackground = LbColors.ScreenBg
 private val TabInactive = Color(0xFF9A958C)
 
 @Composable

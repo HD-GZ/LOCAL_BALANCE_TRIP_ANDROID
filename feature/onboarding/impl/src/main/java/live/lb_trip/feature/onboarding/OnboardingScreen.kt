@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbChip
@@ -90,7 +91,7 @@ private fun HeroSection(modifier: Modifier = Modifier) {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_onboarding_hero_mark),
                     contentDescription = null,
-                    tint = Color(0xFFDFF0E6),
+                    tint = LbColors.GreenGlassText,
                     modifier = Modifier.size(14.dp),
                 )
             },
@@ -189,7 +190,7 @@ private fun ActionSection(
                 .fillMaxWidth()
                 .height(54.dp),
             colors = LbButtonDefaults.whiteColors(),
-            border = BorderStroke(width = 1.dp, color = Color(0xFFC3BDB3)),
+            border = BorderStroke(width = 1.dp, color = LbColors.Line2),
         ) {
             Text(
                 text = "이미 계정이 있어요 · 로그인",

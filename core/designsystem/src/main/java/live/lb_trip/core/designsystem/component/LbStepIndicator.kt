@@ -21,13 +21,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import live.lb_trip.core.designsystem.LbColors
 
-private val TrackDone = Color(0xFFC4DDCD)
-private val TrackUpcoming = Color(0xFFEBE7DF)
-private val CurrentRing = Color(0xFFE7F0EA)
-private val Brand = Color(0xFF2F6F4F)
-private val UpcomingBorder = Color(0xFFC3BDB3)
-private val UpcomingText = Color(0xFF928D84)
+private val TrackDone = LbColors.GreenLine
+private val TrackUpcoming = LbColors.LineSoft
+private val CurrentRing = LbColors.GreenTint
+private val Brand = LbColors.Green
+private val UpcomingBorder = LbColors.Line2
+private val UpcomingText = LbColors.Ink3
 
 @Composable
 fun LbStepIndicator(

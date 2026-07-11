@@ -26,16 +26,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R
 
 private val ChipBackground = Color(0xFFF0EDE6)
-private val ChipBorder = Color(0xFFEBE7DF)
-private val ChipDot = Color(0xFF2F6F4F)
-private val ChipText = Color(0xFF5F5B53)
+private val ChipBorder = LbColors.LineSoft
+private val ChipDot = LbColors.Green
+private val ChipText = LbColors.Ink2
 
 private val ChipGlassBackground = Color(0x21FFFFFF)
 private val ChipGlassBorder = Color(0x33FFFFFF)
-private val ChipGlassText = Color(0xFFDFF0E6)
+private val ChipGlassText = LbColors.GreenGlassText
 
 @Immutable
 data class LbChipColors(
@@ -146,7 +147,7 @@ private fun LbChipGlassPreview() {
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_chip_flash_leading),
                     contentDescription = "취향 · 가치소비 기반 AI 큐레이션",
-                    tint = Color(0xFFDFF0E6)
+                    tint = LbColors.GreenGlassText
                 )
             },
         )
