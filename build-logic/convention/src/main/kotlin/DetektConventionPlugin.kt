@@ -10,6 +10,7 @@ class DetektConventionPlugin : Plugin<Project> {
             extensions.configure(DetektExtension::class.java) {
                 config.setFrom(rootProject.files("config/detekt/detekt.yml"))
                 buildUponDefaultConfig = true
+                baseline = target.file("detekt-baseline.xml")
             }
         }
     }

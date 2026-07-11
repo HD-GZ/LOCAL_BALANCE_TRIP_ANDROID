@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+    types: [opened, reopened, synchronize]
+  push:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/gradle-setup
+
+      - name: ktlint
+        run: ./gradlew ktlintCheck
+
+      - name: detekt
+        run: ./gradlew detekt
+
+      - name: Android Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload ktlint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-report
+          path: '**/build/reports/ktlint/**'
+          retention-days: 7
+
+      - name: Upload detekt report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-report
+          path: '**/build/reports/detekt/**'
+          retention-days: 7
+
+      - name: Upload Android Lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-lint-report
+          path: '**/build/reports/lint-results-debug.xml'
+          retention-days: 7

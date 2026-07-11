@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:SignupViewModel.kt$SignupViewModel$fun nextStep()</ID>
+    <ID>LongMethod:SignupViewModel.kt$SignupViewModel$fun nextStep()</ID>
+    <ID>TooManyFunctions:SignupScreen.kt$live.lb_trip.feature.signup.SignupScreen.kt</ID>
+    <ID>TooManyFunctions:SignupViewModel.kt$SignupViewModel : BaseViewModel</ID>
+  </CurrentIssues>
+</SmellBaseline>
