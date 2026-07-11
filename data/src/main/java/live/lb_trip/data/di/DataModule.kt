@@ -14,6 +14,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.engine.okhttp.OkHttpConfig
 import io.ktor.client.plugins.auth.Auth
@@ -29,6 +30,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
@@ -85,7 +87,7 @@ object DataModule {
                 }
                 refreshTokens {
                     val refreshToken = oldTokens?.refreshToken ?: return@refreshTokens null
-                    val response = noAuthClient.post("/auth/refresh") {
+                    val response = noAuthClient.post(RefreshTokenPath) {
                         markAsRefreshTokenRequest()
                         contentType(ContentType.Application.Json)
                         setBody(TokenRefreshRequestDto(refreshToken = refreshToken))
@@ -99,7 +101,9 @@ object DataModule {
                             refreshToken = dto.refreshToken,
                         )
                     } else {
-                        tokenDataStore.clear()
+                        if (response.status == HttpStatusCode.Unauthorized) {
+                            tokenDataStore.clear()
+                        }
                         null
                     }
                 }
@@ -107,6 +111,8 @@ object DataModule {
         }
     }
 }
+
+private const val RefreshTokenPath = "/auth/refresh"
 
 private val validatorJson = Json { ignoreUnknownKeys = true }
 
@@ -130,6 +136,7 @@ private fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
     HttpResponseValidator {
         validateResponse { response ->
             if (response.status.isSuccess()) return@validateResponse
+            if (response.request.url.encodedPath == RefreshTokenPath) return@validateResponse
             val body = response.bodyAsText()
             val apiError = runCatching {
                 validatorJson.decodeFromString<ApiResponse<Unit>>(body).error

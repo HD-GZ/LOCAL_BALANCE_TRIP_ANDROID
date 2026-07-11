@@ -11,7 +11,7 @@ import live.lb_trip.domain.usecase.LoginUseCase
 @HiltViewModel
 class SigninViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-) : BaseViewModel<SigninUiState, SigninSideEffect>(SigninUiState()) {
+) : BaseViewModel<SigninUiState, Nothing>(SigninUiState()) {
 
     fun updateEmail(email: String) {
         updateState { it.copy(email = email) }
@@ -29,9 +29,6 @@ class SigninViewModel @Inject constructor(
         viewModelScope.launch {
             updateState { it.copy(isLoading = true, errorMessage = null) }
             loginUseCase(email = currentState.email, password = currentState.password)
-                .onSuccess {
-                    postSideEffect(SigninSideEffect.LoginSucceeded)
-                }
                 .onFailure { throwable ->
                     val message = when (throwable) {
                         is LbTripAuthException.InvalidCredentialsException ->
