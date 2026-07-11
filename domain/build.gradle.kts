@@ -1,9 +1,5 @@
 plugins {
-    alias(libs.plugins.convention.android.library)
-}
-
-android {
-    namespace = "live.lb_trip.domain"
+    alias(libs.plugins.convention.jvm.library)
 }
 
 dependencies {
