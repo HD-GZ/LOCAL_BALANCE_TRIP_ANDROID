@@ -73,6 +73,7 @@ private fun MainNavGraph() {
         )
         settingsScreen()
         propensityScreen(
+            navController = navController,
             onBack = navController::popBackStack,
             onNavigateToRecommendation = { navController.navigate(RecommendationRoute) },
         )
@@ -92,6 +93,7 @@ private fun AuthNavGraph() {
             onNavigateToSignup = { navController.navigate(SignupRoute) },
         )
         signupScreen(
+            navController = navController,
             onBack = navController::popBackStack,
             onNavigateToSignin = { navController.navigate(SigninRoute) },
         )

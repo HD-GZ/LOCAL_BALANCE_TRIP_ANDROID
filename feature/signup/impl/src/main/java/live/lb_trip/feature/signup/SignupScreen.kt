@@ -1,6 +1,5 @@
 package live.lb_trip.feature.signup
 
-import android.app.Activity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,17 +26,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,7 +39,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -63,120 +56,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.domain.model.Gender
 
-private val BottomFadeGradient = Brush.verticalGradient(
-    colorStops = arrayOf(
-        0f to Color.Transparent,
-        0.28f to Color.White,
-    ),
-)
-
 @Composable
-internal fun SignupScreen(
-    onBack: () -> Unit,
-    onNavigateToSignin: () -> Unit,
-    viewModel: SignupViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier,
-) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(Unit) {
-        viewModel.sideEffect.collect { sideEffect ->
-            when (sideEffect) {
-                SignupSideEffect.NavigateBack -> onBack()
-                SignupSideEffect.NavigateToSignin -> onNavigateToSignin()
-            }
-        }
-    }
-
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-        }
-    }
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(state.errorMessage) {
-        val message = state.errorMessage
-        if (message != null) {
-            snackbarHostState.showSnackbar(message)
-        }
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White),
-    ) {
-        when (state.step) {
-            SignupStep.AccountInfo -> SignupAccountInfoScreen(
-                state = state,
-                onBack = viewModel::navigateBack,
-                onEmailChange = viewModel::updateEmail,
-                onPasswordChange = viewModel::updatePassword,
-                onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
-                onPasswordConfirmChange = viewModel::updatePasswordConfirm,
-                onToggleConfirmPasswordVisibility = viewModel::toggleConfirmPasswordVisibility,
-                onNextStep = viewModel::nextStep,
-                onNavigateToSignin = viewModel::navigateToSignin,
-            )
-            SignupStep.PersonalInfo -> SignupPersonalInfoScreen(
-                state = state,
-                onBack = viewModel::navigateBack,
-                onNameChange = viewModel::updateName,
-                onBirthYearChange = viewModel::updateBirthYear,
-                onBirthMonthChange = viewModel::updateBirthMonth,
-                onBirthDayChange = viewModel::updateBirthDay,
-                onGenderChange = viewModel::updateGender,
-                onToggleTos = viewModel::toggleTos,
-                onTogglePrivacy = viewModel::togglePrivacy,
-                onToggleMarketing = viewModel::toggleMarketing,
-                onToggleAllTerms = viewModel::toggleAllTerms,
-                onNextStep = viewModel::nextStep,
-            )
-            SignupStep.EmailVerify -> SignupEmailVerifyScreen(
-                state = state,
-                onBack = viewModel::navigateBack,
-                onCodeChange = viewModel::updateCode,
-                onResendCode = viewModel::resendCode,
-                onConfirmCode = viewModel::confirmCode,
-            )
-            SignupStep.Complete -> SignupCompleteScreen(
-                state = state,
-                onNavigateToSignin = viewModel::navigateToSignin,
-            )
-        }
-
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
-
-        if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(color = Color(0xFF2F6F4F))
-            }
-        }
-    }
-}
-
-@Composable
-private fun SignupAccountInfoScreen(
+internal fun SignupAccountInfoScreen(
     state: SignupUiState,
     onBack: () -> Unit,
     onEmailChange: (String) -> Unit,
@@ -209,7 +97,7 @@ private fun SignupAccountInfoScreen(
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = "계정 정보를 입력해요",
-                color = Color(0xFF222019),
+                color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.528).sp,
@@ -217,20 +105,22 @@ private fun SignupAccountInfoScreen(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "로그인에 사용할 이메일과 비밀번호예요.",
-                color = Color(0xFF5F5B53),
+                color = LbColors.Ink2,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
             )
             Spacer(modifier = Modifier.height(22.dp))
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                SignupInputField(
+                LbInputField(
+                    required = true,
                     value = state.email,
                     onValueChange = onEmailChange,
                     label = "이메일",
                     placeholder = "local@email.com",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
-                SignupInputField(
+                LbInputField(
+                    required = true,
                     value = state.password,
                     onValueChange = onPasswordChange,
                     label = "비밀번호",
@@ -251,7 +141,8 @@ private fun SignupAccountInfoScreen(
                         }
                     },
                 )
-                SignupInputField(
+                LbInputField(
+                    required = true,
                     value = state.passwordConfirm,
                     onValueChange = onPasswordConfirmChange,
                     label = "비밀번호 확인",
@@ -282,7 +173,7 @@ private fun SignupAccountInfoScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(BottomFadeGradient)
+                .background(LbBrush.BottomFadeGradient)
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(horizontal = 24.dp, vertical = 14.dp),
             verticalArrangement = Arrangement.spacedBy(11.dp),
@@ -306,11 +197,11 @@ private fun SignupAccountInfoScreen(
             Text(
                 text = buildAnnotatedString {
                     append("이미 회원이신가요? ")
-                    withStyle(SpanStyle(color = Color(0xFF2F6F4F), fontWeight = FontWeight.SemiBold)) {
+                    withStyle(SpanStyle(color = LbColors.Green, fontWeight = FontWeight.SemiBold)) {
                         append("로그인")
                     }
                 },
-                color = Color(0xFF5F5B53),
+                color = LbColors.Ink2,
                 fontSize = 13.sp,
                 modifier = Modifier.clickable(onClick = onNavigateToSignin),
             )
@@ -319,7 +210,7 @@ private fun SignupAccountInfoScreen(
 }
 
 @Composable
-private fun SignupPersonalInfoScreen(
+internal fun SignupPersonalInfoScreen(
     state: SignupUiState,
     onBack: () -> Unit,
     onNameChange: (String) -> Unit,
@@ -356,7 +247,7 @@ private fun SignupPersonalInfoScreen(
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = "기본 정보를 입력해요",
-                color = Color(0xFF222019),
+                color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.528).sp,
@@ -364,13 +255,14 @@ private fun SignupPersonalInfoScreen(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "생년월일은 청년 혜택 판별에 쓰여요.",
-                color = Color(0xFF5F5B53),
+                color = LbColors.Ink2,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
             )
             Spacer(modifier = Modifier.height(22.dp))
 
-            SignupInputField(
+            LbInputField(
+                required = true,
                 value = state.name,
                 onValueChange = onNameChange,
                 label = "이름",
@@ -394,7 +286,7 @@ private fun SignupPersonalInfoScreen(
             ) {
                 Text(
                     text = "성별",
-                    color = Color(0xFF5F5B53),
+                    color = LbColors.Ink2,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     letterSpacing = (-0.065).sp,
@@ -428,7 +320,7 @@ private fun SignupPersonalInfoScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(BottomFadeGradient)
+                .background(LbBrush.BottomFadeGradient)
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         ) {
@@ -470,11 +362,11 @@ private fun BirthField(
         Text(
             text = buildAnnotatedString {
                 append("생년월일")
-                withStyle(SpanStyle(color = Color(0xFFB5654A), fontWeight = FontWeight.SemiBold)) {
+                withStyle(SpanStyle(color = LbColors.RequiredMark, fontWeight = FontWeight.SemiBold)) {
                     append(" *")
                 }
             },
-            color = Color(0xFF5F5B53),
+            color = LbColors.Ink2,
             fontSize = 13.sp,
             fontWeight = FontWeight.Medium,
             letterSpacing = (-0.065).sp,
@@ -488,22 +380,22 @@ private fun BirthField(
                 onValueChange = { if (it.length <= 4 && it.all { c -> c.isDigit() }) onYearChange(it) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
-                cursorBrush = SolidColor(Color(0xFF2F6F4F)),
-                textStyle = TextStyle(color = Color(0xFF222019), fontSize = 15.5.sp),
+                cursorBrush = SolidColor(LbColors.Green),
+                textStyle = TextStyle(color = LbColors.Ink, fontSize = 15.5.sp),
                 modifier = Modifier.weight(2.2f),
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(52.dp)
-                            .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
+                            .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
                             .clip(RoundedCornerShape(12.dp))
                             .background(Color.White)
                             .padding(horizontal = 15.dp),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         if (year.isEmpty()) {
-                            Text(text = "YYYY", color = Color(0xFFB8B3AA), fontSize = 15.5.sp)
+                            Text(text = "YYYY", color = LbColors.Ink4, fontSize = 15.5.sp)
                         }
                         innerTextField()
                     }
@@ -515,7 +407,7 @@ private fun BirthField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(52.dp)
-                        .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
+                        .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .background(Color.White)
                         .clickable { monthMenuExpanded = true }
@@ -524,7 +416,7 @@ private fun BirthField(
                 ) {
                     Text(
                         text = if (month == 0) "월" else "${month}월",
-                        color = if (month == 0) Color(0xFFB8B3AA) else Color(0xFF222019),
+                        color = if (month == 0) LbColors.Ink4 else LbColors.Ink,
                         fontSize = 15.5.sp,
                     )
                 }
@@ -549,22 +441,22 @@ private fun BirthField(
                 onValueChange = { if (it.length <= 2 && it.all { c -> c.isDigit() }) onDayChange(it) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
-                cursorBrush = SolidColor(Color(0xFF2F6F4F)),
-                textStyle = TextStyle(color = Color(0xFF222019), fontSize = 15.5.sp),
+                cursorBrush = SolidColor(LbColors.Green),
+                textStyle = TextStyle(color = LbColors.Ink, fontSize = 15.5.sp),
                 modifier = Modifier.weight(1.2f),
                 decorationBox = { innerTextField ->
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(52.dp)
-                            .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
+                            .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
                             .clip(RoundedCornerShape(12.dp))
                             .background(Color.White)
                             .padding(horizontal = 15.dp),
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         if (day.isEmpty()) {
-                            Text(text = "일", color = Color(0xFFB8B3AA), fontSize = 15.5.sp)
+                            Text(text = "일", color = LbColors.Ink4, fontSize = 15.5.sp)
                         }
                         innerTextField()
                     }
@@ -589,7 +481,7 @@ private fun GenderSegmented(
         modifier = modifier
             .fillMaxWidth()
             .height(52.dp)
-            .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
+            .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp)),
     ) {
         options.forEachIndexed { index, (gender, label) ->
@@ -598,13 +490,13 @@ private fun GenderSegmented(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(if (isSelected) Color(0xFF2F6F4F) else Color.White)
+                    .background(if (isSelected) LbColors.Green else Color.White)
                     .clickable { onSelect(gender) },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = label,
-                    color = if (isSelected) Color.White else Color(0xFF5F5B53),
+                    color = if (isSelected) Color.White else LbColors.Ink2,
                     fontSize = 14.sp,
                     fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                     letterSpacing = (-0.14).sp,
@@ -615,7 +507,7 @@ private fun GenderSegmented(
                     modifier = Modifier
                         .width(1.dp)
                         .fillMaxHeight()
-                        .background(Color(0xFFD9D5CD)),
+                        .background(LbColors.Line),
                 )
             }
         }
@@ -638,7 +530,7 @@ private fun AgreeBlock(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
+            .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White),
     ) {
@@ -653,7 +545,7 @@ private fun AgreeBlock(
             AgreeCheckbox(checked = allAgreed)
             Text(
                 text = "약관에 모두 동의합니다",
-                color = Color(0xFF222019),
+                color = LbColors.Ink,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
             )
@@ -663,7 +555,7 @@ private fun AgreeBlock(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color(0xFFEBE7DF)),
+                .background(LbColors.LineSoft),
         )
 
         AgreeRow(
@@ -706,13 +598,13 @@ private fun AgreeRow(
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 text = if (required) "[필수]" else "[선택]",
-                color = if (required) Color(0xFF2F6F4F) else Color(0xFF928D84),
+                color = if (required) LbColors.Green else LbColors.Ink3,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.Medium,
             )
             Text(
                 text = label,
-                color = Color(0xFF5F5B53),
+                color = LbColors.Ink2,
                 fontSize = 13.5.sp,
             )
         }
@@ -725,8 +617,8 @@ private fun AgreeCheckbox(checked: Boolean) {
         modifier = Modifier
             .size(20.dp)
             .clip(CircleShape)
-            .background(if (checked) Color(0xFF2F6F4F) else Color.Transparent)
-            .border(1.dp, if (checked) Color(0xFF2F6F4F) else Color(0xFFC3BDB3), CircleShape),
+            .background(if (checked) LbColors.Green else Color.Transparent)
+            .border(1.dp, if (checked) LbColors.Green else LbColors.Line2, CircleShape),
         contentAlignment = Alignment.Center,
     ) {
         if (checked) {
@@ -741,7 +633,7 @@ private fun AgreeCheckbox(checked: Boolean) {
 }
 
 @Composable
-private fun SignupEmailVerifyScreen(
+internal fun SignupEmailVerifyScreen(
     state: SignupUiState,
     onBack: () -> Unit,
     onCodeChange: (String) -> Unit,
@@ -772,7 +664,7 @@ private fun SignupEmailVerifyScreen(
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = "이메일을 확인해 주세요",
-                color = Color(0xFF222019),
+                color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.528).sp,
@@ -782,11 +674,11 @@ private fun SignupEmailVerifyScreen(
             Text(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(state.email) }
-                    withStyle(SpanStyle(color = Color(0xFF5F5B53), fontWeight = FontWeight.Normal)) {
+                    withStyle(SpanStyle(color = LbColors.Ink2, fontWeight = FontWeight.Normal)) {
                         append(" 으로\n6자리 인증 코드를 보냈어요.")
                     }
                 },
-                color = Color(0xFF222019),
+                color = LbColors.Ink,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
                 textAlign = TextAlign.Center,
@@ -804,7 +696,7 @@ private fun SignupEmailVerifyScreen(
                         append("%02d:%02d".format(minutes, seconds))
                     }
                 },
-                color = Color(0xFF928D84),
+                color = LbColors.Ink3,
                 fontSize = 13.sp,
                 textAlign = TextAlign.Center,
             )
@@ -814,7 +706,7 @@ private fun SignupEmailVerifyScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(BottomFadeGradient)
+                .background(LbBrush.BottomFadeGradient)
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(horizontal = 24.dp, vertical = 14.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -826,7 +718,7 @@ private fun SignupEmailVerifyScreen(
                     .weight(1f)
                     .height(54.dp),
                 colors = LbButtonDefaults.whiteColors(),
-                border = BorderStroke(1.dp, Color(0xFFC3BDB3)),
+                border = BorderStroke(1.dp, LbColors.Line2),
             ) {
                 Text(
                     text = "코드 재전송",
@@ -855,7 +747,7 @@ private fun SignupEmailVerifyScreen(
 }
 
 @Composable
-private fun SignupCompleteScreen(
+internal fun SignupCompleteScreen(
     state: SignupUiState,
     onNavigateToSignin: () -> Unit,
     modifier: Modifier = Modifier,
@@ -878,8 +770,8 @@ private fun SignupCompleteScreen(
                     modifier = Modifier
                         .size(88.dp)
                         .clip(CircleShape)
-                        .background(Color(0xFFE7F0EA))
-                        .border(1.dp, Color(0xFF2F6F4F), CircleShape),
+                        .background(LbColors.GreenTint)
+                        .border(1.dp, LbColors.Green, CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
@@ -892,12 +784,12 @@ private fun SignupCompleteScreen(
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = buildAnnotatedString {
-                        withStyle(SpanStyle(color = Color(0xFF2F6F4F))) {
+                        withStyle(SpanStyle(color = LbColors.Green)) {
                             append(state.name.ifEmpty { "여행자" })
                         }
                         append("님, 환영해요!")
                     },
-                    color = Color(0xFF222019),
+                    color = LbColors.Ink,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.5).sp,
@@ -906,7 +798,7 @@ private fun SignupCompleteScreen(
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "이메일 인증이 완료되어 회원가입이 끝났어요.\n이제 취향에 맞는 로컬 슬로우 트립을 만나보세요.",
-                    color = Color(0xFF5F5B53),
+                    color = LbColors.Ink2,
                     fontSize = 14.sp,
                     lineHeight = 23.1.sp,
                     textAlign = TextAlign.Center,
@@ -917,7 +809,7 @@ private fun SignupCompleteScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(BottomFadeGradient)
+                .background(LbBrush.BottomFadeGradient)
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         ) {
@@ -965,7 +857,7 @@ private fun SignupAppBar(
         }
         Text(
             text = title,
-            color = Color(0xFF222019),
+            color = LbColors.Ink,
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             letterSpacing = (-0.15).sp,
@@ -994,17 +886,17 @@ private fun SignupStepBar(
                 modifier = Modifier
                     .size(26.dp)
                     .clip(CircleShape)
-                    .background(if (isActive) Color(0xFF2F6F4F) else Color.Transparent)
+                    .background(if (isActive) LbColors.Green else Color.Transparent)
                     .border(
                         width = 1.dp,
-                        color = if (isActive) Color(0xFF2F6F4F) else Color(0xFFC3BDB3),
+                        color = if (isActive) LbColors.Green else LbColors.Line2,
                         shape = CircleShape,
                     ),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = step.toString(),
-                    color = if (isActive) Color.White else Color(0xFF928D84),
+                    color = if (isActive) Color.White else LbColors.Ink3,
                     fontSize = 12.sp,
                 )
             }
@@ -1013,84 +905,9 @@ private fun SignupStepBar(
                     modifier = Modifier
                         .weight(1f)
                         .height(2.dp)
-                        .background(Color(0xFFEBE7DF)),
+                        .background(LbColors.LineSoft),
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun SignupInputField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    placeholder: String,
-    modifier: Modifier = Modifier,
-    hintText: String? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    trailingIcon: @Composable (() -> Unit)? = null,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
-    ) {
-        Text(
-            text = buildAnnotatedString {
-                append(label)
-                withStyle(SpanStyle(color = Color(0xFFB5654A), fontWeight = FontWeight.SemiBold)) {
-                    append(" *")
-                }
-            },
-            color = Color(0xFF5F5B53),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            letterSpacing = (-0.065).sp,
-        )
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            visualTransformation = visualTransformation,
-            keyboardOptions = keyboardOptions,
-            cursorBrush = SolidColor(Color(0xFF2F6F4F)),
-            textStyle = TextStyle(
-                color = Color(0xFF222019),
-                fontSize = 15.5.sp,
-            ),
-            decorationBox = { innerTextField ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp)
-                        .border(1.dp, Color(0xFFD9D5CD), RoundedCornerShape(12.dp))
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .padding(start = 15.dp, end = if (trailingIcon != null) 6.dp else 15.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Box(modifier = Modifier.weight(1f)) {
-                        if (value.isEmpty()) {
-                            Text(
-                                text = placeholder,
-                                color = Color(0xFFB8B3AA),
-                                fontSize = 15.5.sp,
-                            )
-                        }
-                        innerTextField()
-                    }
-                    trailingIcon?.invoke()
-                }
-            },
-        )
-        if (hintText != null) {
-            Text(
-                text = hintText,
-                color = Color(0xFF928D84),
-                fontSize = 12.sp,
-                lineHeight = 17.4.sp,
-            )
         }
     }
 }
@@ -1135,7 +952,7 @@ private fun OtpBox(
             .size(width = 46.dp, height = 58.dp)
             .border(
                 width = 1.dp,
-                color = if (isCurrent) Color(0xFF2F6F4F) else Color(0xFFD9D5CD),
+                color = if (isCurrent) LbColors.Green else LbColors.Line,
                 shape = RoundedCornerShape(13.dp),
             )
             .clip(RoundedCornerShape(13.dp))
@@ -1145,7 +962,7 @@ private fun OtpBox(
         if (char != null) {
             Text(
                 text = char.toString(),
-                color = Color(0xFF222019),
+                color = LbColors.Ink,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -1173,7 +990,7 @@ private fun SignupAccountInfoPreview() {
 @Composable
 private fun SignupPersonalInfoPreview() {
     SignupPersonalInfoScreen(
-        state = SignupUiState(step = SignupStep.PersonalInfo),
+        state = SignupUiState(),
         onBack = {},
         onNameChange = {},
         onBirthYearChange = {},
@@ -1192,7 +1009,7 @@ private fun SignupPersonalInfoPreview() {
 @Composable
 private fun SignupEmailVerifyPreview() {
     SignupEmailVerifyScreen(
-        state = SignupUiState(step = SignupStep.EmailVerify, email = "local@email.com"),
+        state = SignupUiState(email = "local@email.com"),
         onBack = {},
         onCodeChange = {},
         onResendCode = {},
@@ -1204,7 +1021,7 @@ private fun SignupEmailVerifyPreview() {
 @Composable
 private fun SignupCompletePreview() {
     SignupCompleteScreen(
-        state = SignupUiState(step = SignupStep.Complete, name = "여행자"),
+        state = SignupUiState(name = "여행자"),
         onNavigateToSignin = {},
     )
 }
