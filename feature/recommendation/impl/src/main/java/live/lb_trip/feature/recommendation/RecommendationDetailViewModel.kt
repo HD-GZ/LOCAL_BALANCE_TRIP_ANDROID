@@ -1,19 +1,57 @@
 package live.lb_trip.feature.recommendation
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.minus
 import kotlinx.collections.immutable.plus
+import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
+import live.lb_trip.domain.exception.recommendation.LbTripRecommendationException
+import live.lb_trip.domain.model.CoursePlace
+import live.lb_trip.domain.usecase.GetCourseDetailUseCase
+import live.lb_trip.domain.usecase.SaveCourseUseCase
 
 @HiltViewModel
 class RecommendationDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val getCourseDetailUseCase: GetCourseDetailUseCase,
+    private val saveCourseUseCase: SaveCourseUseCase,
 ) : BaseViewModel<RecommendationDetailUiState, RecommendationDetailSideEffect>(RecommendationDetailUiState()) {
 
-    val courseIndex: Int = savedStateHandle.toRoute<DetailRoute>().courseIndex
+    val courseId: Long = savedStateHandle.toRoute<DetailRoute>().courseId
+
+    init {
+        viewModelScope.launch { loadCourseDetail() }
+    }
+
+    fun retry() {
+        viewModelScope.launch { loadCourseDetail() }
+    }
+
+    private suspend fun loadCourseDetail() {
+        updateState { it.copy(isLoading = true) }
+        getCourseDetailUseCase(courseId)
+            .onSuccess { detail ->
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        title = detail.title,
+                        stops = detail.places.map(CoursePlace::toCourseStop).toPersistentList(),
+                    )
+                }
+                if (detail.places.isEmpty()) {
+                    postSideEffect(RecommendationDetailSideEffect.ShowLoadError(DetailLoadErrorReason.EmptyPlaces))
+                }
+            }
+            .onFailure { throwable ->
+                updateState { it.copy(isLoading = false) }
+                postSideEffect(RecommendationDetailSideEffect.ShowLoadError(loadErrorReasonFor(throwable)))
+            }
+    }
 
     fun toggleStopExpanded(index: Int) {
         updateState {
@@ -36,8 +74,19 @@ class RecommendationDetailViewModel @Inject constructor(
     }
 
     fun saveCourse() {
-        updateState { it.copy(isSaved = true) }
-        postSideEffect(RecommendationDetailSideEffect.ShowSaveConfirmation)
+        if (currentState.isSaved || currentState.isSaving) return
+        viewModelScope.launch {
+            updateState { it.copy(isSaving = true) }
+            saveCourseUseCase(courseId)
+                .onSuccess {
+                    updateState { it.copy(isSaving = false, isSaved = true) }
+                    postSideEffect(RecommendationDetailSideEffect.ShowSaveConfirmation)
+                }
+                .onFailure {
+                    updateState { it.copy(isSaving = false) }
+                    postSideEffect(RecommendationDetailSideEffect.ShowSaveError)
+                }
+        }
     }
 
     fun onTourStartClicked() {
@@ -47,4 +96,18 @@ class RecommendationDetailViewModel @Inject constructor(
     fun onIncentiveClicked() {
         postSideEffect(RecommendationDetailSideEffect.ShowIncentiveStub)
     }
+}
+
+private fun CoursePlace.toCourseStop(): CourseStop = CourseStop(
+    order = order,
+    name = name,
+    hasAudioGuide = hasAudio,
+    walkDuration = walkMinutes?.let { "${it}분" },
+    description = description,
+    audioUrl = audioUrl,
+)
+
+private fun loadErrorReasonFor(throwable: Throwable?): DetailLoadErrorReason = when (throwable) {
+    is LbTripRecommendationException.CourseNotFoundException -> DetailLoadErrorReason.CourseNotFound
+    else -> DetailLoadErrorReason.Unknown
 }

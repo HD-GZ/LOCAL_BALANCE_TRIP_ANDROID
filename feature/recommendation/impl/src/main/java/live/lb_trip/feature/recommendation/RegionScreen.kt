@@ -15,9 +15,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -27,6 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.persistentListOf
+import live.lb_trip.core.designsystem.component.LbLoadingOverlay
+import live.lb_trip.domain.model.RecommendedRegion
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.Ink2
 import live.lb_trip.feature.recommendation.components.Paper
@@ -38,7 +50,51 @@ import live.lb_trip.feature.recommendation.components.ScreenBg
 @Composable
 internal fun RegionScreen(
     onBack: () -> Unit,
-    onRegionSelected: (Int) -> Unit,
+    onRegionSelected: (regionId: Long, regionName: String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: RegionViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val retryActionLabel = stringResource(R.string.recommendation_action_retry)
+    val propensityNotFoundMessage = stringResource(R.string.recommendation_error_propensity_not_found)
+    val tourApiUnavailableMessage = stringResource(R.string.recommendation_error_tour_api_unavailable)
+    val emptyRegionsMessage = stringResource(R.string.recommendation_error_empty_regions)
+    val genericErrorMessage = stringResource(R.string.recommendation_error_generic_region)
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is RegionSideEffect.ShowError -> {
+                    val message = when (effect.reason) {
+                        RegionLoadErrorReason.PropensityNotFound -> propensityNotFoundMessage
+                        RegionLoadErrorReason.TourApiUnavailable -> tourApiUnavailableMessage
+                        RegionLoadErrorReason.Empty -> emptyRegionsMessage
+                        RegionLoadErrorReason.Unknown -> genericErrorMessage
+                    }
+                    val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
+                    if (result == SnackbarResult.ActionPerformed) viewModel.retry()
+                }
+            }
+        }
+    }
+
+    RegionScreenContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onBack = onBack,
+        onRegionSelected = onRegionSelected,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun RegionScreenContent(
+    state: RegionUiState,
+    snackbarHostState: SnackbarHostState,
+    onBack: () -> Unit,
+    onRegionSelected: (regionId: Long, regionName: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -88,17 +144,28 @@ internal fun RegionScreen(
                     )
                     Spacer(modifier = Modifier.height(15.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        RecommendationSampleData.regions.fastForEachIndexed { index, region ->
+                        state.regions.fastForEachIndexed { index, region ->
                             RCard(
-                                title = "${region.provinceFullName} ${region.name}",
+                                title = region.name,
                                 reason = region.reason,
-                                isBest = region.best,
-                                onClick = { onRegionSelected(index) },
+                                isBest = index == 0,
+                                onClick = { onRegionSelected(region.id, region.name) },
                             )
                         }
                     }
                 }
             }
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .windowInsetsPadding(WindowInsets.navigationBars),
+        )
+
+        if (state.isLoading) {
+            LbLoadingOverlay()
         }
     }
 }
@@ -106,5 +173,15 @@ internal fun RegionScreen(
 @Preview(showBackground = true)
 @Composable
 private fun RegionScreenPreview() {
-    RegionScreen(onBack = {}, onRegionSelected = {})
+    RegionScreenContent(
+        state = RegionUiState(
+            isLoading = false,
+            regions = persistentListOf(
+                RecommendedRegion(id = 1, name = "전라남도 담양군", reason = "로컬 미식 상권이 풍부해요."),
+            ),
+        ),
+        snackbarHostState = remember { SnackbarHostState() },
+        onBack = {},
+        onRegionSelected = { _, _ -> },
+    )
 }

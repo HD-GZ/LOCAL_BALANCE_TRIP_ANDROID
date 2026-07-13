@@ -11,5 +11,6 @@ dependencies {
     implementation(projects.feature.recommendation.api)
     implementation(projects.core.designsystem)
     implementation(projects.core)
+    implementation(projects.domain)
     implementation(libs.kotlinx.collections.immutable)
 }

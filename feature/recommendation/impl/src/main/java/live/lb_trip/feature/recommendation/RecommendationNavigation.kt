@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import androidx.navigation.toRoute
 
 fun NavGraphBuilder.recommendationScreen(
     navController: NavController,
@@ -14,16 +13,16 @@ fun NavGraphBuilder.recommendationScreen(
         composable<RegionRoute> {
             RegionScreen(
                 onBack = onBack,
-                onRegionSelected = { index -> navController.navigate(CourseRoute(regionIndex = index)) },
+                onRegionSelected = { regionId, regionName ->
+                    navController.navigate(CourseRoute(regionId = regionId, regionName = regionName))
+                },
             )
         }
-        composable<CourseRoute> { backStackEntry ->
-            val route: CourseRoute = backStackEntry.toRoute()
+        composable<CourseRoute> {
             CourseScreen(
-                regionIndex = route.regionIndex,
                 onBack = navController::popBackStack,
-                onCourseSelected = { index ->
-                    navController.navigate(DetailRoute(courseIndex = index))
+                onCourseSelected = { courseId ->
+                    navController.navigate(DetailRoute(courseId = courseId))
                 },
             )
         }
