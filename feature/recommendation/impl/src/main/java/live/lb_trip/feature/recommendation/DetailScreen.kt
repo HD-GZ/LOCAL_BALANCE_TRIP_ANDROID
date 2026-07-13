@@ -182,11 +182,13 @@ private fun DetailScreenContent(
                 }
             }
 
-            RecommendationCtaBar(
-                isSaved = state.isSaved,
-                onSaveClick = onSaveClick,
-                onTourStartClick = onTourStartClick,
-            )
+            if (state.stops.isNotEmpty()) {
+                RecommendationCtaBar(
+                    isSaved = state.isSaved,
+                    onSaveClick = onSaveClick,
+                    onTourStartClick = onTourStartClick,
+                )
+            }
         }
 
         SnackbarHost(

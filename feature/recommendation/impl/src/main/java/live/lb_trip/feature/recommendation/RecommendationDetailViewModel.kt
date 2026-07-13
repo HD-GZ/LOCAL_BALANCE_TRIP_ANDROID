@@ -74,7 +74,7 @@ class RecommendationDetailViewModel @Inject constructor(
     }
 
     fun saveCourse() {
-        if (currentState.isSaved || currentState.isSaving) return
+        if (currentState.stops.isEmpty() || currentState.isSaved || currentState.isSaving) return
         viewModelScope.launch {
             updateState { it.copy(isSaving = true) }
             saveCourseUseCase(courseId)
