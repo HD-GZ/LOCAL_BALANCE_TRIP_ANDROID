@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 internal object RegionRoute
 
 @Serializable
-internal data class CourseRoute(val regionIndex: Int)
+internal data class CourseRoute(val regionId: Long, val regionName: String)
 
 @Serializable
-internal data class DetailRoute(val courseIndex: Int)
+internal data class DetailRoute(val courseId: Long)

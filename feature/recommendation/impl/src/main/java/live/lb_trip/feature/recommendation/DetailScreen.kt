@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +37,7 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
+import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.feature.recommendation.components.IncentiveRow
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
@@ -53,17 +55,31 @@ internal fun DetailScreen(
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val course = RecommendationSampleData.courses.getOrNull(viewModel.courseIndex)
 
     val snackbarHostState = remember { SnackbarHostState() }
     val saveConfirmationMessage = stringResource(R.string.recommendation_snackbar_save_confirmation)
+    val saveErrorMessage = stringResource(R.string.recommendation_snackbar_save_error)
     val tourStubMessage = stringResource(R.string.recommendation_snackbar_tour_stub)
     val incentiveStubMessage = stringResource(R.string.recommendation_snackbar_incentive_stub)
+    val retryActionLabel = stringResource(R.string.recommendation_action_retry)
+    val courseNotFoundMessage = stringResource(R.string.recommendation_error_course_not_found)
+    val emptyPlacesMessage = stringResource(R.string.recommendation_error_empty_places)
+    val genericLoadErrorMessage = stringResource(R.string.recommendation_error_generic_detail)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
+                is RecommendationDetailSideEffect.ShowLoadError -> {
+                    val message = when (effect.reason) {
+                        DetailLoadErrorReason.CourseNotFound -> courseNotFoundMessage
+                        DetailLoadErrorReason.EmptyPlaces -> emptyPlacesMessage
+                        DetailLoadErrorReason.Unknown -> genericLoadErrorMessage
+                    }
+                    val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
+                    if (result == SnackbarResult.ActionPerformed) viewModel.retry()
+                }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
+                RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
                 RecommendationDetailSideEffect.ShowTourStub -> snackbarHostState.showSnackbar(tourStubMessage)
                 RecommendationDetailSideEffect.ShowIncentiveStub -> snackbarHostState.showSnackbar(incentiveStubMessage)
             }
@@ -71,7 +87,6 @@ internal fun DetailScreen(
     }
 
     DetailScreenContent(
-        course = course,
         state = state,
         snackbarHostState = snackbarHostState,
         onBack = onBack,
@@ -86,7 +101,6 @@ internal fun DetailScreen(
 
 @Composable
 private fun DetailScreenContent(
-    course: RecommendedCourse?,
     state: RecommendationDetailUiState,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
@@ -128,7 +142,7 @@ private fun DetailScreenContent(
                 Spacer(modifier = Modifier.height(18.dp))
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    Text(text = course?.name.orEmpty(), color = Ink, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                    Text(text = state.title, color = Ink, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
@@ -141,7 +155,7 @@ private fun DetailScreenContent(
                 Spacer(modifier = Modifier.height(14.dp))
 
                 Timeline(
-                    stops = RecommendationSampleData.stops,
+                    stops = state.stops,
                     expandedIndices = state.expandedStopIndices,
                     playingStopIndex = state.playingStopIndex,
                     onToggle = onStopClick,
@@ -160,7 +174,7 @@ private fun DetailScreenContent(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Column {
-                        RecommendationSampleData.incentives.fastForEachIndexed { index, incentive ->
+                        RecommendationStubData.incentives.fastForEachIndexed { index, incentive ->
                             if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
                             IncentiveRow(incentive = incentive, onClick = onIncentiveClick)
                         }
@@ -168,11 +182,13 @@ private fun DetailScreenContent(
                 }
             }
 
-            RecommendationCtaBar(
-                isSaved = state.isSaved,
-                onSaveClick = onSaveClick,
-                onTourStartClick = onTourStartClick,
-            )
+            if (state.stops.isNotEmpty()) {
+                RecommendationCtaBar(
+                    isSaved = state.isSaved,
+                    onSaveClick = onSaveClick,
+                    onTourStartClick = onTourStartClick,
+                )
+            }
         }
 
         SnackbarHost(
@@ -181,6 +197,10 @@ private fun DetailScreenContent(
                 .align(Alignment.BottomCenter)
                 .windowInsetsPadding(WindowInsets.navigationBars),
         )
+
+        if (state.isLoading) {
+            LbLoadingOverlay()
+        }
     }
 }
 
@@ -188,8 +208,11 @@ private fun DetailScreenContent(
 @Composable
 private fun DetailScreenPreview() {
     DetailScreenContent(
-        course = RecommendationSampleData.courses.firstOrNull(),
-        state = RecommendationDetailUiState(expandedStopIndices = persistentSetOf(0, 2)),
+        state = RecommendationDetailUiState(
+            isLoading = false,
+            title = "전라북도 임실군 골목 미식 코스",
+            expandedStopIndices = persistentSetOf(0, 2),
+        ),
         snackbarHostState = remember { SnackbarHostState() },
         onBack = {},
         onStopClick = {},
