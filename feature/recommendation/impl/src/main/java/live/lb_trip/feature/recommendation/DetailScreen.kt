@@ -76,7 +76,9 @@ internal fun DetailScreen(
                         DetailLoadErrorReason.Unknown -> genericLoadErrorMessage
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) viewModel.retry()
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.onIntent(RecommendationDetailIntent.Retry)
+                    }
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
                 RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
@@ -90,11 +92,7 @@ internal fun DetailScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onBack = onBack,
-        onStopClick = viewModel::toggleStopExpanded,
-        onTogglePlayback = viewModel::toggleAudioPlayback,
-        onSaveClick = viewModel::saveCourse,
-        onTourStartClick = viewModel::onTourStartClicked,
-        onIncentiveClick = viewModel::onIncentiveClicked,
+        onIntent = viewModel::onIntent,
         modifier = modifier,
     )
 }
@@ -104,11 +102,7 @@ private fun DetailScreenContent(
     state: RecommendationDetailUiState,
     snackbarHostState: SnackbarHostState,
     onBack: () -> Unit,
-    onStopClick: (Int) -> Unit,
-    onTogglePlayback: (Int) -> Unit,
-    onSaveClick: () -> Unit,
-    onTourStartClick: () -> Unit,
-    onIncentiveClick: () -> Unit,
+    onIntent: (RecommendationDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -158,8 +152,8 @@ private fun DetailScreenContent(
                     stops = state.stops,
                     expandedIndices = state.expandedStopIndices,
                     playingStopIndex = state.playingStopIndex,
-                    onToggle = onStopClick,
-                    onTogglePlayback = onTogglePlayback,
+                    onToggle = { onIntent(RecommendationDetailIntent.StopToggled(it)) },
+                    onTogglePlayback = { onIntent(RecommendationDetailIntent.PlaybackToggled(it)) },
                 )
 
                 Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -176,7 +170,10 @@ private fun DetailScreenContent(
                     Column {
                         RecommendationStubData.incentives.fastForEachIndexed { index, incentive ->
                             if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
-                            IncentiveRow(incentive = incentive, onClick = onIncentiveClick)
+                            IncentiveRow(
+                                incentive = incentive,
+                                onClick = { onIntent(RecommendationDetailIntent.IncentiveClicked) },
+                            )
                         }
                     }
                 }
@@ -185,8 +182,8 @@ private fun DetailScreenContent(
             if (state.stops.isNotEmpty()) {
                 RecommendationCtaBar(
                     isSaved = state.isSaved,
-                    onSaveClick = onSaveClick,
-                    onTourStartClick = onTourStartClick,
+                    onSaveClick = { onIntent(RecommendationDetailIntent.SaveClicked) },
+                    onTourStartClick = { onIntent(RecommendationDetailIntent.TourStartClicked) },
                 )
             }
         }
@@ -215,10 +212,6 @@ private fun DetailScreenPreview() {
         ),
         snackbarHostState = remember { SnackbarHostState() },
         onBack = {},
-        onStopClick = {},
-        onTogglePlayback = {},
-        onSaveClick = {},
-        onTourStartClick = {},
-        onIncentiveClick = {},
+        onIntent = {},
     )
 }

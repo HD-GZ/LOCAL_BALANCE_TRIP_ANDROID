@@ -74,7 +74,7 @@ internal fun RegionScreen(
                         RegionLoadErrorReason.Unknown -> genericErrorMessage
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) viewModel.retry()
+                    if (result == SnackbarResult.ActionPerformed) viewModel.onIntent(RegionIntent.Retry)
                 }
             }
         }

@@ -67,13 +67,7 @@ import live.lb_trip.domain.model.Gender
 internal fun SignupAccountInfoScreen(
     state: SignupUiState,
     onBack: () -> Unit,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onTogglePasswordVisibility: () -> Unit,
-    onPasswordConfirmChange: (String) -> Unit,
-    onToggleConfirmPasswordVisibility: () -> Unit,
-    onNextStep: () -> Unit,
-    onNavigateToSignin: () -> Unit,
+    onIntent: (SignupIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -114,7 +108,7 @@ internal fun SignupAccountInfoScreen(
                 LbInputField(
                     required = true,
                     value = state.email,
-                    onValueChange = onEmailChange,
+                    onValueChange = { onIntent(SignupIntent.EmailChanged(it)) },
                     label = "이메일",
                     placeholder = "local@email.com",
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -122,7 +116,7 @@ internal fun SignupAccountInfoScreen(
                 LbInputField(
                     required = true,
                     value = state.password,
-                    onValueChange = onPasswordChange,
+                    onValueChange = { onIntent(SignupIntent.PasswordChanged(it)) },
                     label = "비밀번호",
                     placeholder = "영문·숫자 8자 이상",
                     hintText = "영문·숫자 포함 8자 이상",
@@ -130,7 +124,7 @@ internal fun SignupAccountInfoScreen(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
                         IconButton(
-                            onClick = onTogglePasswordVisibility,
+                            onClick = { onIntent(SignupIntent.TogglePasswordVisibility) },
                             modifier = Modifier.size(38.dp),
                         ) {
                             Icon(
@@ -144,14 +138,14 @@ internal fun SignupAccountInfoScreen(
                 LbInputField(
                     required = true,
                     value = state.passwordConfirm,
-                    onValueChange = onPasswordConfirmChange,
+                    onValueChange = { onIntent(SignupIntent.PasswordConfirmChanged(it)) },
                     label = "비밀번호 확인",
                     placeholder = "다시 입력",
                     visualTransformation = if (state.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
                         IconButton(
-                            onClick = onToggleConfirmPasswordVisibility,
+                            onClick = { onIntent(SignupIntent.ToggleConfirmPasswordVisibility) },
                             modifier = Modifier.size(38.dp),
                         ) {
                             Icon(
@@ -180,7 +174,7 @@ internal fun SignupAccountInfoScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             LbButton(
-                onClick = onNextStep,
+                onClick = { onIntent(SignupIntent.AccountInfoNextStepClicked) },
                 enabled = isAccountInfoValid && !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -203,7 +197,7 @@ internal fun SignupAccountInfoScreen(
                 },
                 color = LbColors.Ink2,
                 fontSize = 13.sp,
-                modifier = Modifier.clickable(onClick = onNavigateToSignin),
+                modifier = Modifier.clickable { onIntent(SignupIntent.NavigateToSigninClicked) },
             )
         }
     }
@@ -213,16 +207,7 @@ internal fun SignupAccountInfoScreen(
 internal fun SignupPersonalInfoScreen(
     state: SignupUiState,
     onBack: () -> Unit,
-    onNameChange: (String) -> Unit,
-    onBirthYearChange: (String) -> Unit,
-    onBirthMonthChange: (Int) -> Unit,
-    onBirthDayChange: (String) -> Unit,
-    onGenderChange: (Gender) -> Unit,
-    onToggleTos: () -> Unit,
-    onTogglePrivacy: () -> Unit,
-    onToggleMarketing: () -> Unit,
-    onToggleAllTerms: () -> Unit,
-    onNextStep: () -> Unit,
+    onIntent: (SignupIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -264,7 +249,7 @@ internal fun SignupPersonalInfoScreen(
             LbInputField(
                 required = true,
                 value = state.name,
-                onValueChange = onNameChange,
+                onValueChange = { onIntent(SignupIntent.NameChanged(it)) },
                 label = "이름",
                 placeholder = "홍길동",
             )
@@ -274,9 +259,9 @@ internal fun SignupPersonalInfoScreen(
                 year = state.birthYear,
                 month = state.birthMonth,
                 day = state.birthDay,
-                onYearChange = onBirthYearChange,
-                onMonthChange = onBirthMonthChange,
-                onDayChange = onBirthDayChange,
+                onYearChange = { onIntent(SignupIntent.BirthYearChanged(it)) },
+                onMonthChange = { onIntent(SignupIntent.BirthMonthChanged(it)) },
+                onDayChange = { onIntent(SignupIntent.BirthDayChanged(it)) },
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -293,7 +278,7 @@ internal fun SignupPersonalInfoScreen(
                 )
                 GenderSegmented(
                     selected = state.gender,
-                    onSelect = onGenderChange,
+                    onSelect = { onIntent(SignupIntent.GenderChanged(it)) },
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -302,10 +287,10 @@ internal fun SignupPersonalInfoScreen(
                 termsAgreed = state.termsAgreed,
                 privacyAgreed = state.privacyAgreed,
                 marketingAgreed = state.marketingAgreed,
-                onToggleTos = onToggleTos,
-                onTogglePrivacy = onTogglePrivacy,
-                onToggleMarketing = onToggleMarketing,
-                onToggleAll = onToggleAllTerms,
+                onToggleTos = { onIntent(SignupIntent.ToggleTos) },
+                onTogglePrivacy = { onIntent(SignupIntent.TogglePrivacy) },
+                onToggleMarketing = { onIntent(SignupIntent.ToggleMarketing) },
+                onToggleAll = { onIntent(SignupIntent.ToggleAllTerms) },
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -325,7 +310,7 @@ internal fun SignupPersonalInfoScreen(
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         ) {
             LbButton(
-                onClick = onNextStep,
+                onClick = { onIntent(SignupIntent.PersonalInfoNextStepClicked) },
                 enabled = isPersonalInfoValid && !state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -636,9 +621,7 @@ private fun AgreeCheckbox(checked: Boolean) {
 internal fun SignupEmailVerifyScreen(
     state: SignupUiState,
     onBack: () -> Unit,
-    onCodeChange: (String) -> Unit,
-    onResendCode: () -> Unit,
-    onConfirmCode: () -> Unit,
+    onIntent: (SignupIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val minutes = state.remainingSeconds / 60
@@ -686,7 +669,7 @@ internal fun SignupEmailVerifyScreen(
             Spacer(modifier = Modifier.height(61.dp))
             OtpInputField(
                 code = state.code,
-                onCodeChange = onCodeChange,
+                onCodeChange = { onIntent(SignupIntent.CodeChanged(it)) },
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(
@@ -712,7 +695,7 @@ internal fun SignupEmailVerifyScreen(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             LbButton(
-                onClick = onResendCode,
+                onClick = { onIntent(SignupIntent.ResendCodeClicked) },
                 enabled = !state.isLoading,
                 modifier = Modifier
                     .weight(1f)
@@ -728,7 +711,7 @@ internal fun SignupEmailVerifyScreen(
                 )
             }
             LbButton(
-                onClick = onConfirmCode,
+                onClick = { onIntent(SignupIntent.ConfirmCodeClicked) },
                 enabled = isCodeComplete && !state.isLoading,
                 modifier = Modifier
                     .weight(1f)
@@ -749,7 +732,7 @@ internal fun SignupEmailVerifyScreen(
 @Composable
 internal fun SignupCompleteScreen(
     state: SignupUiState,
-    onNavigateToSignin: () -> Unit,
+    onIntent: (SignupIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -814,7 +797,7 @@ internal fun SignupCompleteScreen(
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         ) {
             LbButton(
-                onClick = onNavigateToSignin,
+                onClick = { onIntent(SignupIntent.NavigateToSigninClicked) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(54.dp),
@@ -976,13 +959,7 @@ private fun SignupAccountInfoPreview() {
     SignupAccountInfoScreen(
         state = SignupUiState(),
         onBack = {},
-        onEmailChange = {},
-        onPasswordChange = {},
-        onTogglePasswordVisibility = {},
-        onPasswordConfirmChange = {},
-        onToggleConfirmPasswordVisibility = {},
-        onNextStep = {},
-        onNavigateToSignin = {},
+        onIntent = {},
     )
 }
 
@@ -992,16 +969,7 @@ private fun SignupPersonalInfoPreview() {
     SignupPersonalInfoScreen(
         state = SignupUiState(),
         onBack = {},
-        onNameChange = {},
-        onBirthYearChange = {},
-        onBirthMonthChange = {},
-        onBirthDayChange = {},
-        onGenderChange = {},
-        onToggleTos = {},
-        onTogglePrivacy = {},
-        onToggleMarketing = {},
-        onToggleAllTerms = {},
-        onNextStep = {},
+        onIntent = {},
     )
 }
 
@@ -1011,9 +979,7 @@ private fun SignupEmailVerifyPreview() {
     SignupEmailVerifyScreen(
         state = SignupUiState(email = "local@email.com"),
         onBack = {},
-        onCodeChange = {},
-        onResendCode = {},
-        onConfirmCode = {},
+        onIntent = {},
     )
 }
 
@@ -1022,6 +988,6 @@ private fun SignupEmailVerifyPreview() {
 private fun SignupCompletePreview() {
     SignupCompleteScreen(
         state = SignupUiState(name = "여행자"),
-        onNavigateToSignin = {},
+        onIntent = {},
     )
 }

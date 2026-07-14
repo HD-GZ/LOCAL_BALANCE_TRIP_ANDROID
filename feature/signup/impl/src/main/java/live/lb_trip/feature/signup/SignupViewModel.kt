@@ -8,7 +8,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.auth.LbTripAuthException
-import live.lb_trip.domain.model.Gender
 import live.lb_trip.domain.usecase.CheckEmailAvailabilityUseCase
 import live.lb_trip.domain.usecase.ConfirmEmailVerificationUseCase
 import live.lb_trip.domain.usecase.ResendEmailVerificationUseCase
@@ -20,28 +19,60 @@ class SignupViewModel @Inject constructor(
     private val checkEmailAvailabilityUseCase: CheckEmailAvailabilityUseCase,
     private val confirmEmailVerificationUseCase: ConfirmEmailVerificationUseCase,
     private val resendEmailVerificationUseCase: ResendEmailVerificationUseCase,
-) : BaseViewModel<SignupUiState, SignupSideEffect>(SignupUiState()) {
+) : BaseViewModel<SignupUiState, SignupIntent, SignupSideEffect>(SignupUiState()) {
 
     private var timerJob: Job? = null
 
-    fun leaveEmailVerifyStep() {
-        timerJob?.cancel()
+    override fun onIntent(intent: SignupIntent) {
+        when (intent) {
+            is SignupIntent.AccountInfo -> handleAccountInfoIntent(intent)
+            is SignupIntent.PersonalInfo -> handlePersonalInfoIntent(intent)
+            is SignupIntent.EmailVerify -> handleEmailVerifyIntent(intent)
+            SignupIntent.NavigateToSigninClicked -> postSideEffect(SignupSideEffect.NavigateToSignin)
+        }
     }
 
-    fun updateEmail(email: String) = updateState { it.copy(email = email) }
+    private fun handleAccountInfoIntent(intent: SignupIntent.AccountInfo) {
+        when (intent) {
+            is SignupIntent.EmailChanged -> updateState { it.copy(email = intent.value) }
+            is SignupIntent.PasswordChanged -> updateState { it.copy(password = intent.value) }
+            SignupIntent.TogglePasswordVisibility ->
+                updateState { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+            is SignupIntent.PasswordConfirmChanged -> updateState { it.copy(passwordConfirm = intent.value) }
+            SignupIntent.ToggleConfirmPasswordVisibility ->
+                updateState { it.copy(isConfirmPasswordVisible = !it.isConfirmPasswordVisible) }
+            SignupIntent.AccountInfoNextStepClicked -> checkEmailAndProceed()
+        }
+    }
 
-    fun updatePassword(password: String) = updateState { it.copy(password = password) }
+    private fun handlePersonalInfoIntent(intent: SignupIntent.PersonalInfo) {
+        when (intent) {
+            is SignupIntent.NameChanged -> updateState { it.copy(name = intent.value) }
+            is SignupIntent.BirthYearChanged -> updateState { it.copy(birthYear = intent.value) }
+            is SignupIntent.BirthMonthChanged -> updateState { it.copy(birthMonth = intent.value) }
+            is SignupIntent.BirthDayChanged -> updateState { it.copy(birthDay = intent.value) }
+            is SignupIntent.GenderChanged -> updateState { it.copy(gender = intent.value) }
+            SignupIntent.ToggleTos -> updateState { it.copy(termsAgreed = !it.termsAgreed) }
+            SignupIntent.TogglePrivacy -> updateState { it.copy(privacyAgreed = !it.privacyAgreed) }
+            SignupIntent.ToggleMarketing -> updateState { it.copy(marketingAgreed = !it.marketingAgreed) }
+            SignupIntent.ToggleAllTerms -> updateState {
+                val allOn = it.termsAgreed && it.privacyAgreed && it.marketingAgreed
+                it.copy(termsAgreed = !allOn, privacyAgreed = !allOn, marketingAgreed = !allOn)
+            }
+            SignupIntent.PersonalInfoNextStepClicked -> submitPersonalInfo()
+        }
+    }
 
-    fun updatePasswordConfirm(passwordConfirm: String) =
-        updateState { it.copy(passwordConfirm = passwordConfirm) }
+    private fun handleEmailVerifyIntent(intent: SignupIntent.EmailVerify) {
+        when (intent) {
+            is SignupIntent.CodeChanged -> updateState { it.copy(code = intent.value) }
+            SignupIntent.ResendCodeClicked -> resendCode()
+            SignupIntent.ConfirmCodeClicked -> confirmCode()
+            SignupIntent.EmailVerifyStepLeft -> timerJob?.cancel()
+        }
+    }
 
-    fun togglePasswordVisibility() =
-        updateState { it.copy(isPasswordVisible = !it.isPasswordVisible) }
-
-    fun toggleConfirmPasswordVisibility() =
-        updateState { it.copy(isConfirmPasswordVisible = !it.isConfirmPasswordVisible) }
-
-    fun checkEmailAndProceed() {
+    private fun checkEmailAndProceed() {
         viewModelScope.launch {
             val email = currentState.email
             updateState { it.copy(isLoading = true, errorMessage = null) }
@@ -60,7 +91,7 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    fun submitPersonalInfo() {
+    private fun submitPersonalInfo() {
         viewModelScope.launch {
             val current = currentState
             updateState { it.copy(isLoading = true, errorMessage = null) }
@@ -108,30 +139,7 @@ class SignupViewModel @Inject constructor(
         else -> null
     }
 
-    fun updateName(name: String) = updateState { it.copy(name = name) }
-
-    fun updateBirthYear(year: String) = updateState { it.copy(birthYear = year) }
-
-    fun updateBirthMonth(month: Int) = updateState { it.copy(birthMonth = month) }
-
-    fun updateBirthDay(day: String) = updateState { it.copy(birthDay = day) }
-
-    fun updateGender(gender: Gender) = updateState { it.copy(gender = gender) }
-
-    fun toggleTos() = updateState { it.copy(termsAgreed = !it.termsAgreed) }
-
-    fun togglePrivacy() = updateState { it.copy(privacyAgreed = !it.privacyAgreed) }
-
-    fun toggleMarketing() = updateState { it.copy(marketingAgreed = !it.marketingAgreed) }
-
-    fun toggleAllTerms() = updateState {
-        val allOn = it.termsAgreed && it.privacyAgreed && it.marketingAgreed
-        it.copy(termsAgreed = !allOn, privacyAgreed = !allOn, marketingAgreed = !allOn)
-    }
-
-    fun updateCode(code: String) = updateState { it.copy(code = code) }
-
-    fun resendCode() {
+    private fun resendCode() {
         viewModelScope.launch {
             val email = currentState.email
             updateState { it.copy(isLoading = true, errorMessage = null) }
@@ -147,7 +155,7 @@ class SignupViewModel @Inject constructor(
         }
     }
 
-    fun confirmCode() {
+    private fun confirmCode() {
         viewModelScope.launch {
             val code = currentState.code
             updateState { it.copy(isLoading = true, errorMessage = null) }
@@ -168,8 +176,6 @@ class SignupViewModel @Inject constructor(
             updateState { it.copy(isLoading = false) }
         }
     }
-
-    fun navigateToSignin() = postSideEffect(SignupSideEffect.NavigateToSignin)
 
     private fun startTimer() {
         timerJob?.cancel()

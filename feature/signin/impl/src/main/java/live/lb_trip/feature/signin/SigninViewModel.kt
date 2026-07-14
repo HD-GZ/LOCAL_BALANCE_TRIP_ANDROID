@@ -11,21 +11,19 @@ import live.lb_trip.domain.usecase.LoginUseCase
 @HiltViewModel
 class SigninViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-) : BaseViewModel<SigninUiState, Nothing>(SigninUiState()) {
+) : BaseViewModel<SigninUiState, SigninIntent, Nothing>(SigninUiState()) {
 
-    fun updateEmail(email: String) {
-        updateState { it.copy(email = email) }
+    override fun onIntent(intent: SigninIntent) {
+        when (intent) {
+            is SigninIntent.EmailChanged -> updateState { it.copy(email = intent.value) }
+            is SigninIntent.PasswordChanged -> updateState { it.copy(password = intent.value) }
+            SigninIntent.TogglePasswordVisibility ->
+                updateState { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+            SigninIntent.LoginClicked -> login()
+        }
     }
 
-    fun updatePassword(password: String) {
-        updateState { it.copy(password = password) }
-    }
-
-    fun togglePasswordVisibility() {
-        updateState { it.copy(isPasswordVisible = !it.isPasswordVisible) }
-    }
-
-    fun login() {
+    private fun login() {
         viewModelScope.launch {
             updateState { it.copy(isLoading = true, errorMessage = null) }
             loginUseCase(email = currentState.email, password = currentState.password)

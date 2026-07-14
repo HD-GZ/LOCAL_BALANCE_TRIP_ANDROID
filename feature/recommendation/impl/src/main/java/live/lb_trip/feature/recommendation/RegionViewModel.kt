@@ -16,14 +16,16 @@ class RegionViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val createRecommendationsUseCase: CreateRecommendationsUseCase,
     private val getRecommendedRegionsUseCase: GetRecommendedRegionsUseCase,
-) : BaseViewModel<RegionUiState, RegionSideEffect>(RegionUiState()) {
+) : BaseViewModel<RegionUiState, RegionIntent, RegionSideEffect>(RegionUiState()) {
 
     init {
         viewModelScope.launch { loadRegions() }
     }
 
-    fun retry() {
-        viewModelScope.launch { loadRegions() }
+    override fun onIntent(intent: RegionIntent) {
+        when (intent) {
+            RegionIntent.Retry -> viewModelScope.launch { loadRegions() }
+        }
     }
 
     private suspend fun loadRegions() {

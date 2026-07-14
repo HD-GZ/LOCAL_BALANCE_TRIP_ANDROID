@@ -157,29 +157,50 @@ fun NavGraphBuilder.<name>Screen(
 }
 ```
 
-## Step 4 (Optional): Create ViewModel and state classes
+## Step 4 (Optional): Create ViewModel, Intent, and state classes
 
-Only create these files if the user says the feature needs state management or business logic. Both go in the `impl` module.
+Only create these files if the user says the feature needs state management or business logic. All go in the `impl` module.
+
+This project uses an orthodox MVI shape: all ViewModels extend `live.lb_trip.core.viewmodel.BaseViewModel<State, Intent, SideEffect>` (in the `:core` module — add `implementation(projects.core)` to the impl module's dependencies if not already present). The View never calls individual ViewModel methods; it only ever dispatches a sealed `Intent` through a single `onIntent` entry point. One-off events (navigation, snackbars) go through `SideEffect`, not `Intent`.
+
+**Important:** detekt's `EmptyWhenBlock` rule is active in this repo. You MUST fill in `<Name>Intent`'s real cases (based on what the user says the feature needs) and write a real branch for each in `onIntent` before finishing — never leave the `when` in `onIntent` containing only comments/placeholders, or detekt will fail on the scaffolded feature.
+
+**`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>Intent.kt`**
+```kotlin
+package live.lb_trip.feature.<name>
+
+sealed interface <Name>Intent {
+    // Replace with one entry per real user action, e.g.:
+    // data class NameChanged(val value: String) : <Name>Intent
+    // data object SubmitClicked : <Name>Intent
+}
+```
 
 **`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>ViewModel.kt`**
 ```kotlin
 package live.lb_trip.feature.<name>
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import javax.inject.Inject
+import live.lb_trip.core.viewmodel.BaseViewModel
 
 @HiltViewModel
 class <Name>ViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-) : ViewModel() {
-    private val _uiState = MutableStateFlow(<Name>UiState())
-    val uiState: StateFlow<<Name>UiState> = _uiState
+) : BaseViewModel<<Name>UiState, <Name>Intent, <Name>SideEffect>(<Name>UiState()) {
+
+    override fun onIntent(intent: <Name>Intent) {
+        when (intent) {
+            // Replace with one real branch per <Name>Intent case above, e.g.:
+            // is <Name>Intent.NameChanged -> updateState { it.copy(name = intent.value) }
+            // <Name>Intent.SubmitClicked -> submit()
+        }
+    }
 }
 ```
+
+If the user hasn't specified any concrete actions yet, ask what the feature needs to do rather than leaving `<Name>Intent` and `onIntent` as empty stubs.
 
 **`feature/<name>/impl/src/main/java/live/lb_trip/feature/<name>/<Name>UiState.kt`**
 ```kotlin
@@ -189,7 +210,15 @@ data class <Name>UiState(
     val isLoading: Boolean = false,
     val error: String? = null,
 )
+
+sealed interface <Name>SideEffect {
+    // data object NavigateToNext : <Name>SideEffect
+}
 ```
+
+In the Screen composable, collapse per-field callbacks into a single `onIntent: (<Name>Intent) -> Unit` parameter (pure-navigation callbacks like `onBack` that never touch the ViewModel stay as separate plain lambdas). In the `<Name>Navigation.kt` destination, wire `onIntent = viewModel::onIntent` and collect `viewModel.sideEffect` in a `LaunchedEffect` to react to navigation/one-off events.
+
+If the ViewModel has more than ~5-6 intent cases, group related intents under a shared sealed sub-interface (e.g. `sealed interface AccountInfo : <Name>Intent`) and dispatch to a per-group private handler function, the same way `SignupViewModel` splits `AccountInfo`/`PersonalInfo`/`EmailVerify` — this keeps `onIntent` under detekt's cyclomatic-complexity threshold.
 
 If the feature does NOT need ViewModel, mention that state/business logic can be added later using the pattern shown above.
 
