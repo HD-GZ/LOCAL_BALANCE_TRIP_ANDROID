@@ -15,7 +15,7 @@ import live.lb_trip.domain.usecase.GetRegionCoursesUseCase
 class CourseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getRegionCoursesUseCase: GetRegionCoursesUseCase,
-) : BaseViewModel<CourseUiState, CourseSideEffect>(CourseUiState()) {
+) : BaseViewModel<CourseUiState, CourseIntent, CourseSideEffect>(CourseUiState()) {
 
     private val route: CourseRoute = savedStateHandle.toRoute()
     val regionId: Long = route.regionId
@@ -25,8 +25,10 @@ class CourseViewModel @Inject constructor(
         viewModelScope.launch { loadCourses() }
     }
 
-    fun retry() {
-        viewModelScope.launch { loadCourses() }
+    override fun onIntent(intent: CourseIntent) {
+        when (intent) {
+            CourseIntent.Retry -> viewModelScope.launch { loadCourses() }
+        }
     }
 
     private suspend fun loadCourses() {

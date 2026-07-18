@@ -1,8 +1,8 @@
 package live.lb_trip.domain.usecase
 
-import javax.inject.Inject
 import live.lb_trip.domain.model.RecommendedCourse
 import live.lb_trip.domain.repository.RecommendationRepository
+import javax.inject.Inject
 
 class GetRegionCoursesUseCase @Inject constructor(
     private val recommendationRepository: RecommendationRepository,

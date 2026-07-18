@@ -72,7 +72,7 @@ internal fun CourseScreen(
                         CourseLoadErrorReason.Unknown -> genericErrorMessage
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) viewModel.retry()
+                    if (result == SnackbarResult.ActionPerformed) viewModel.onIntent(CourseIntent.Retry)
                 }
             }
         }

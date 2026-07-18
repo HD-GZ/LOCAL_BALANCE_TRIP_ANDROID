@@ -66,13 +66,7 @@ private fun AccountInfoStepDestination(
         SignupAccountInfoScreen(
             state = state,
             onBack = onBack,
-            onEmailChange = viewModel::updateEmail,
-            onPasswordChange = viewModel::updatePassword,
-            onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
-            onPasswordConfirmChange = viewModel::updatePasswordConfirm,
-            onToggleConfirmPasswordVisibility = viewModel::toggleConfirmPasswordVisibility,
-            onNextStep = viewModel::checkEmailAndProceed,
-            onNavigateToSignin = viewModel::navigateToSignin,
+            onIntent = viewModel::onIntent,
         )
     }
 }
@@ -92,16 +86,7 @@ private fun PersonalInfoStepDestination(
         SignupPersonalInfoScreen(
             state = state,
             onBack = navController::popBackStack,
-            onNameChange = viewModel::updateName,
-            onBirthYearChange = viewModel::updateBirthYear,
-            onBirthMonthChange = viewModel::updateBirthMonth,
-            onBirthDayChange = viewModel::updateBirthDay,
-            onGenderChange = viewModel::updateGender,
-            onToggleTos = viewModel::toggleTos,
-            onTogglePrivacy = viewModel::togglePrivacy,
-            onToggleMarketing = viewModel::toggleMarketing,
-            onToggleAllTerms = viewModel::toggleAllTerms,
-            onNextStep = viewModel::submitPersonalInfo,
+            onIntent = viewModel::onIntent,
         )
     }
 }
@@ -114,7 +99,7 @@ private fun EmailVerifyStepDestination(
 ) {
     val viewModel = signupSharedViewModel(navController, entry)
     DisposableEffect(Unit) {
-        onDispose { viewModel.leaveEmailVerifyStep() }
+        onDispose { viewModel.onIntent(SignupIntent.EmailVerifyStepLeft) }
     }
     SignupStepScaffold(
         viewModel = viewModel,
@@ -124,9 +109,7 @@ private fun EmailVerifyStepDestination(
         SignupEmailVerifyScreen(
             state = state,
             onBack = navController::popBackStack,
-            onCodeChange = viewModel::updateCode,
-            onResendCode = viewModel::resendCode,
-            onConfirmCode = viewModel::confirmCode,
+            onIntent = viewModel::onIntent,
         )
     }
 }
@@ -144,7 +127,7 @@ private fun CompleteStepDestination(
     ) { state ->
         SignupCompleteScreen(
             state = state,
-            onNavigateToSignin = viewModel::navigateToSignin,
+            onIntent = viewModel::onIntent,
         )
     }
 }

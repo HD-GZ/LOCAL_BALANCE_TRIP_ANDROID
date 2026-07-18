@@ -13,20 +13,27 @@ import live.lb_trip.domain.usecase.SubmitPropensityUseCase
 @HiltViewModel
 class PropensityViewModel @Inject constructor(
     private val submitPropensityUseCase: SubmitPropensityUseCase,
-) : BaseViewModel<PropensityUiState, PropensitySideEffect>(PropensityUiState()) {
+) : BaseViewModel<PropensityUiState, PropensityIntent, PropensitySideEffect>(PropensityUiState()) {
 
-    fun updateLocality(value: Int) = updateState { it.copy(locality = value) }
-    fun updateFrugality(value: Int) = updateState { it.copy(frugality = value) }
-    fun updateExperientiality(value: Int) = updateState { it.copy(experientiality = value) }
-    fun updateVitality(value: Int) = updateState { it.copy(vitality = value) }
-    fun updateSociality(value: Int) = updateState { it.copy(sociality = value) }
-    fun updateAccommodation(value: Int) = updateState { it.copy(accommodation = value) }
-    fun updateFood(value: Int) = updateState { it.copy(food = value) }
-    fun updateExperience(value: Int) = updateState { it.copy(experience = value) }
-    fun updateTransportation(value: Int) = updateState { it.copy(transportation = value) }
-    fun updateCafeExhibition(value: Int) = updateState { it.copy(cafeExhibition = value) }
+    override fun onIntent(intent: PropensityIntent) {
+        when (intent) {
+            is PropensityIntent.LocalityChanged -> updateState { it.copy(locality = intent.value) }
+            is PropensityIntent.FrugalityChanged -> updateState { it.copy(frugality = intent.value) }
+            is PropensityIntent.ExperientialityChanged -> updateState { it.copy(experientiality = intent.value) }
+            is PropensityIntent.VitalityChanged -> updateState { it.copy(vitality = intent.value) }
+            is PropensityIntent.SocialityChanged -> updateState { it.copy(sociality = intent.value) }
+            is PropensityIntent.AccommodationChanged -> updateState { it.copy(accommodation = intent.value) }
+            is PropensityIntent.FoodChanged -> updateState { it.copy(food = intent.value) }
+            is PropensityIntent.ExperienceChanged -> updateState { it.copy(experience = intent.value) }
+            is PropensityIntent.TransportationChanged -> updateState { it.copy(transportation = intent.value) }
+            is PropensityIntent.CafeExhibitionChanged -> updateState { it.copy(cafeExhibition = intent.value) }
+            PropensityIntent.SubmitAndViewResult -> submitAndViewResult()
+            PropensityIntent.RestartDiagnosis -> restartDiagnosis()
+            PropensityIntent.CourseRecommendationClicked -> postSideEffect(PropensitySideEffect.NavigateToRecommendation)
+        }
+    }
 
-    fun submitAndViewResult() {
+    private fun submitAndViewResult() {
         viewModelScope.launch {
             val current = currentState
             updateState { it.copy(isLoading = true, errorMessage = null) }
@@ -59,7 +66,7 @@ class PropensityViewModel @Inject constructor(
         }
     }
 
-    fun restartDiagnosis() {
+    private fun restartDiagnosis() {
         updateState {
             it.copy(
                 locality = 3, frugality = 3, experientiality = 3, vitality = 3, sociality = 3,
@@ -67,9 +74,6 @@ class PropensityViewModel @Inject constructor(
                 resultType = null, resultDescription = null,
             )
         }
-    }
-
-    fun onCourseRecommendationClicked() {
-        postSideEffect(PropensitySideEffect.NavigateToRecommendation)
+        postSideEffect(PropensitySideEffect.RestartToPreference)
     }
 }

@@ -41,11 +41,7 @@ private fun PreferenceStepDestination(navController: NavController, entry: NavBa
     PropensityPreferenceScreen(
         state = state,
         onBack = onBack,
-        onLocalityChange = viewModel::updateLocality,
-        onFrugalityChange = viewModel::updateFrugality,
-        onExperientialityChange = viewModel::updateExperientiality,
-        onVitalityChange = viewModel::updateVitality,
-        onSocialityChange = viewModel::updateSociality,
+        onIntent = viewModel::onIntent,
         onNextStep = { navController.navigate(ValueConsumptionRoute) },
     )
 }
@@ -66,12 +62,7 @@ private fun ValueConsumptionStepDestination(navController: NavController, entry:
     PropensityValueConsumptionScreen(
         state = state,
         onBack = navController::popBackStack,
-        onAccommodationChange = viewModel::updateAccommodation,
-        onFoodChange = viewModel::updateFood,
-        onExperienceChange = viewModel::updateExperience,
-        onTransportationChange = viewModel::updateTransportation,
-        onCafeExhibitionChange = viewModel::updateCafeExhibition,
-        onNextStep = viewModel::submitAndViewResult,
+        onIntent = viewModel::onIntent,
     )
 }
 
@@ -86,8 +77,14 @@ private fun ResultStepDestination(
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
-            if (sideEffect == PropensitySideEffect.NavigateToRecommendation) {
-                onNavigateToRecommendation()
+            when (sideEffect) {
+                PropensitySideEffect.NavigateToRecommendation -> onNavigateToRecommendation()
+                PropensitySideEffect.RestartToPreference -> {
+                    navController.navigate(PreferenceRoute) {
+                        popUpTo(PreferenceRoute) { inclusive = true }
+                    }
+                }
+                PropensitySideEffect.NavigateToResult -> Unit
             }
         }
     }
@@ -95,13 +92,7 @@ private fun ResultStepDestination(
     PropensityResultScreen(
         state = state,
         onBack = navController::popBackStack,
-        onRestartDiagnosis = {
-            viewModel.restartDiagnosis()
-            navController.navigate(PreferenceRoute) {
-                popUpTo(PreferenceRoute) { inclusive = true }
-            }
-        },
-        onCourseRecommendationClicked = viewModel::onCourseRecommendationClicked,
+        onIntent = viewModel::onIntent,
     )
 }
 

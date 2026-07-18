@@ -76,10 +76,7 @@ internal fun SigninScreen(
     SigninScreenContent(
         state = state,
         onBack = onBack,
-        onEmailChange = viewModel::updateEmail,
-        onPasswordChange = viewModel::updatePassword,
-        onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
-        onLoginClick = viewModel::login,
+        onIntent = viewModel::onIntent,
         onNavigateToSignup = onNavigateToSignup,
         modifier = modifier,
     )
@@ -89,10 +86,7 @@ internal fun SigninScreen(
 private fun SigninScreenContent(
     state: SigninUiState,
     onBack: () -> Unit,
-    onEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit,
-    onTogglePasswordVisibility: () -> Unit,
-    onLoginClick: () -> Unit,
+    onIntent: (SigninIntent) -> Unit,
     onNavigateToSignup: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -129,9 +123,9 @@ private fun SigninScreenContent(
                     email = state.email,
                     password = state.password,
                     isPasswordVisible = state.isPasswordVisible,
-                    onEmailChange = onEmailChange,
-                    onPasswordChange = onPasswordChange,
-                    onTogglePasswordVisibility = onTogglePasswordVisibility,
+                    onEmailChange = { onIntent(SigninIntent.EmailChanged(it)) },
+                    onPasswordChange = { onIntent(SigninIntent.PasswordChanged(it)) },
+                    onTogglePasswordVisibility = { onIntent(SigninIntent.TogglePasswordVisibility) },
                 )
             }
 
@@ -139,7 +133,7 @@ private fun SigninScreenContent(
 
             SigninBottomAction(
                 isLoading = state.isLoading,
-                onLoginClick = onLoginClick,
+                onLoginClick = { onIntent(SigninIntent.LoginClicked) },
                 onForgotPasswordClick = {},
                 onSignupClick = onNavigateToSignup,
             )
@@ -339,10 +333,7 @@ private fun SigninScreenPreview() {
     SigninScreenContent(
         state = SigninUiState(),
         onBack = {},
-        onEmailChange = {},
-        onPasswordChange = {},
-        onTogglePasswordVisibility = {},
-        onLoginClick = {},
+        onIntent = {},
         onNavigateToSignup = {},
     )
 }

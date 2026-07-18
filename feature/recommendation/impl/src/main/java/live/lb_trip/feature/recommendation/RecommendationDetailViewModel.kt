@@ -20,7 +20,9 @@ class RecommendationDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getCourseDetailUseCase: GetCourseDetailUseCase,
     private val saveCourseUseCase: SaveCourseUseCase,
-) : BaseViewModel<RecommendationDetailUiState, RecommendationDetailSideEffect>(RecommendationDetailUiState()) {
+) : BaseViewModel<RecommendationDetailUiState, RecommendationDetailIntent, RecommendationDetailSideEffect>(
+    RecommendationDetailUiState(),
+) {
 
     val courseId: Long = savedStateHandle.toRoute<DetailRoute>().courseId
 
@@ -28,8 +30,15 @@ class RecommendationDetailViewModel @Inject constructor(
         viewModelScope.launch { loadCourseDetail() }
     }
 
-    fun retry() {
-        viewModelScope.launch { loadCourseDetail() }
+    override fun onIntent(intent: RecommendationDetailIntent) {
+        when (intent) {
+            is RecommendationDetailIntent.StopToggled -> toggleStopExpanded(intent.index)
+            is RecommendationDetailIntent.PlaybackToggled -> toggleAudioPlayback(intent.stopIndex)
+            RecommendationDetailIntent.SaveClicked -> saveCourse()
+            RecommendationDetailIntent.TourStartClicked -> postSideEffect(RecommendationDetailSideEffect.ShowTourStub)
+            RecommendationDetailIntent.IncentiveClicked -> postSideEffect(RecommendationDetailSideEffect.ShowIncentiveStub)
+            RecommendationDetailIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
+        }
     }
 
     private suspend fun loadCourseDetail() {
@@ -53,7 +62,7 @@ class RecommendationDetailViewModel @Inject constructor(
             }
     }
 
-    fun toggleStopExpanded(index: Int) {
+    private fun toggleStopExpanded(index: Int) {
         updateState {
             val isCollapsing = index in it.expandedStopIndices
             it.copy(
@@ -67,13 +76,13 @@ class RecommendationDetailViewModel @Inject constructor(
         }
     }
 
-    fun toggleAudioPlayback(stopIndex: Int) {
+    private fun toggleAudioPlayback(stopIndex: Int) {
         updateState {
             it.copy(playingStopIndex = if (it.playingStopIndex == stopIndex) null else stopIndex)
         }
     }
 
-    fun saveCourse() {
+    private fun saveCourse() {
         if (currentState.stops.isEmpty() || currentState.isSaved || currentState.isSaving) return
         viewModelScope.launch {
             updateState { it.copy(isSaving = true) }
@@ -89,13 +98,6 @@ class RecommendationDetailViewModel @Inject constructor(
         }
     }
 
-    fun onTourStartClicked() {
-        postSideEffect(RecommendationDetailSideEffect.ShowTourStub)
-    }
-
-    fun onIncentiveClicked() {
-        postSideEffect(RecommendationDetailSideEffect.ShowIncentiveStub)
-    }
 }
 
 private fun CoursePlace.toCourseStop(): CourseStop = CourseStop(

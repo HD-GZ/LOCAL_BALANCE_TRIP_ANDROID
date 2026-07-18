@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<State, SideEffect>(initialState: State) : ViewModel() {
+abstract class BaseViewModel<State, Intent, SideEffect>(initialState: State) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialState)
     val uiState: StateFlow<State> = _uiState.asStateFlow()
@@ -29,4 +29,6 @@ abstract class BaseViewModel<State, SideEffect>(initialState: State) : ViewModel
     protected fun postSideEffect(sideEffect: SideEffect) {
         viewModelScope.launch { _sideEffect.send(sideEffect) }
     }
+
+    abstract fun onIntent(intent: Intent)
 }
