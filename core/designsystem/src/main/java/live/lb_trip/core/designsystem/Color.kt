@@ -26,6 +26,7 @@ object LbColors {
     val SurfaceBar = Color(0xFFEFEDE5)
 
     val Green = Color(0xFF3C875F)
+    val GreenDeep = Color(0xFF2F6F4F)
     val GreenHover = Color(0xFF347452)
     val GreenDk = Color(0xFF266143)
     val GreenForest = Color(0xFF1C4631)
