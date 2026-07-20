@@ -2,6 +2,8 @@ package live.lb_trip.feature.home
 
 import android.app.Activity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,8 +33,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -42,12 +47,17 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.PersistentList
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
@@ -68,6 +78,32 @@ private val HeroBodyText = Color(0xD1FFFFFF)
 internal fun HomeScreen(
     onStartDiagnosisClick: () -> Unit,
     onMyInfoClick: () -> Unit,
+    onSavedCourseClick: (Long) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LifecycleResumeEffect(Unit) {
+        viewModel.onIntent(HomeIntent.RefreshSavedCourses)
+        onPauseOrDispose { }
+    }
+
+    HomeScreenContent(
+        state = state,
+        onStartDiagnosisClick = onStartDiagnosisClick,
+        onMyInfoClick = onMyInfoClick,
+        onSavedCourseClick = onSavedCourseClick,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun HomeScreenContent(
+    state: HomeUiState,
+    onStartDiagnosisClick: () -> Unit,
+    onMyInfoClick: () -> Unit,
+    onSavedCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -88,8 +124,15 @@ internal fun HomeScreen(
                 .background(BodyBackground)
                 .verticalScroll(rememberScrollState())
                 .padding(vertical = 22.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             HomeDiagnosisHero(onStartDiagnosisClick = onStartDiagnosisClick)
+            if (state.savedCourses.isNotEmpty()) {
+                SavedCoursesSection(
+                    savedCourses = state.savedCourses,
+                    onSavedCourseClick = onSavedCourseClick,
+                )
+            }
         }
 
         HomeBottomTabs(onMyInfoClick = onMyInfoClick)
@@ -159,6 +202,103 @@ private fun HomeDiagnosisHero(onStartDiagnosisClick: () -> Unit, modifier: Modif
                     modifier = Modifier.padding(start = 8.dp).size(18.dp),
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SavedCoursesSection(
+    savedCourses: PersistentList<SavedCourseUi>,
+    onSavedCourseClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(9.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.home_saved_courses_title),
+                color = TextPrimary,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = stringResource(R.string.home_saved_courses_count, savedCourses.size),
+                color = Brand,
+                fontSize = 11.sp,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(100))
+                    .background(LbColors.GreenTint)
+                    .padding(horizontal = 9.dp, vertical = 2.dp),
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            savedCourses.forEach { course ->
+                SavedCourseCard(
+                    course = course,
+                    onClick = { onSavedCourseClick(course.courseId) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SavedCourseCard(
+    course: SavedCourseUi,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .width(280.dp)
+            .clip(RoundedCornerShape(15.dp))
+            .background(LbColors.Paper)
+            .clickable(onClick = onClick),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(110.dp)
+                .background(Brush.linearGradient(listOf(LbColors.GreenTint, Color(0xFFEEF4EE)))),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_route),
+                contentDescription = null,
+                tint = Brand,
+                modifier = Modifier.size(34.dp).alpha(0.72f),
+            )
+        }
+        Column(modifier = Modifier.padding(13.dp)) {
+            Text(
+                text = course.regionName,
+                color = LbColors.Ink3,
+                fontSize = 11.sp,
+            )
+            Text(
+                text = course.title,
+                color = TextPrimary,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+            Text(
+                text = stringResource(R.string.home_saved_course_stops, course.stopCount),
+                color = LbColors.Ink2,
+                fontSize = 11.5.sp,
+                modifier = Modifier.padding(top = 6.dp),
+            )
         }
     }
 }
@@ -238,5 +378,10 @@ private val HomeNavigationBarItemColors
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreen(onStartDiagnosisClick = {}, onMyInfoClick = {})
+    HomeScreenContent(
+        state = HomeUiState(),
+        onStartDiagnosisClick = {},
+        onMyInfoClick = {},
+        onSavedCourseClick = {},
+    )
 }

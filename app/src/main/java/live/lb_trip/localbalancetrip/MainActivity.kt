@@ -23,6 +23,7 @@ import live.lb_trip.feature.onboarding.OnboardingRoute
 import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
 import live.lb_trip.feature.propensity.propensityScreen
+import live.lb_trip.feature.recommendation.DetailRoute
 import live.lb_trip.feature.recommendation.RecommendationRoute
 import live.lb_trip.feature.recommendation.recommendationScreen
 import live.lb_trip.feature.settings.SettingsRoute
@@ -70,6 +71,7 @@ private fun MainNavGraph() {
         homeScreen(
             onStartDiagnosis = { navController.navigate(PropensityRoute) },
             onNavigateToSettings = { navController.navigate(SettingsRoute) },
+            onSavedCourseClick = { courseId -> navController.navigate(DetailRoute(courseId)) },
         )
         settingsScreen()
         propensityScreen(

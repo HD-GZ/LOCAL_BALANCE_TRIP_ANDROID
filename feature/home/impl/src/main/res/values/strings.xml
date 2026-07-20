@@ -8,4 +8,7 @@
     <string name="home_hero_description">아끼기·직접 해보기, 느긋한 쉼·알찬 체험 — 취향과 가치소비 성향을 진단해 꼭 맞는 코스를 추천해요.</string>
     <string name="home_tab_main">메인</string>
     <string name="home_tab_my_info">나의 정보</string>
+    <string name="home_saved_courses_title">저장한 코스</string>
+    <string name="home_saved_courses_count">%1$d개 저장</string>
+    <string name="home_saved_course_stops">%1$d곳</string>
 </resources>
