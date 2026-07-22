@@ -1,0 +1,17 @@
+<resources>
+    <string name="tour_back_content_description">뒤로</string>
+    <string name="tour_action_retry">재시도</string>
+
+    <string name="tour_progress_template">%1$d / %2$d 지점 완료</string>
+    <string name="tour_next_stop_label">다음 지점</string>
+    <string name="tour_last_stop_label">마지막 지점</string>
+    <string name="tour_end">종료</string>
+    <string name="tour_next_stop_arrived">다음 지점 도착</string>
+    <string name="tour_finish">투어 완료</string>
+    <string name="tour_full_route">전체 경로</string>
+    <string name="tour_walk_time_template">도보 %1$s</string>
+
+    <string name="tour_error_course_not_found">코스를 찾을 수 없어요.</string>
+    <string name="tour_error_empty_places">표시할 장소 정보가 없어요.</string>
+    <string name="tour_error_generic_detail">코스 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+</resources>
