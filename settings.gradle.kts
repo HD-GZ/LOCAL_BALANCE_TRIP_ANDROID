@@ -14,6 +14,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://repository.map.naver.com/archive/maven") }
     }
 }
 
@@ -39,3 +40,5 @@ include(":feature:propensity:api")
 include(":feature:propensity:impl")
 include(":feature:recommendation:api")
 include(":feature:recommendation:impl")
+include(":feature:tour:api")
+include(":feature:tour:impl")

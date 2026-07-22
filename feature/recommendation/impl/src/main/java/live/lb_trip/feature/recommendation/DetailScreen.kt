@@ -51,6 +51,7 @@ import live.lb_trip.feature.recommendation.components.Timeline
 @Composable
 internal fun DetailScreen(
     onBack: () -> Unit,
+    onNavigateToTour: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
 ) {
@@ -59,7 +60,6 @@ internal fun DetailScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val saveConfirmationMessage = stringResource(R.string.recommendation_snackbar_save_confirmation)
     val saveErrorMessage = stringResource(R.string.recommendation_snackbar_save_error)
-    val tourStubMessage = stringResource(R.string.recommendation_snackbar_tour_stub)
     val incentiveStubMessage = stringResource(R.string.recommendation_snackbar_incentive_stub)
     val retryActionLabel = stringResource(R.string.recommendation_action_retry)
     val courseNotFoundMessage = stringResource(R.string.recommendation_error_course_not_found)
@@ -82,7 +82,7 @@ internal fun DetailScreen(
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
                 RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
-                RecommendationDetailSideEffect.ShowTourStub -> snackbarHostState.showSnackbar(tourStubMessage)
+                is RecommendationDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.courseId)
                 RecommendationDetailSideEffect.ShowIncentiveStub -> snackbarHostState.showSnackbar(incentiveStubMessage)
             }
         }

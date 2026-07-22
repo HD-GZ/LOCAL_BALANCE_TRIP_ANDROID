@@ -1,9 +1,20 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.convention.android.application)
     alias(libs.plugins.convention.android.compose)
     alias(libs.plugins.convention.android.hilt)
     alias(libs.plugins.kotlin.serialization)
 }
+
+val localProperties =
+    Properties().apply {
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { load(it) }
+        }
+    }
+val naverMapClientId: String = localProperties.getProperty("NCP_KEY_ID", "REPLACE_WITH_NCP_KEY_ID")
 
 android {
     namespace = "live.lb_trip.localbalancetrip"
@@ -22,6 +33,7 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://api.stage.lb-trip.live\"")
+            buildConfigField("String", "NCP_KEY_ID", "\"$naverMapClientId\"")
         }
         release {
             isMinifyEnabled = true
@@ -31,6 +43,7 @@ android {
                 "proguard-rules.pro",
             )
             buildConfigField("String", "BASE_URL", "\"https://api.lb-trip.live\"")
+            buildConfigField("String", "NCP_KEY_ID", "\"$naverMapClientId\"")
         }
     }
 }
@@ -46,6 +59,8 @@ dependencies {
     implementation(projects.feature.propensity.impl)
     implementation(projects.feature.recommendation.api)
     implementation(projects.feature.recommendation.impl)
+    implementation(projects.feature.tour.api)
+    implementation(projects.feature.tour.impl)
     implementation(projects.feature.signup.api)
     implementation(projects.feature.signup.impl)
     implementation(projects.feature.signin.api)
@@ -62,6 +77,7 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.naver.map.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

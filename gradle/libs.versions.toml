@@ -24,6 +24,7 @@ annotation-experimental = "1.5.1"
 splash-screen = "1.0.1"
 navigationCompose = "2.9.5"
 collectionsImmutable = "0.5.1"
+naverMapCompose = "1.9.0"
 
 [libraries]
 android-gradle-tool = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -73,6 +74,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-annotation-experimental = { module = "androidx.annotation:annotation-experimental", version.ref = "annotation-experimental" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "splash-screen" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+naver-map-compose = { group = "io.github.fornewid", name = "naver-map-compose", version.ref = "naverMapCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

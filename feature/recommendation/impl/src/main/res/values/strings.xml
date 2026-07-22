@@ -25,7 +25,6 @@
 
     <string name="recommendation_snackbar_save_confirmation">코스를 SAVE했습니다 · 마이 &gt; SAVE에서 다시 볼 수 있어요.</string>
     <string name="recommendation_snackbar_save_error">코스 저장에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="recommendation_snackbar_tour_stub">GPS 슬로우 투어는 앱 전용 · 준비 중이에요.</string>
     <string name="recommendation_snackbar_incentive_stub">공식 채널로 이동해요.</string>
 
     <string name="recommendation_content_description_play">재생</string>
