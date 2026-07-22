@@ -61,6 +61,8 @@ dependencies {
     implementation(projects.feature.recommendation.impl)
     implementation(projects.feature.tour.api)
     implementation(projects.feature.tour.impl)
+    implementation(projects.feature.savedcourses.api)
+    implementation(projects.feature.savedcourses.impl)
     implementation(projects.feature.signup.api)
     implementation(projects.feature.signup.impl)
     implementation(projects.feature.signin.api)
