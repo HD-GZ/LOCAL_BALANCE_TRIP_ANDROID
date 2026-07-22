@@ -8,4 +8,11 @@
     <string name="home_hero_description">아끼기·직접 해보기, 느긋한 쉼·알찬 체험 — 취향과 가치소비 성향을 진단해 꼭 맞는 코스를 추천해요.</string>
     <string name="home_tab_main">메인</string>
     <string name="home_tab_my_info">나의 정보</string>
+
+    <string name="home_saved_section_title">저장한 코스</string>
+    <string name="home_saved_count_template">%1$d개 저장</string>
+    <string name="home_saved_view_all">전체보기 &gt;</string>
+
+    <string name="home_error_courses_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="home_action_retry">재시도</string>
 </resources>
