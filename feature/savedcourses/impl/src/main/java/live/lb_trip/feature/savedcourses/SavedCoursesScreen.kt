@@ -1,0 +1,268 @@
+package live.lb_trip.feature.savedcourses
+
+import android.app.Activity
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.R as DesignSystemR
+
+@Composable
+internal fun SavedCoursesScreen(
+    onBack: () -> Unit,
+    onCourseClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SavedCoursesViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val loadErrorMessage = stringResource(R.string.savedcourses_error_load)
+    val retryActionLabel = stringResource(R.string.savedcourses_action_retry)
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                SavedCoursesSideEffect.ShowLoadError -> {
+                    val result =
+                        snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.onIntent(SavedCoursesIntent.Retry)
+                    }
+                }
+            }
+        }
+    }
+
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
+    SavedCoursesScreenContent(
+        state = state,
+        snackbarHostState = snackbarHostState,
+        onBack = onBack,
+        onCourseClick = onCourseClick,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun SavedCoursesScreenContent(
+    state: SavedCoursesUiState,
+    snackbarHostState: SnackbarHostState,
+    onBack: () -> Unit,
+    onCourseClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .background(Color.White)) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            SavedCoursesAppBar(count = state.courses.size, onBackClick = onBack)
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .background(LbColors.ScreenBg),
+            ) {
+                when {
+                    state.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = LbColors.Green)
+                    }
+
+                    state.courses.isEmpty() -> Text(
+                        text = stringResource(R.string.savedcourses_empty),
+                        color = LbColors.Ink3,
+                        fontSize = 13.sp,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(horizontal = 32.dp),
+                    )
+
+                    else -> SavedCoursesList(courses = state.courses, onCourseClick = onCourseClick)
+                }
+            }
+        }
+
+        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
+    }
+}
+
+@Composable
+private fun SavedCoursesAppBar(count: Int, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier = modifier
+        .fillMaxWidth()
+        .windowInsetsPadding(WindowInsets.statusBars)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(end = 16.dp),
+        ) {
+            IconButton(onClick = onBackClick) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
+                    contentDescription = stringResource(R.string.savedcourses_back_content_description),
+                    tint = Color.Unspecified,
+                )
+            }
+            Text(
+                text = stringResource(R.string.savedcourses_title),
+                color = LbColors.Ink,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = stringResource(R.string.savedcourses_count_template, count),
+                color = LbColors.Green,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(start = 6.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SavedCoursesList(
+    courses: ImmutableList<SavedCourseSummary>,
+    onCourseClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(11.dp),
+        modifier = modifier.fillMaxSize(),
+    ) {
+        items(courses, key = { it.courseId }) { course ->
+            SavedCoursesRow(course = course, onClick = { onCourseClick(course.courseId) })
+        }
+
+        item {
+            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
+        }
+    }
+}
+
+@Composable
+private fun SavedCoursesRow(course: SavedCourseSummary, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(13.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(14.dp))
+            .background(Color.White)
+            .border(1.dp, LbColors.Line, RoundedCornerShape(14.dp))
+            .clickable(onClick = onClick)
+            .padding(12.dp),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(width = 76.dp, height = 92.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Brush.linearGradient(listOf(LbColors.GreenTint2, LbColors.GreenBlock))),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_route),
+                contentDescription = null,
+                tint = LbColors.Green,
+                modifier = Modifier.size(28.dp),
+            )
+        }
+        Column {
+            Text(
+                text = course.regionName,
+                color = LbColors.Ink3,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = course.title,
+                color = LbColors.Ink,
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 4.dp),
+            )
+            Text(
+                text = course.reason,
+                color = LbColors.Ink3,
+                fontSize = 11.sp,
+                lineHeight = 16.sp,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 6.dp),
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SavedCoursesScreenPreview() {
+    SavedCoursesScreenContent(
+        state = SavedCoursesUiState(isLoading = false, courses = persistentListOf()),
+        snackbarHostState = remember { SnackbarHostState() },
+        onBack = {},
+        onCourseClick = {},
+    )
+}
