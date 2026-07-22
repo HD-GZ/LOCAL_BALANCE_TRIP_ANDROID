@@ -22,12 +22,16 @@ fun NavGraphBuilder.recommendationScreen(
             CourseScreen(
                 onBack = navController::popBackStack,
                 onCourseSelected = { courseId ->
-                    navController.navigate(DetailRoute(courseId = courseId))
+                    navController.navigate(CourseDetailRoute(courseId = courseId))
                 },
             )
         }
-        composable<DetailRoute> {
-            DetailScreen(onBack = navController::popBackStack)
-        }
+    }
+    courseDetailScreen(navController)
+}
+
+fun NavGraphBuilder.courseDetailScreen(navController: NavController) {
+    composable<CourseDetailRoute> {
+        DetailScreen(onBack = navController::popBackStack)
     }
 }

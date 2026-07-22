@@ -24,7 +24,7 @@ class RecommendationDetailViewModel @Inject constructor(
     RecommendationDetailUiState(),
 ) {
 
-    val courseId: Long = savedStateHandle.toRoute<DetailRoute>().courseId
+    val courseId: Long = savedStateHandle.toRoute<CourseDetailRoute>().courseId
 
     init {
         viewModelScope.launch { loadCourseDetail() }
