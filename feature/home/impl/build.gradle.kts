@@ -10,4 +10,7 @@ android {
 dependencies {
     implementation(projects.feature.home.api)
     implementation(projects.core.designsystem)
+    implementation(projects.core)
+    implementation(projects.domain)
+    implementation(libs.kotlinx.collections.immutable)
 }

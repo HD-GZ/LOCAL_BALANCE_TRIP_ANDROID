@@ -75,6 +75,8 @@ private fun MainNavGraph() {
         homeScreen(
             onStartDiagnosis = { navController.navigate(PropensityRoute) },
             onNavigateToSettings = { navController.navigate(SettingsRoute) },
+            onNavigateToCourseDetail = { courseId -> navController.navigate(CourseDetailRoute(courseId)) },
+            onSavedAllClick = { navController.navigate(SavedCoursesRoute) },
         )
         savedCoursesScreen(
             onBack = navController::popBackStack,
