@@ -3,8 +3,11 @@ package live.lb_trip.feature.settings
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
-fun NavGraphBuilder.settingsScreen() {
+fun NavGraphBuilder.settingsScreen(onNavigateToMain: () -> Unit, onNavigateToSavedCourses: () -> Unit) {
     composable<SettingsRoute> {
-        SettingsScreen()
+        SettingsScreen(
+            onNavigateToMain = onNavigateToMain,
+            onNavigateToSavedCourses = onNavigateToSavedCourses,
+        )
     }
 }

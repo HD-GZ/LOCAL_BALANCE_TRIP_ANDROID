@@ -3,8 +3,10 @@ package live.lb_trip.data.repository
 import kotlinx.coroutines.flow.Flow
 import live.lb_trip.data.datasource.local.TokenDataStore
 import live.lb_trip.data.datasource.remote.UserRemoteDataSource
+import live.lb_trip.data.mapper.toDomain
 import live.lb_trip.domain.exception.user.LbTripUserException
 import live.lb_trip.domain.model.Tokens
+import live.lb_trip.domain.model.UserProfile
 import live.lb_trip.domain.repository.UserRepository
 import live.lb_trip.domain.util.mapApiFailure
 import live.lb_trip.domain.util.suspendRunCatching
@@ -30,5 +32,10 @@ class UserRepositoryImpl @Inject constructor(
             userRemoteDataSource.checkEmailAvailability(email)
         }.mapApiFailure {
             on(409, "EMAIL_UNAVAILABLE") throws LbTripUserException.EmailUnavailableException()
+        }
+
+    override suspend fun getMyProfile(): Result<UserProfile> =
+        suspendRunCatching {
+            userRemoteDataSource.getMyProfile().toDomain()
         }
 }

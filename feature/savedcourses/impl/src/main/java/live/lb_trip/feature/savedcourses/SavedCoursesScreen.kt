@@ -9,15 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -107,38 +105,35 @@ private fun SavedCoursesScreenContent(
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier
-        .fillMaxSize()
-        .background(Color.White)) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            SavedCoursesAppBar(count = state.courses.size, onBackClick = onBack)
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(LbColors.ScreenBg),
-            ) {
-                when {
-                    state.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(color = LbColors.Green)
-                    }
-
-                    state.courses.isEmpty() -> Text(
-                        text = stringResource(R.string.savedcourses_empty),
-                        color = LbColors.Ink3,
-                        fontSize = 13.sp,
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(horizontal = 32.dp),
-                    )
-
-                    else -> SavedCoursesList(courses = state.courses, onCourseClick = onCourseClick)
+    Scaffold(
+        modifier = modifier,
+        topBar = { SavedCoursesAppBar(count = state.courses.size, onBackClick = onBack) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = Color.White,
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(LbColors.ScreenBg),
+        ) {
+            when {
+                state.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = LbColors.Green)
                 }
+
+                state.courses.isEmpty() -> Text(
+                    text = stringResource(R.string.savedcourses_empty),
+                    color = LbColors.Ink3,
+                    fontSize = 13.sp,
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(horizontal = 32.dp),
+                )
+
+                else -> SavedCoursesList(courses = state.courses, onCourseClick = onCourseClick)
             }
         }
-
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
@@ -190,10 +185,6 @@ private fun SavedCoursesList(
     ) {
         items(courses, key = { it.courseId }) { course ->
             SavedCoursesRow(course = course, onClick = { onCourseClick(course.courseId) })
-        }
-
-        item {
-            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars))
         }
     }
 }

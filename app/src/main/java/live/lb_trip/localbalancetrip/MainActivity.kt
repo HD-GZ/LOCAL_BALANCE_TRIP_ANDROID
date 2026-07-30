@@ -82,7 +82,10 @@ private fun MainNavGraph() {
             onBack = navController::popBackStack,
             onCourseClick = { courseId -> navController.navigate(CourseDetailRoute(courseId)) },
         )
-        settingsScreen()
+        settingsScreen(
+            onNavigateToMain = navController::popBackStack,
+            onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute) },
+        )
         propensityScreen(
             navController = navController,
             onBack = navController::popBackStack,

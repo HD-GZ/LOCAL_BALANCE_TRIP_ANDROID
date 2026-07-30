@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -139,41 +140,38 @@ private fun HomeScreenContent(
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            HomeBrandBar()
+    Scaffold(
+        modifier = modifier,
+        topBar = { HomeBrandBar() },
+        bottomBar = { HomeBottomTabs(onMyInfoClick = onMyInfoClick) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = BodyBackground,
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 22.dp),
+        ) {
+            HomeDiagnosisHero(onStartDiagnosisClick = onStartDiagnosisClick)
 
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(BodyBackground)
-                    .verticalScroll(rememberScrollState())
-                    .padding(vertical = 22.dp),
-            ) {
-                HomeDiagnosisHero(onStartDiagnosisClick = onStartDiagnosisClick)
-
-                if (!state.isLoadingCourses && state.courses.isNotEmpty()) {
-                    HomeSavedCoursesSection(
-                        courses = state.courses,
-                        onSavedAllClick = onSavedAllClick,
-                        onCourseClick = onCourseClick,
-                        modifier = Modifier.padding(top = 26.dp),
-                    )
-                } else if (state.isLoadingCourses) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(color = Brand)
-                    }
+            if (!state.isLoadingCourses && state.courses.isNotEmpty()) {
+                HomeSavedCoursesSection(
+                    courses = state.courses,
+                    onSavedAllClick = onSavedAllClick,
+                    onCourseClick = onCourseClick,
+                    modifier = Modifier.padding(top = 26.dp),
+                )
+            } else if (state.isLoadingCourses) {
+                Box(
+                    modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = Brand)
                 }
             }
-
-            HomeBottomTabs(onMyInfoClick = onMyInfoClick)
         }
-
-        SnackbarHost(hostState = snackbarHostState, modifier = Modifier.align(Alignment.BottomCenter))
     }
 }
 
