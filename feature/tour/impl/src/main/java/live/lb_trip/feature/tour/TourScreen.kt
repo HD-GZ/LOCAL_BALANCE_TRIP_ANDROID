@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
@@ -73,6 +74,7 @@ import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.feature.tour.components.TourRouteTimeline
+import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 import live.lb_trip.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,6 +118,16 @@ internal fun TourScreen(
         SideEffect {
             val window = (view.context as Activity).window
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+        }
+    }
+
+    val hasLocationPermission = rememberFineLocationPermissionGranted()
+    LifecycleStartEffect(hasLocationPermission) {
+        if (hasLocationPermission) {
+            viewModel.onIntent(TourIntent.LocationTrackingStarted)
+        }
+        onStopOrDispose {
+            viewModel.onIntent(TourIntent.LocationTrackingStopped)
         }
     }
 

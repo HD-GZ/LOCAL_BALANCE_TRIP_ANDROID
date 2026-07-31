@@ -5,4 +5,6 @@ sealed interface TourIntent {
     data class StopSelected(val index: Int) : TourIntent
     data object EndTourClicked : TourIntent
     data object Retry : TourIntent
+    data object LocationTrackingStarted : TourIntent
+    data object LocationTrackingStopped : TourIntent
 }
