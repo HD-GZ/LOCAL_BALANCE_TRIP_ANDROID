@@ -10,4 +10,5 @@ data class SettingsUiState(
 sealed interface SettingsSideEffect {
     data object ShowLoadError : SettingsSideEffect
     data class ShowUnavailableMessage(val label: String) : SettingsSideEffect
+    data object NavigateToDiagnosis : SettingsSideEffect
 }

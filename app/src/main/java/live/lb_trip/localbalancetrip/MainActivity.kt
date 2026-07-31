@@ -88,12 +88,13 @@ private fun MainNavGraph() {
     NavHost(navController = navController, startDestination = HomeRoute) {
         composable<HomeRoute> {
             MainTabScreen(
-                onStartDiagnosis = { navController.navigate(PropensityRoute) },
+                onStartDiagnosis = { navController.navigate(PropensityRoute()) },
                 onNavigateToSavedCourseDetail = { savedCourseId ->
                     navController.navigate(SavedCourseDetailRoute(savedCourseId))
                 },
                 onSavedAllClick = { navController.navigate(SavedCoursesRoute) },
                 onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute) },
+                onRetakeDiagnosis = { navController.navigate(PropensityRoute(forceNew = true)) },
             )
         }
         savedCoursesScreen(

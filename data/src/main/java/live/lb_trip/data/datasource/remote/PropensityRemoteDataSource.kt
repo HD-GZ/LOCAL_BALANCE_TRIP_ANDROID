@@ -1,6 +1,7 @@
 package live.lb_trip.data.datasource.remote
 
 import io.ktor.client.HttpClient
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -21,4 +22,7 @@ class PropensityRemoteDataSource @Inject constructor(
             contentType(ContentType.Application.Json)
             setBody(request)
         }.bodyOrThrow()
+
+    suspend fun getPropensity(): PropensityResponseDto =
+        authClient.get("/propensity").bodyOrThrow()
 }

@@ -38,6 +38,17 @@ fun NavGraphBuilder.propensityScreen(
 private fun PreferenceStepDestination(navController: NavController, entry: NavBackStackEntry, onBack: () -> Unit) {
     val viewModel = propensitySharedViewModel(navController, entry)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            if (sideEffect == PropensitySideEffect.NavigateToResult) {
+                navController.navigate(ResultRoute) {
+                    popUpTo(PreferenceRoute) { inclusive = true }
+                }
+            }
+        }
+    }
+
     PropensityPreferenceScreen(
         state = state,
         onBack = onBack,
@@ -81,7 +92,7 @@ private fun ResultStepDestination(
                 PropensitySideEffect.NavigateToRecommendation -> onNavigateToRecommendation()
                 PropensitySideEffect.RestartToPreference -> {
                     navController.navigate(PreferenceRoute) {
-                        popUpTo(PreferenceRoute) { inclusive = true }
+                        popUpTo<PropensityRoute>()
                     }
                 }
                 PropensitySideEffect.NavigateToResult -> Unit
@@ -99,7 +110,7 @@ private fun ResultStepDestination(
 @Composable
 private fun propensitySharedViewModel(navController: NavController, entry: NavBackStackEntry): PropensityViewModel {
     val parentEntry = remember(entry) {
-        navController.getBackStackEntry(PropensityRoute)
+        navController.getBackStackEntry<PropensityRoute>()
     }
     return hiltViewModel(parentEntry)
 }

@@ -37,6 +37,7 @@ import live.lb_trip.feature.settings.components.SettingsSavedCoursesRow
 @Composable
 fun MyInfoTabContent(
     onNavigateToSavedCourses: () -> Unit,
+    onNavigateToDiagnosis: () -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -59,6 +60,8 @@ fun MyInfoTabContent(
                 is SettingsSideEffect.ShowUnavailableMessage -> {
                     snackbarHostState.showSnackbar(message = String.format(unavailableTemplate, effect.label))
                 }
+
+                SettingsSideEffect.NavigateToDiagnosis -> onNavigateToDiagnosis()
             }
         }
     }
@@ -119,7 +122,7 @@ private fun MyInfoTabContentBody(
                 label = stringResource(R.string.settings_group_label),
                 items = listOf(
                     editInfoLabel to { onIntent(SettingsIntent.MenuItemClick(editInfoLabel)) },
-                    retakeDiagnosisLabel to { onIntent(SettingsIntent.MenuItemClick(retakeDiagnosisLabel)) },
+                    retakeDiagnosisLabel to { onIntent(SettingsIntent.RetakeDiagnosisClick) },
                     licensesLabel to { onIntent(SettingsIntent.MenuItemClick(licensesLabel)) },
                     termsLabel to { onIntent(SettingsIntent.MenuItemClick(termsLabel)) },
                     privacyLabel to { onIntent(SettingsIntent.MenuItemClick(privacyLabel)) },

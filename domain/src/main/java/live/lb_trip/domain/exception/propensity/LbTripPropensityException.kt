@@ -4,4 +4,6 @@ import live.lb_trip.domain.exception.LbTripException
 
 sealed class LbTripPropensityException : LbTripException() {
     class InvalidInputException : LbTripPropensityException()
+
+    class PropensityNotFoundException : LbTripPropensityException()
 }
