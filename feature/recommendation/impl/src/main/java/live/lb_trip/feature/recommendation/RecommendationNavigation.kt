@@ -5,11 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 
-fun NavGraphBuilder.recommendationScreen(
-    navController: NavController,
-    onBack: () -> Unit,
-    onNavigateToTour: (Long) -> Unit,
-) {
+fun NavGraphBuilder.recommendationScreen(navController: NavController, onBack: () -> Unit) {
     navigation<RecommendationRoute>(startDestination = RegionRoute) {
         composable<RegionRoute> {
             RegionScreen(
@@ -28,14 +24,11 @@ fun NavGraphBuilder.recommendationScreen(
             )
         }
     }
-    courseDetailScreen(navController, onNavigateToTour)
+    courseDetailScreen(navController)
 }
 
-fun NavGraphBuilder.courseDetailScreen(navController: NavController, onNavigateToTour: (Long) -> Unit) {
+fun NavGraphBuilder.courseDetailScreen(navController: NavController) {
     composable<CourseDetailRoute> {
-        DetailScreen(
-            onBack = navController::popBackStack,
-            onNavigateToTour = onNavigateToTour,
-        )
+        DetailScreen(onBack = navController::popBackStack)
     }
 }

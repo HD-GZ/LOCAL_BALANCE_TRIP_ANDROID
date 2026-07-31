@@ -19,7 +19,6 @@ sealed interface RecommendationDetailSideEffect {
     data class ShowLoadError(val reason: DetailLoadErrorReason) : RecommendationDetailSideEffect
     data object ShowSaveConfirmation : RecommendationDetailSideEffect
     data object ShowSaveError : RecommendationDetailSideEffect
-    data class NavigateToTour(val courseId: Long) : RecommendationDetailSideEffect
     data object ShowIncentiveStub : RecommendationDetailSideEffect
 }
 

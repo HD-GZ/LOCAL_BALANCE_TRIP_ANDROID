@@ -4,21 +4,18 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.usecase.ClearSessionUseCase
-import live.lb_trip.domain.usecase.GetRecommendedRegionsUseCase
-import live.lb_trip.domain.usecase.GetRegionCoursesUseCase
+import live.lb_trip.domain.usecase.GetSavedCoursesUseCase
 import live.lb_trip.domain.usecase.GetUserProfileUseCase
 import live.lb_trip.domain.usecase.LogoutUseCase
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val getRecommendedRegionsUseCase: GetRecommendedRegionsUseCase,
-    private val getRegionCoursesUseCase: GetRegionCoursesUseCase,
+    private val getSavedCoursesUseCase: GetSavedCoursesUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val clearSessionUseCase: ClearSessionUseCase,
 ) : BaseViewModel<SettingsUiState, SettingsIntent, SettingsSideEffect>(SettingsUiState()) {
@@ -39,33 +36,23 @@ class SettingsViewModel @Inject constructor(
         updateState { it.copy(isLoading = true) }
         coroutineScope {
             val profileDeferred = async { getUserProfileUseCase() }
-            val countDeferred = async { loadSavedCoursesCount() }
+            val coursesDeferred = async { getSavedCoursesUseCase() }
             val profileResult = profileDeferred.await()
-            val countResult = countDeferred.await()
+            val coursesResult = coursesDeferred.await()
 
             updateState {
                 it.copy(
                     isLoading = false,
                     name = profileResult.getOrNull()?.name ?: it.name,
                     email = profileResult.getOrNull()?.email ?: it.email,
-                    savedCoursesCount = countResult.getOrDefault(it.savedCoursesCount),
+                    savedCoursesCount = coursesResult.getOrNull()?.totalCount?.toInt() ?: it.savedCoursesCount,
                 )
             }
-            if (profileResult.isFailure || countResult.isFailure) {
+            if (profileResult.isFailure || coursesResult.isFailure) {
                 postSideEffect(SettingsSideEffect.ShowLoadError)
             }
         }
     }
-
-    private suspend fun loadSavedCoursesCount(): Result<Int> =
-        getRecommendedRegionsUseCase().map { regions ->
-            coroutineScope {
-                regions
-                    .map { region -> async { getRegionCoursesUseCase(region.id).getOrDefault(emptyList()).size } }
-                    .awaitAll()
-                    .sum()
-            }
-        }
 
     private suspend fun logout() {
         logoutUseCase()

@@ -51,7 +51,6 @@ import live.lb_trip.feature.recommendation.components.Timeline
 @Composable
 internal fun DetailScreen(
     onBack: () -> Unit,
-    onNavigateToTour: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
 ) {
@@ -82,7 +81,6 @@ internal fun DetailScreen(
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
                 RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
-                is RecommendationDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.courseId)
                 RecommendationDetailSideEffect.ShowIncentiveStub -> snackbarHostState.showSnackbar(incentiveStubMessage)
             }
         }
@@ -183,7 +181,6 @@ private fun DetailScreenContent(
                 RecommendationCtaBar(
                     isSaved = state.isSaved,
                     onSaveClick = { onIntent(RecommendationDetailIntent.SaveClicked) },
-                    onTourStartClick = { onIntent(RecommendationDetailIntent.TourStartClicked) },
                 )
             }
         }
