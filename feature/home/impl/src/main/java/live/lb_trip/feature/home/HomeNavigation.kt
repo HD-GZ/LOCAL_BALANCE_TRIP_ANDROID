@@ -6,7 +6,7 @@ import androidx.navigation.compose.composable
 fun NavGraphBuilder.homeScreen(
     onStartDiagnosis: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToCourseDetail: (Long) -> Unit,
+    onNavigateToSavedCourseDetail: (Long) -> Unit,
     onSavedAllClick: () -> Unit,
 ) {
     composable<HomeRoute> {
@@ -14,7 +14,7 @@ fun NavGraphBuilder.homeScreen(
             onStartDiagnosisClick = onStartDiagnosis,
             onMyInfoClick = onNavigateToSettings,
             onSavedAllClick = onSavedAllClick,
-            onCourseClick = onNavigateToCourseDetail,
+            onCourseClick = onNavigateToSavedCourseDetail,
         )
     }
 }

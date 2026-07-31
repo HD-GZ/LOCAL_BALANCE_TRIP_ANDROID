@@ -8,4 +8,45 @@
     <string name="savedcourses_status_before_trip">여행 전</string>
     <string name="savedcourses_status_traveling">여행 중</string>
     <string name="savedcourses_status_completed">완주</string>
+
+    <string name="savedcourses_detail_tab_course">코스 순서</string>
+    <string name="savedcourses_detail_tab_receipt">환급 증빙</string>
+    <string name="savedcourses_detail_tab_report">리포트</string>
+
+    <string name="savedcourses_detail_audio_guide_label">오디오 가이드</string>
+    <string name="savedcourses_detail_walk_time_template">도보 %1$s</string>
+    <string name="savedcourses_detail_benefits_title">이 코스 적용 가능 혜택</string>
+
+    <string name="savedcourses_detail_receipt_total_label">적립 완료 금액</string>
+    <string name="savedcourses_detail_receipt_amount_template">%1$,d원</string>
+    <string name="savedcourses_detail_receipt_empty">등록된 환급 증빙이 없어요.</string>
+
+    <string name="savedcourses_detail_report_status_label">여행 상태</string>
+    <string name="savedcourses_detail_report_places_label">전체 방문 장소</string>
+    <string name="savedcourses_detail_report_places_template">%1$d곳</string>
+    <string name="savedcourses_detail_report_amount_label">지역 소비 금액</string>
+
+    <string name="savedcourses_detail_cta_tour_start">투어 시작</string>
+    <string name="savedcourses_detail_cta_register_receipt">영수증 등록하기</string>
+
+    <string name="savedcourses_detail_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_detail_error_course_not_found">코스를 찾을 수 없어요.</string>
+    <string name="savedcourses_detail_error_empty_places">표시할 장소 정보가 없어요.</string>
+    <string name="savedcourses_detail_error_receipts">환급 증빙 목록을 불러오지 못했어요.</string>
+    <string name="savedcourses_detail_action_retry">재시도</string>
+    <string name="savedcourses_detail_back_content_description">뒤로</string>
+
+    <string name="savedcourses_receipt_title">영수증 등록</string>
+    <string name="savedcourses_receipt_pick_guide">영수증 사진을 선택해 주세요.</string>
+    <string name="savedcourses_receipt_pick_button">사진 선택하기</string>
+    <string name="savedcourses_receipt_scanning">영수증을 인식하고 있어요…</string>
+    <string name="savedcourses_receipt_verify_title">인식 결과 확인</string>
+    <string name="savedcourses_receipt_field_merchant">가맹점명</string>
+    <string name="savedcourses_receipt_field_amount">결제 금액</string>
+    <string name="savedcourses_receipt_field_date">결제 일자 (YYYY-MM-DD)</string>
+    <string name="savedcourses_receipt_submit">증빙 제출하기</string>
+    <string name="savedcourses_receipt_error_scan">영수증 인식에 실패했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_error_submit">증빙 등록에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_error_invalid">모든 항목을 올바르게 입력해 주세요.</string>
+    <string name="savedcourses_receipt_back_content_description">뒤로</string>
 </resources>

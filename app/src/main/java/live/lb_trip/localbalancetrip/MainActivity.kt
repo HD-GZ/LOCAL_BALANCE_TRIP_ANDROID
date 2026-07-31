@@ -23,10 +23,14 @@ import live.lb_trip.feature.onboarding.OnboardingRoute
 import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
 import live.lb_trip.feature.propensity.propensityScreen
-import live.lb_trip.feature.recommendation.CourseDetailRoute
 import live.lb_trip.feature.recommendation.RecommendationRoute
 import live.lb_trip.feature.recommendation.recommendationScreen
+import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
+import live.lb_trip.feature.savedcourses.ReceiptCaptureRoute
+import live.lb_trip.feature.savedcourses.SavedCourseDetailRoute
 import live.lb_trip.feature.savedcourses.SavedCoursesRoute
+import live.lb_trip.feature.savedcourses.receiptCaptureScreen
+import live.lb_trip.feature.savedcourses.savedCourseDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
 import live.lb_trip.feature.settings.SettingsRoute
 import live.lb_trip.feature.settings.settingsScreen
@@ -34,6 +38,7 @@ import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
 import live.lb_trip.feature.signup.signupScreen
+import live.lb_trip.feature.tour.TourRoute
 import live.lb_trip.feature.tour.tourScreen
 
 @AndroidEntryPoint
@@ -74,12 +79,28 @@ private fun MainNavGraph() {
         homeScreen(
             onStartDiagnosis = { navController.navigate(PropensityRoute) },
             onNavigateToSettings = { navController.navigate(SettingsRoute) },
-            onNavigateToCourseDetail = { courseId -> navController.navigate(CourseDetailRoute(courseId)) },
+            onNavigateToSavedCourseDetail = { savedCourseId ->
+                navController.navigate(SavedCourseDetailRoute(savedCourseId))
+            },
             onSavedAllClick = { navController.navigate(SavedCoursesRoute) },
         )
         savedCoursesScreen(
             onBack = navController::popBackStack,
-            onCourseClick = { courseId -> navController.navigate(CourseDetailRoute(courseId)) },
+            onCourseClick = { savedCourseId -> navController.navigate(SavedCourseDetailRoute(savedCourseId)) },
+        )
+        savedCourseDetailScreen(
+            onBack = navController::popBackStack,
+            onNavigateToTour = { savedCourseId -> navController.navigate(TourRoute(savedCourseId)) },
+            onNavigateToReceiptCapture = { savedCourseId ->
+                navController.navigate(ReceiptCaptureRoute(savedCourseId))
+            },
+        )
+        receiptCaptureScreen(
+            onBack = navController::popBackStack,
+            onSubmitted = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(RECEIPT_REGISTERED_RESULT_KEY, true)
+                navController.popBackStack()
+            },
         )
         settingsScreen(
             onNavigateToMain = navController::popBackStack,
