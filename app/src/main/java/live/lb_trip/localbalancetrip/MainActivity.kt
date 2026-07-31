@@ -1,6 +1,7 @@
 package live.lb_trip.localbalancetrip
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,16 +10,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeRoute
-import live.lb_trip.feature.home.homeScreen
 import live.lb_trip.feature.onboarding.OnboardingRoute
 import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
@@ -32,8 +36,6 @@ import live.lb_trip.feature.savedcourses.SavedCoursesRoute
 import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.savedCourseDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
-import live.lb_trip.feature.settings.SettingsRoute
-import live.lb_trip.feature.settings.settingsScreen
 import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
@@ -55,6 +57,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+            val context = LocalContext.current
+            val sessionExpiredMessage = stringResource(R.string.main_session_expired)
+
+            LaunchedEffect(Unit) {
+                viewModel.sessionExpiredEvent.collect {
+                    Toast.makeText(context, sessionExpiredMessage, Toast.LENGTH_LONG).show()
+                }
+            }
 
             LocalBalanceTripTheme {
                 Surface(
@@ -76,14 +86,16 @@ class MainActivity : ComponentActivity() {
 private fun MainNavGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = HomeRoute) {
-        homeScreen(
-            onStartDiagnosis = { navController.navigate(PropensityRoute) },
-            onNavigateToSettings = { navController.navigate(SettingsRoute) },
-            onNavigateToSavedCourseDetail = { savedCourseId ->
-                navController.navigate(SavedCourseDetailRoute(savedCourseId))
-            },
-            onSavedAllClick = { navController.navigate(SavedCoursesRoute) },
-        )
+        composable<HomeRoute> {
+            MainTabScreen(
+                onStartDiagnosis = { navController.navigate(PropensityRoute) },
+                onNavigateToSavedCourseDetail = { savedCourseId ->
+                    navController.navigate(SavedCourseDetailRoute(savedCourseId))
+                },
+                onSavedAllClick = { navController.navigate(SavedCoursesRoute) },
+                onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute) },
+            )
+        }
         savedCoursesScreen(
             onBack = navController::popBackStack,
             onCourseClick = { savedCourseId -> navController.navigate(SavedCourseDetailRoute(savedCourseId)) },
@@ -101,10 +113,6 @@ private fun MainNavGraph() {
                 navController.previousBackStackEntry?.savedStateHandle?.set(RECEIPT_REGISTERED_RESULT_KEY, true)
                 navController.popBackStack()
             },
-        )
-        settingsScreen(
-            onNavigateToMain = navController::popBackStack,
-            onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute) },
         )
         propensityScreen(
             navController = navController,

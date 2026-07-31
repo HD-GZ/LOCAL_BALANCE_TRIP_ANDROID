@@ -1,6 +1,5 @@
 package live.lb_trip.feature.home
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,47 +21,28 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
@@ -75,9 +55,6 @@ import live.lb_trip.domain.model.TravelStatus
 
 private val TextPrimary = LbColors.Ink
 private val Brand = LbColors.Green
-private val Border = LbColors.LineSoft
-private val BodyBackground = LbColors.ScreenBg
-private val TabInactive = Color(0xFF9A958C)
 private val HeroGradientMid = Color(0xFF276044)
 private val HeroGradientEnd = Color(0xFF245A40)
 private val HeroBlob = Color(0x24FFFFFF)
@@ -86,17 +63,15 @@ private val HeroBodyText = Color(0xD1FFFFFF)
 private val SavedCardRegionText = Color(0xFF928D84)
 
 @Composable
-internal fun HomeScreen(
+fun HomeTabContent(
     onStartDiagnosisClick: () -> Unit,
-    onMyInfoClick: () -> Unit,
     onSavedAllClick: () -> Unit,
     onCourseClick: (Long) -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val view = LocalView.current
-    val snackbarHostState = remember { SnackbarHostState() }
     val loadErrorMessage = stringResource(R.string.home_error_courses_load)
     val retryActionLabel = stringResource(R.string.home_action_retry)
 
@@ -113,18 +88,9 @@ internal fun HomeScreen(
         }
     }
 
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
-        }
-    }
-
-    HomeScreenContent(
+    HomeTabContentBody(
         state = state,
-        snackbarHostState = snackbarHostState,
         onStartDiagnosisClick = onStartDiagnosisClick,
-        onMyInfoClick = onMyInfoClick,
         onSavedAllClick = onSavedAllClick,
         onCourseClick = onCourseClick,
         modifier = modifier,
@@ -132,45 +98,34 @@ internal fun HomeScreen(
 }
 
 @Composable
-private fun HomeScreenContent(
+private fun HomeTabContentBody(
     state: HomeUiState,
-    snackbarHostState: SnackbarHostState,
     onStartDiagnosisClick: () -> Unit,
-    onMyInfoClick: () -> Unit,
     onSavedAllClick: () -> Unit,
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier,
-        topBar = { HomeBrandBar() },
-        bottomBar = { HomeBottomTabs(onMyInfoClick = onMyInfoClick) },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = BodyBackground,
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 22.dp),
-        ) {
-            HomeDiagnosisHero(onStartDiagnosisClick = onStartDiagnosisClick)
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 22.dp),
+    ) {
+        HomeDiagnosisHero(onStartDiagnosisClick = onStartDiagnosisClick)
 
-            if (!state.isLoadingCourses && state.courses.isNotEmpty()) {
-                HomeSavedCoursesSection(
-                    courses = state.courses,
-                    onSavedAllClick = onSavedAllClick,
-                    onCourseClick = onCourseClick,
-                    modifier = Modifier.padding(top = 26.dp),
-                )
-            } else if (state.isLoadingCourses) {
-                Box(
-                    modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(color = Brand)
-                }
+        if (!state.isLoadingCourses && state.courses.isNotEmpty()) {
+            HomeSavedCoursesSection(
+                courses = state.courses,
+                onSavedAllClick = onSavedAllClick,
+                onCourseClick = onCourseClick,
+                modifier = Modifier.padding(top = 26.dp),
+            )
+        } else if (state.isLoadingCourses) {
+            Box(
+                modifier = Modifier.fillMaxWidth().padding(top = 40.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = Brand)
             }
         }
     }
@@ -354,86 +309,12 @@ private fun HomeDiagnosisHero(onStartDiagnosisClick: () -> Unit, modifier: Modif
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun HomeBrandBar(modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        TopAppBar(
-            title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_balance_mark),
-                        contentDescription = null,
-                        tint = Brand,
-                        modifier = Modifier.size(26.dp),
-                    )
-                    val brandPrefix = stringResource(R.string.home_brand_prefix)
-                    val brandHighlight = stringResource(R.string.home_brand_highlight)
-                    val brandSuffix = stringResource(R.string.home_brand_suffix)
-                    Text(
-                        text = buildAnnotatedString {
-                            append(brandPrefix)
-                            withStyle(SpanStyle(color = Brand)) { append(brandHighlight) }
-                            append(brandSuffix)
-                        },
-                        color = TextPrimary,
-                        fontSize = 16.5.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
-        )
-        HorizontalDivider(color = Border, thickness = 1.dp)
-    }
-}
-
-@Composable
-private fun HomeBottomTabs(onMyInfoClick: () -> Unit, modifier: Modifier = Modifier) {
-    val mainTabLabel = stringResource(R.string.home_tab_main)
-    val myInfoTabLabel = stringResource(R.string.home_tab_my_info)
-
-    Column(modifier = modifier.fillMaxWidth()) {
-        HorizontalDivider(color = Border, thickness = 1.dp)
-        NavigationBar(containerColor = Color.White) {
-            NavigationBarItem(
-                selected = true,
-                onClick = {},
-                icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = mainTabLabel) },
-                label = { Text(text = mainTabLabel, fontSize = 11.sp) },
-                colors = HomeNavigationBarItemColors,
-            )
-            NavigationBarItem(
-                selected = false,
-                onClick = onMyInfoClick,
-                icon = { Icon(imageVector = Icons.Outlined.Person, contentDescription = myInfoTabLabel) },
-                label = { Text(text = myInfoTabLabel, fontSize = 11.sp) },
-                colors = HomeNavigationBarItemColors,
-            )
-        }
-    }
-}
-
-private val HomeNavigationBarItemColors
-    @Composable get() = NavigationBarItemDefaults.colors(
-        selectedIconColor = Brand,
-        selectedTextColor = Brand,
-        unselectedIconColor = TabInactive,
-        unselectedTextColor = TabInactive,
-        indicatorColor = Color.Transparent,
-    )
-
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
-    HomeScreenContent(
+    HomeTabContentBody(
         state = HomeUiState(isLoadingCourses = false, courses = persistentListOf()),
-        snackbarHostState = remember { SnackbarHostState() },
         onStartDiagnosisClick = {},
-        onMyInfoClick = {},
         onSavedAllClick = {},
         onCourseClick = {},
     )

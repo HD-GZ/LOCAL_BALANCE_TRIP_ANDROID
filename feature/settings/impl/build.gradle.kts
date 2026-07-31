@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.convention.android.feature.impl)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -8,7 +7,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.feature.settings.api)
     implementation(projects.core.designsystem)
     implementation(projects.core)
     implementation(projects.domain)

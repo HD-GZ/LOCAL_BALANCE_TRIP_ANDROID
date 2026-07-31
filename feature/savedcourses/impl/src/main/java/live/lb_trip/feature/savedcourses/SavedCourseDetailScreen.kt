@@ -1,6 +1,6 @@
 package live.lb_trip.feature.savedcourses
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -112,10 +112,10 @@ internal fun SavedCourseDetailScreen(
         }
     }
 
-    if (!view.isInEditMode) {
+    val activity = LocalActivity.current
+    if (activity != null) {
         SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = true
         }
     }
 
@@ -140,7 +140,7 @@ private fun SavedCourseDetailScreenContent(
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
     val context = LocalContext.current
     val view = LocalView.current
-    val activity = view.context as? Activity
+    val activity = LocalActivity.current
     val coroutineScope = rememberCoroutineScope()
     var showShareSheet by remember { mutableStateOf(false) }
     val shareSavedMessage = stringResource(R.string.savedcourses_detail_share_saved_toast)

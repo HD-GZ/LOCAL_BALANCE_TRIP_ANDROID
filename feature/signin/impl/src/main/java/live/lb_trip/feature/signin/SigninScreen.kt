@@ -1,6 +1,6 @@
 package live.lb_trip.feature.signin
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -66,10 +66,10 @@ internal fun SigninScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val view = LocalView.current
 
-    if (!view.isInEditMode) {
+    val activity = LocalActivity.current
+    if (activity != null) {
         SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = true
         }
     }
 
