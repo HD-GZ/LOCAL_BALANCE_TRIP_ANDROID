@@ -14,4 +14,6 @@ dependencies {
     implementation(projects.domain)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.naver.map.compose)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.ktx)
 }

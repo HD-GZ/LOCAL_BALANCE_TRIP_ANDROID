@@ -4,12 +4,14 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import live.lb_trip.data.location.FusedLocationTracker
 import live.lb_trip.data.repository.AuthRepositoryImpl
 import live.lb_trip.data.repository.PropensityRepositoryImpl
 import live.lb_trip.data.repository.RecommendationRepositoryImpl
 import live.lb_trip.data.repository.SavedCourseRepositoryImpl
 import live.lb_trip.data.repository.UserRepositoryImpl
 import live.lb_trip.domain.repository.AuthRepository
+import live.lb_trip.domain.repository.LocationTracker
 import live.lb_trip.domain.repository.PropensityRepository
 import live.lb_trip.domain.repository.RecommendationRepository
 import live.lb_trip.domain.repository.SavedCourseRepository
@@ -40,4 +42,8 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsSavedCourseRepository(savedCourseRepositoryImpl: SavedCourseRepositoryImpl): SavedCourseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsLocationTracker(fusedLocationTracker: FusedLocationTracker): LocationTracker
 }
