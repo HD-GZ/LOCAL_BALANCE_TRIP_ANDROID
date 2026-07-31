@@ -9,4 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.settings.api)
+    implementation(projects.core.designsystem)
+    implementation(projects.core)
+    implementation(projects.domain)
 }

@@ -1,0 +1,29 @@
+<resources>
+    <string name="settings_brand_prefix">로컬</string>
+    <string name="settings_brand_highlight">밸런스</string>
+    <string name="settings_brand_suffix">" 트립"</string>
+
+    <string name="settings_edit_info">정보 변경</string>
+
+    <string name="settings_stat_saved_courses">저장한 코스</string>
+    <string name="settings_stat_count_template">%1$d개</string>
+
+    <string name="settings_group_label">설정</string>
+    <string name="settings_menu_retake_diagnosis">여행 프로필 · 재진단</string>
+    <string name="settings_menu_licenses">오픈소스 라이선스</string>
+    <string name="settings_menu_terms">이용약관 확인</string>
+    <string name="settings_menu_privacy">개인정보 처리방침</string>
+    <string name="settings_menu_contact">문의하기</string>
+    <string name="settings_menu_version">버전 정보</string>
+    <string name="settings_menu_unavailable_template">%1$s 화면은 기능 완성 후 추가될 예정이에요.</string>
+
+    <string name="settings_logout">로그아웃</string>
+
+    <string name="settings_footer">로컬밸런스 트립 · 인구감소지역 로컬 여행 서비스</string>
+
+    <string name="settings_tab_main">메인</string>
+    <string name="settings_tab_my_info">나의 정보</string>
+
+    <string name="settings_error_load">내 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="settings_action_retry">재시도</string>
+</resources>

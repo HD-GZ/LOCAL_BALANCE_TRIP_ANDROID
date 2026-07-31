@@ -2,6 +2,7 @@ package live.lb_trip.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import live.lb_trip.domain.model.Tokens
+import live.lb_trip.domain.model.UserProfile
 
 interface UserRepository {
     suspend fun saveTokens(
@@ -14,4 +15,6 @@ interface UserRepository {
     suspend fun clearTokens()
 
     suspend fun checkEmailAvailability(email: String): Result<Boolean>
+
+    suspend fun getMyProfile(): Result<UserProfile>
 }
