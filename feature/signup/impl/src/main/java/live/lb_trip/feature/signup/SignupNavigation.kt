@@ -1,6 +1,6 @@
 package live.lb_trip.feature.signup
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -163,10 +163,10 @@ private fun SignupStepScaffold(
     }
 
     val view = LocalView.current
-    if (!view.isInEditMode) {
+    val activity = LocalActivity.current
+    if (activity != null) {
         SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
+            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = true
         }
     }
 

@@ -1,6 +1,6 @@
 package live.lb_trip.feature.onboarding
 
-import android.app.Activity
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -60,10 +60,10 @@ internal fun OnboardingScreen(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    if (!view.isInEditMode) {
+    val activity = LocalActivity.current
+    if (activity != null) {
         SideEffect {
-            val window = (view.context as Activity).window
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            WindowCompat.getInsetsController(activity.window, view).isAppearanceLightStatusBars = false
         }
     }
 

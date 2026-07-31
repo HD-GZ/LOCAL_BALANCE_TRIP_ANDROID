@@ -15,6 +15,7 @@ object LbColors {
     val Ink2 = Color(0xFF5F5B53)
     val Ink3 = Color(0xFF888E88)
     val Ink4 = Color(0xFFB8B3AA)
+    val TabInactive = Color(0xFF9A958C)
     val Line = Color(0xFFD9D5CD)
     val Line2 = Color(0xFFC3BDB3)
     val LineSoft = Color(0xFFEBE7DF)
