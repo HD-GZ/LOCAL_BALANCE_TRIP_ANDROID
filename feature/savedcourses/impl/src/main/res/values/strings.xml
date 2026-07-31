@@ -25,6 +25,15 @@
     <string name="savedcourses_detail_report_places_label">전체 방문 장소</string>
     <string name="savedcourses_detail_report_places_template">%1$d곳</string>
     <string name="savedcourses_detail_report_amount_label">지역 소비 금액</string>
+    <string name="savedcourses_detail_report_share_button">공유하기</string>
+
+    <string name="savedcourses_detail_share_preview_label">공유 카드 미리보기</string>
+    <string name="savedcourses_detail_share_card_brand">로컬밸런스 트립</string>
+    <string name="savedcourses_detail_share_sheet_title">어디에 공유할까요?</string>
+    <string name="savedcourses_detail_share_save_image">이미지 저장</string>
+    <string name="savedcourses_detail_share_send">공유</string>
+    <string name="savedcourses_detail_share_saved_toast">갤러리에 저장했어요</string>
+    <string name="savedcourses_detail_share_failed">이미지를 저장하지 못했어요. 다시 시도해 주세요.</string>
 
     <string name="savedcourses_detail_cta_tour_start">투어 시작</string>
     <string name="savedcourses_detail_cta_register_receipt">영수증 등록하기</string>

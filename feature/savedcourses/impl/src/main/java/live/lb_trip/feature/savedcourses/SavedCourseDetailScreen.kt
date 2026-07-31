@@ -28,9 +28,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -42,7 +46,10 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.feature.savedcourses.components.SavedCourseBenefitRow
@@ -50,6 +57,8 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseDetailAppBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptRow
+import live.lb_trip.feature.savedcourses.components.SavedCourseShareCard
+import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
 import live.lb_trip.feature.savedcourses.components.SavedCourseTimeline
 
 @Composable
@@ -127,6 +136,17 @@ private fun SavedCourseDetailScreenContent(
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
+    val context = LocalContext.current
+    val view = LocalView.current
+    val activity = view.context as? Activity
+    val coroutineScope = rememberCoroutineScope()
+    var showShareSheet by remember { mutableStateOf(false) }
+    val shareSavedMessage = stringResource(R.string.savedcourses_detail_share_saved_toast)
+    val shareFailedMessage = stringResource(R.string.savedcourses_detail_share_failed)
+    val shareCardDateLabel = remember { LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) }
+    val shareCardStatusLabel = state.status.toLabel()
+    val shareCardPlacesLabel = stringResource(R.string.savedcourses_detail_report_places_template, state.stops.size)
+    val shareCardAmountLabel = stringResource(R.string.savedcourses_detail_receipt_amount_template, state.receiptTotalAmount)
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -150,6 +170,7 @@ private fun SavedCourseDetailScreenContent(
                 hasStops = state.stops.isNotEmpty(),
                 onTourStartClick = { onIntent(SavedCourseDetailIntent.TourStartClicked) },
                 onRegisterReceiptClick = { onIntent(SavedCourseDetailIntent.RegisterReceiptClicked) },
+                onShareClick = { showShareSheet = true },
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
@@ -180,11 +201,65 @@ private fun SavedCourseDetailScreenContent(
                     when (SavedCourseDetailTab.entries[page]) {
                         SavedCourseDetailTab.COURSE -> SavedCourseOrderTab(state = state, onIntent = onIntent)
                         SavedCourseDetailTab.RECEIPT -> SavedCourseReceiptTab(state = state)
-                        SavedCourseDetailTab.REPORT -> SavedCourseReportTab(state = state)
+                        SavedCourseDetailTab.REPORT -> SavedCourseReportTab(
+                            state = state,
+                            statusLabel = shareCardStatusLabel,
+                            placesLabel = shareCardPlacesLabel,
+                            amountLabel = shareCardAmountLabel,
+                            dateLabel = shareCardDateLabel,
+                        )
                     }
                 }
             }
         }
+    }
+
+    if (showShareSheet) {
+        SavedCourseShareSheet(
+            onDismiss = { showShareSheet = false },
+            onSaveImageClick = {
+                showShareSheet = false
+                if (activity != null) {
+                    coroutineScope.launch {
+                        val saved = runCatching {
+                            val bitmap = renderComposableToBitmap(activity) {
+                                SavedCourseShareCard(
+                                    regionName = state.regionName,
+                                    title = state.title,
+                                    statusLabel = shareCardStatusLabel,
+                                    placesLabel = shareCardPlacesLabel,
+                                    amountLabel = shareCardAmountLabel,
+                                    dateLabel = shareCardDateLabel,
+                                )
+                            }
+                            saveBitmapToGallery(context, bitmap, shareImageFileName())
+                        }.getOrDefault(false)
+                        snackbarHostState.showSnackbar(if (saved) shareSavedMessage else shareFailedMessage)
+                    }
+                }
+            },
+            onShareClick = {
+                showShareSheet = false
+                if (activity != null) {
+                    coroutineScope.launch {
+                        val shared = runCatching {
+                            val bitmap = renderComposableToBitmap(activity) {
+                                SavedCourseShareCard(
+                                    regionName = state.regionName,
+                                    title = state.title,
+                                    statusLabel = shareCardStatusLabel,
+                                    placesLabel = shareCardPlacesLabel,
+                                    amountLabel = shareCardAmountLabel,
+                                    dateLabel = shareCardDateLabel,
+                                )
+                            }
+                            shareBitmapImage(context, bitmap, shareImageFileName())
+                        }.getOrDefault(false)
+                        if (!shared) snackbarHostState.showSnackbar(shareFailedMessage)
+                    }
+                }
+            },
+        )
     }
 }
 
@@ -280,21 +355,36 @@ private fun SavedCourseReceiptTab(state: SavedCourseDetailUiState, modifier: Mod
 }
 
 @Composable
-private fun SavedCourseReportTab(state: SavedCourseDetailUiState, modifier: Modifier = Modifier) {
+private fun SavedCourseReportTab(
+    state: SavedCourseDetailUiState,
+    statusLabel: String,
+    placesLabel: String,
+    amountLabel: String,
+    dateLabel: String,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
-        SavedCourseReportRow(
-            label = stringResource(R.string.savedcourses_detail_report_status_label),
-            value = state.status.toLabel(),
-        )
+        SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_status_label), value = statusLabel)
         HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-        SavedCourseReportRow(
-            label = stringResource(R.string.savedcourses_detail_report_places_label),
-            value = stringResource(R.string.savedcourses_detail_report_places_template, state.stops.size),
-        )
+        SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_places_label), value = placesLabel)
         HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-        SavedCourseReportRow(
-            label = stringResource(R.string.savedcourses_detail_report_amount_label),
-            value = stringResource(R.string.savedcourses_detail_receipt_amount_template, state.receiptTotalAmount),
+        SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_amount_label), value = amountLabel)
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = stringResource(R.string.savedcourses_detail_share_preview_label),
+            color = LbColors.Ink3,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+        SavedCourseShareCard(
+            regionName = state.regionName,
+            title = state.title,
+            statusLabel = statusLabel,
+            placesLabel = placesLabel,
+            amountLabel = amountLabel,
+            dateLabel = dateLabel,
         )
     }
 }

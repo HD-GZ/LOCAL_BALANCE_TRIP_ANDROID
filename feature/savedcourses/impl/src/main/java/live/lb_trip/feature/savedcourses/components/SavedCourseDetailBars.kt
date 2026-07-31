@@ -70,9 +70,9 @@ internal fun SavedCourseDetailCtaBar(
     hasStops: Boolean,
     onTourStartClick: () -> Unit,
     onRegisterReceiptClick: () -> Unit,
+    onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    if (tab == SavedCourseDetailTab.REPORT) return
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(color = LineSoft, thickness = 1.dp)
         Row(
@@ -106,7 +106,17 @@ internal fun SavedCourseDetailCtaBar(
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
-                SavedCourseDetailTab.REPORT -> Unit
+                SavedCourseDetailTab.REPORT -> LbButton(
+                    onClick = onShareClick,
+                    colors = LbButtonDefaults.greenColors(),
+                    modifier = Modifier.weight(1f).height(46.dp),
+                ) {
+                    Text(
+                        text = stringResource(R.string.savedcourses_detail_report_share_button),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
             }
         }
     }
