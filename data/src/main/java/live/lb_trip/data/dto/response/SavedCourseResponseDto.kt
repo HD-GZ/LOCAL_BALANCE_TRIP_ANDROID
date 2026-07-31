@@ -55,3 +55,25 @@ data class ReceiptScanResponseDto(
     val amount: Int? = null,
     val paidDate: String? = null,
 )
+
+@Serializable
+data class SavedCourseReportResponseDto(
+    val courseName: String,
+    val imageUrl: String? = null,
+    val visitedPlaceCount: Int,
+    val durationMinutes: Long,
+    val totalSpentAmount: Int,
+    val tourEndedAt: String,
+)
+
+@Serializable
+data class TourStartResponseDto(
+    val places: List<TourPlaceResponseDto>,
+)
+
+@Serializable
+data class TourPlaceResponseDto(
+    val placeId: Long,
+    val order: Int,
+    val visited: Boolean,
+)

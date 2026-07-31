@@ -6,6 +6,7 @@ import live.lb_trip.data.dto.response.ReceiptScanResponseDto
 import live.lb_trip.data.dto.response.ReceiptSummaryResponseDto
 import live.lb_trip.data.dto.response.SavedCourseDetailResponseDto
 import live.lb_trip.data.dto.response.SavedCourseListResponseDto
+import live.lb_trip.data.dto.response.SavedCourseReportResponseDto
 import live.lb_trip.data.dto.response.SavedCourseResponseDto
 import live.lb_trip.domain.model.CourseBenefit
 import live.lb_trip.domain.model.Receipt
@@ -14,6 +15,7 @@ import live.lb_trip.domain.model.ReceiptSummary
 import live.lb_trip.domain.model.SavedCourse
 import live.lb_trip.domain.model.SavedCourseDetail
 import live.lb_trip.domain.model.SavedCourseList
+import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.model.TravelStatus
 
 fun SavedCourseListResponseDto.toDomain(): SavedCourseList =
@@ -53,6 +55,16 @@ fun ReceiptScanResponseDto.toDomain(): ReceiptScan =
         merchantName = merchantName,
         amount = amount,
         paidDate = paidDate,
+    )
+
+fun SavedCourseReportResponseDto.toDomain(): SavedCourseReport =
+    SavedCourseReport(
+        courseName = courseName,
+        imageUrl = imageUrl,
+        visitedPlaceCount = visitedPlaceCount,
+        durationMinutes = durationMinutes,
+        totalSpentAmount = totalSpentAmount,
+        tourEndedAt = tourEndedAt,
     )
 
 private fun String.toTravelStatus(): TravelStatus = TravelStatus.valueOf(this)

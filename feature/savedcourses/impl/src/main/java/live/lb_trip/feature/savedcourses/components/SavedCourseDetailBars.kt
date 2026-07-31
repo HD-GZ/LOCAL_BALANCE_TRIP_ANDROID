@@ -68,6 +68,7 @@ internal fun SavedCourseDetailAppBar(
 internal fun SavedCourseDetailCtaBar(
     tab: SavedCourseDetailTab,
     hasStops: Boolean,
+    isReportAvailable: Boolean,
     onTourStartClick: () -> Unit,
     onRegisterReceiptClick: () -> Unit,
     onShareClick: () -> Unit,
@@ -108,6 +109,7 @@ internal fun SavedCourseDetailCtaBar(
                 }
                 SavedCourseDetailTab.REPORT -> LbButton(
                     onClick = onShareClick,
+                    enabled = isReportAvailable,
                     colors = LbButtonDefaults.greenColors(),
                     modifier = Modifier.weight(1f).height(46.dp),
                 ) {

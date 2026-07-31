@@ -46,7 +46,7 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.time.LocalDate
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
@@ -79,6 +79,7 @@ internal fun SavedCourseDetailScreen(
     val courseNotFoundMessage = stringResource(R.string.savedcourses_detail_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.savedcourses_detail_error_empty_places)
     val receiptsErrorMessage = stringResource(R.string.savedcourses_detail_error_receipts)
+    val reportErrorMessage = stringResource(R.string.savedcourses_detail_error_report)
     val retryActionLabel = stringResource(R.string.savedcourses_detail_action_retry)
 
     LaunchedEffect(Unit) {
@@ -96,6 +97,7 @@ internal fun SavedCourseDetailScreen(
                     }
                 }
                 SavedCourseDetailSideEffect.ShowReceiptsLoadError -> snackbarHostState.showSnackbar(receiptsErrorMessage)
+                SavedCourseDetailSideEffect.ShowReportLoadError -> snackbarHostState.showSnackbar(reportErrorMessage)
                 is SavedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
                 is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
                 is SavedCourseDetailSideEffect.NavigateToReceiptCapture -> onNavigateToReceiptCapture(effect.savedCourseId)
@@ -143,10 +145,12 @@ private fun SavedCourseDetailScreenContent(
     var showShareSheet by remember { mutableStateOf(false) }
     val shareSavedMessage = stringResource(R.string.savedcourses_detail_share_saved_toast)
     val shareFailedMessage = stringResource(R.string.savedcourses_detail_share_failed)
-    val shareCardDateLabel = remember { LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")) }
+    val shareCardDateLabel = remember(state.reportTourEndedAt) { formatReportDate(state.reportTourEndedAt) }
     val shareCardStatusLabel = state.status.toLabel()
-    val shareCardPlacesLabel = stringResource(R.string.savedcourses_detail_report_places_template, state.stops.size)
-    val shareCardAmountLabel = stringResource(R.string.savedcourses_detail_receipt_amount_template, state.receiptTotalAmount)
+    val shareCardPlacesLabel =
+        stringResource(R.string.savedcourses_detail_report_places_template, state.reportVisitedPlaceCount)
+    val shareCardAmountLabel =
+        stringResource(R.string.savedcourses_detail_receipt_amount_template, state.reportTotalSpentAmount)
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -168,6 +172,7 @@ private fun SavedCourseDetailScreenContent(
             SavedCourseDetailCtaBar(
                 tab = state.selectedTab,
                 hasStops = state.stops.isNotEmpty(),
+                isReportAvailable = state.isReportAvailable,
                 onTourStartClick = { onIntent(SavedCourseDetailIntent.TourStartClicked) },
                 onRegisterReceiptClick = { onIntent(SavedCourseDetailIntent.RegisterReceiptClicked) },
                 onShareClick = { showShareSheet = true },
@@ -364,6 +369,22 @@ private fun SavedCourseReportTab(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+        if (state.isReportLoading) {
+            Box(modifier = Modifier.fillMaxWidth().padding(top = 24.dp), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(color = LbColors.Green)
+            }
+            return@Column
+        }
+        if (!state.isReportAvailable) {
+            Text(
+                text = stringResource(R.string.savedcourses_detail_report_not_available),
+                color = LbColors.Ink3,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(vertical = 20.dp),
+            )
+            return@Column
+        }
+
         SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_status_label), value = statusLabel)
         HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
         SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_places_label), value = placesLabel)
@@ -396,6 +417,11 @@ private fun SavedCourseReportRow(label: String, value: String, modifier: Modifie
         Text(text = value, color = LbColors.Ink, fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
 }
+
+private fun formatReportDate(tourEndedAt: String): String =
+    runCatching {
+        OffsetDateTime.parse(tourEndedAt).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+    }.getOrDefault("")
 
 @Composable
 private fun SavedCourseDetailTab.toLabel(): String = when (this) {

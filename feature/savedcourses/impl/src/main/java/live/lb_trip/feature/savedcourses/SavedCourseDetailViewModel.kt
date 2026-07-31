@@ -16,14 +16,17 @@ import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.CourseBenefit
 import live.lb_trip.domain.model.CoursePlace
 import live.lb_trip.domain.model.Receipt
+import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.usecase.GetReceiptsUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
+import live.lb_trip.domain.usecase.GetSavedCourseReportUseCase
 
 @HiltViewModel
 class SavedCourseDetailViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getSavedCourseDetailUseCase: GetSavedCourseDetailUseCase,
     private val getReceiptsUseCase: GetReceiptsUseCase,
+    private val getSavedCourseReportUseCase: GetSavedCourseReportUseCase,
 ) : BaseViewModel<SavedCourseDetailUiState, SavedCourseDetailIntent, SavedCourseDetailSideEffect>(
     SavedCourseDetailUiState(),
 ) {
@@ -50,12 +53,14 @@ class SavedCourseDetailViewModel @Inject constructor(
     }
 
     private suspend fun load() {
-        updateState { it.copy(isLoading = true, isReceiptsLoading = true) }
+        updateState { it.copy(isLoading = true, isReceiptsLoading = true, isReportLoading = true) }
         coroutineScope {
             val detailDeferred = async { getSavedCourseDetailUseCase(savedCourseId) }
             val receiptsDeferred = async { getReceiptsUseCase(savedCourseId) }
+            val reportDeferred = async { getSavedCourseReportUseCase(savedCourseId) }
             val detailResult = detailDeferred.await()
             val receiptsResult = receiptsDeferred.await()
+            val reportResult = reportDeferred.await()
 
             detailResult
                 .onSuccess { detail ->
@@ -95,7 +100,31 @@ class SavedCourseDetailViewModel @Inject constructor(
                     updateState { it.copy(isReceiptsLoading = false) }
                     postSideEffect(SavedCourseDetailSideEffect.ShowReceiptsLoadError)
                 }
+
+            applyReportResult(reportResult)
         }
+    }
+
+    private fun applyReportResult(result: Result<SavedCourseReport>) {
+        result
+            .onSuccess { report ->
+                updateState {
+                    it.copy(
+                        isReportLoading = false,
+                        isReportAvailable = true,
+                        reportVisitedPlaceCount = report.visitedPlaceCount,
+                        reportTotalSpentAmount = report.totalSpentAmount,
+                        reportTourEndedAt = report.tourEndedAt,
+                    )
+                }
+            }
+            .onFailure { throwable ->
+                updateState { it.copy(isReportLoading = false, isReportAvailable = false) }
+                // Tour not yet ended is expected for BEFORE_TRIP/TRAVELING courses, not an error to surface.
+                if (throwable !is LbTripSavedCourseException.TourReportNotAvailableException) {
+                    postSideEffect(SavedCourseDetailSideEffect.ShowReportLoadError)
+                }
+            }
     }
 
     private suspend fun reloadReceipts() {
