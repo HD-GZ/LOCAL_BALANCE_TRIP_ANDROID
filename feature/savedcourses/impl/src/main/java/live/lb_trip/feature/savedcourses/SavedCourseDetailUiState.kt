@@ -25,6 +25,11 @@ data class SavedCourseDetailUiState(
     val hasLoadedReceipts: Boolean = false,
     val receiptTotalAmount: Int = 0,
     val receipts: ImmutableList<SavedCourseReceipt> = persistentListOf(),
+    val isReportLoading: Boolean = false,
+    val isReportAvailable: Boolean = false,
+    val reportVisitedPlaceCount: Int = 0,
+    val reportTotalSpentAmount: Int = 0,
+    val reportTourEndedAt: String = "",
 )
 
 data class SavedCourseStop(
@@ -51,6 +56,7 @@ data class SavedCourseReceipt(
 sealed interface SavedCourseDetailSideEffect {
     data class ShowLoadError(val reason: SavedCourseDetailLoadErrorReason) : SavedCourseDetailSideEffect
     data object ShowReceiptsLoadError : SavedCourseDetailSideEffect
+    data object ShowReportLoadError : SavedCourseDetailSideEffect
     data class OpenBenefitUrl(val url: String) : SavedCourseDetailSideEffect
     data class NavigateToTour(val savedCourseId: Long) : SavedCourseDetailSideEffect
     data class NavigateToReceiptCapture(val savedCourseId: Long) : SavedCourseDetailSideEffect

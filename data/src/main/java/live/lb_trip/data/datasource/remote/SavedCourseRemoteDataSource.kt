@@ -20,7 +20,10 @@ import live.lb_trip.data.dto.response.ReceiptScanResponseDto
 import live.lb_trip.data.dto.response.ReceiptSummaryResponseDto
 import live.lb_trip.data.dto.response.SavedCourseDetailResponseDto
 import live.lb_trip.data.dto.response.SavedCourseListResponseDto
+import live.lb_trip.data.dto.response.SavedCourseReportResponseDto
+import live.lb_trip.data.dto.response.TourStartResponseDto
 import live.lb_trip.data.dto.response.bodyOrThrow
+import live.lb_trip.data.dto.response.checkOrThrow
 
 @Singleton
 class SavedCourseRemoteDataSource
@@ -36,6 +39,9 @@ class SavedCourseRemoteDataSource
 
         suspend fun getReceipts(savedCourseId: Long): ReceiptSummaryResponseDto =
             authClient.get("/saved-courses/$savedCourseId/receipts").bodyOrThrow()
+
+        suspend fun getReport(savedCourseId: Long): SavedCourseReportResponseDto =
+            authClient.get("/saved-courses/$savedCourseId/report").bodyOrThrow()
 
         suspend fun scanReceipt(savedCourseId: Long, imageBytes: ByteArray, fileName: String): ReceiptScanResponseDto =
             authClient.submitFormWithBinaryData(
@@ -57,4 +63,15 @@ class SavedCourseRemoteDataSource
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.bodyOrThrow()
+
+        suspend fun startTour(savedCourseId: Long): TourStartResponseDto =
+            authClient.post("/saved-courses/$savedCourseId/tour/start").bodyOrThrow()
+
+        suspend fun checkInTourPlace(savedCourseId: Long, placeId: Long) {
+            authClient.post("/saved-courses/$savedCourseId/tour/places/$placeId/check-in").checkOrThrow()
+        }
+
+        suspend fun endTour(savedCourseId: Long) {
+            authClient.post("/saved-courses/$savedCourseId/tour/end").checkOrThrow()
+        }
     }

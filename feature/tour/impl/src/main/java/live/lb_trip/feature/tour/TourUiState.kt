@@ -17,6 +17,7 @@ data class TourStop(
     val latitude: Double,
     val longitude: Double,
     val walkMinutesToNext: Int?,
+    val placeId: Long? = null,
 )
 
 sealed interface TourSideEffect {

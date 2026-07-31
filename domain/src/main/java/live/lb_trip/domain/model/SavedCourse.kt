@@ -32,3 +32,18 @@ data class CourseBenefit(
     val description: String?,
     val url: String,
 )
+
+data class SavedCourseReport(
+    val courseName: String,
+    val imageUrl: String?,
+    val visitedPlaceCount: Int,
+    val durationMinutes: Long,
+    val totalSpentAmount: Int,
+    val tourEndedAt: String,
+)
+
+data class TourPlaceVisit(
+    val placeId: Long,
+    val order: Int,
+    val visited: Boolean,
+)
