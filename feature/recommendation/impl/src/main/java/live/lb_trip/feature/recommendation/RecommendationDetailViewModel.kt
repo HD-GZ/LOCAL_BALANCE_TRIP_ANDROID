@@ -35,8 +35,6 @@ class RecommendationDetailViewModel @Inject constructor(
             is RecommendationDetailIntent.StopToggled -> toggleStopExpanded(intent.index)
             is RecommendationDetailIntent.PlaybackToggled -> toggleAudioPlayback(intent.stopIndex)
             RecommendationDetailIntent.SaveClicked -> saveCourse()
-            RecommendationDetailIntent.TourStartClicked ->
-                postSideEffect(RecommendationDetailSideEffect.NavigateToTour(courseId))
             RecommendationDetailIntent.IncentiveClicked -> postSideEffect(RecommendationDetailSideEffect.ShowIncentiveStub)
             RecommendationDetailIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
         }

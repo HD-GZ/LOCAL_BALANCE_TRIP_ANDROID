@@ -71,6 +71,7 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.domain.model.TravelStatus
 
 private val TextPrimary = LbColors.Ink
 private val Brand = LbColors.Green
@@ -221,10 +222,10 @@ private fun HomeSavedCoursesSection(
             contentPadding = PaddingValues(horizontal = 20.dp),
             modifier = Modifier.padding(top = 12.dp),
         ) {
-            items(courses, key = { it.courseId }) { course ->
+            items(courses, key = { it.savedCourseId }) { course ->
                 HomeSavedCourseCard(
                     course = course,
-                    onClick = { onCourseClick(course.courseId) },
+                    onClick = { onCourseClick(course.savedCourseId) },
                     modifier = Modifier.width(297.dp),
                 )
             }
@@ -260,7 +261,7 @@ private fun HomeSavedCourseCard(course: HomeCourseSummary, onClick: () -> Unit, 
             modifier = Modifier.padding(start = 15.dp, top = 13.dp, end = 15.dp, bottom = 15.dp),
         ) {
             Text(
-                text = course.regionName,
+                text = course.status.toLabel(),
                 color = SavedCardRegionText,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
@@ -268,7 +269,7 @@ private fun HomeSavedCourseCard(course: HomeCourseSummary, onClick: () -> Unit, 
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = course.title,
+                text = course.courseName,
                 color = TextPrimary,
                 fontSize = 15.5.sp,
                 fontWeight = FontWeight.Bold,
@@ -277,6 +278,13 @@ private fun HomeSavedCourseCard(course: HomeCourseSummary, onClick: () -> Unit, 
             )
         }
     }
+}
+
+@Composable
+private fun TravelStatus.toLabel(): String = when (this) {
+    TravelStatus.BEFORE_TRIP -> stringResource(R.string.home_status_before_trip)
+    TravelStatus.TRAVELING -> stringResource(R.string.home_status_traveling)
+    TravelStatus.COMPLETED -> stringResource(R.string.home_status_completed)
 }
 
 @Composable

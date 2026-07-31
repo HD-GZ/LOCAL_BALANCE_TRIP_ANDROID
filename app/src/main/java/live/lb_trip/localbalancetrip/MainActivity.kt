@@ -34,7 +34,6 @@ import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
 import live.lb_trip.feature.signup.signupScreen
-import live.lb_trip.feature.tour.TourRoute
 import live.lb_trip.feature.tour.tourScreen
 
 @AndroidEntryPoint
@@ -94,7 +93,6 @@ private fun MainNavGraph() {
         recommendationScreen(
             navController = navController,
             onBack = navController::popBackStack,
-            onNavigateToTour = { courseId -> navController.navigate(TourRoute(courseId)) },
         )
         tourScreen(onBack = navController::popBackStack)
     }

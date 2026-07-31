@@ -8,17 +8,17 @@ import javax.inject.Inject
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
-import live.lb_trip.domain.exception.recommendation.LbTripRecommendationException
+import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.CoursePlace
-import live.lb_trip.domain.usecase.GetCourseDetailUseCase
+import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
 
 @HiltViewModel
 class TourViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val getCourseDetailUseCase: GetCourseDetailUseCase,
+    private val getSavedCourseDetailUseCase: GetSavedCourseDetailUseCase,
 ) : BaseViewModel<TourUiState, TourIntent, TourSideEffect>(TourUiState()) {
 
-    private val courseId: Long = savedStateHandle.toRoute<TourRoute>().courseId
+    private val savedCourseId: Long = savedStateHandle.toRoute<TourRoute>().savedCourseId
 
     init {
         viewModelScope.launch { loadCourseDetail() }
@@ -35,7 +35,7 @@ class TourViewModel @Inject constructor(
 
     private suspend fun loadCourseDetail() {
         updateState { it.copy(isLoading = true) }
-        getCourseDetailUseCase(courseId)
+        getSavedCourseDetailUseCase(savedCourseId)
             .onSuccess { detail ->
                 updateState {
                     it.copy(
@@ -83,6 +83,6 @@ private fun CoursePlace.toTourStop(): TourStop = TourStop(
 )
 
 private fun loadErrorReasonFor(throwable: Throwable?): TourLoadErrorReason = when (throwable) {
-    is LbTripRecommendationException.CourseNotFoundException -> TourLoadErrorReason.CourseNotFound
+    is LbTripSavedCourseException.SavedCourseNotFoundException -> TourLoadErrorReason.CourseNotFound
     else -> TourLoadErrorReason.Unknown
 }

@@ -21,7 +21,6 @@
 
     <string name="recommendation_cta_save">저장</string>
     <string name="recommendation_cta_saved">저장됨</string>
-    <string name="recommendation_cta_tour_start">투어 시작</string>
 
     <string name="recommendation_snackbar_save_confirmation">코스를 SAVE했습니다 · 마이 &gt; SAVE에서 다시 볼 수 있어요.</string>
     <string name="recommendation_snackbar_save_error">코스 저장에 실패했어요. 잠시 후 다시 시도해 주세요.</string>

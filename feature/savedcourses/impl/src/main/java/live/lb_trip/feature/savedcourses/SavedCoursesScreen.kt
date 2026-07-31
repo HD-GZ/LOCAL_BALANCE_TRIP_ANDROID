@@ -53,6 +53,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
+import live.lb_trip.domain.model.TravelStatus
 
 @Composable
 internal fun SavedCoursesScreen(
@@ -183,8 +184,8 @@ private fun SavedCoursesList(
         verticalArrangement = Arrangement.spacedBy(11.dp),
         modifier = modifier.fillMaxSize(),
     ) {
-        items(courses, key = { it.courseId }) { course ->
-            SavedCoursesRow(course = course, onClick = { onCourseClick(course.courseId) })
+        items(courses, key = { it.savedCourseId }) { course ->
+            SavedCoursesRow(course = course, onClick = { onCourseClick(course.savedCourseId) })
         }
     }
 }
@@ -217,34 +218,37 @@ private fun SavedCoursesRow(course: SavedCourseSummary, onClick: () -> Unit, mod
             )
         }
         Column {
+            SavedCourseStatusBadge(status = course.status)
             Text(
-                text = course.regionName,
-                color = LbColors.Ink3,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = course.title,
+                text = course.courseName,
                 color = LbColors.Ink,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-            Text(
-                text = course.reason,
-                color = LbColors.Ink3,
-                fontSize = 11.sp,
-                lineHeight = 16.sp,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.padding(top = 6.dp),
             )
         }
     }
+}
+
+@Composable
+private fun SavedCourseStatusBadge(status: TravelStatus, modifier: Modifier = Modifier) {
+    val label = when (status) {
+        TravelStatus.BEFORE_TRIP -> stringResource(R.string.savedcourses_status_before_trip)
+        TravelStatus.TRAVELING -> stringResource(R.string.savedcourses_status_traveling)
+        TravelStatus.COMPLETED -> stringResource(R.string.savedcourses_status_completed)
+    }
+    Text(
+        text = label,
+        color = LbColors.Green,
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp))
+            .background(LbColors.GreenTint2)
+            .padding(horizontal = 8.dp, vertical = 3.dp),
+    )
 }
 
 @Preview(showBackground = true)

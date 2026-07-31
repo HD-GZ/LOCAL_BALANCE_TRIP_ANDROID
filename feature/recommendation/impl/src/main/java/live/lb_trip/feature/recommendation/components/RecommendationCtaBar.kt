@@ -35,12 +35,7 @@ private val SavedButtonColors: ButtonColors
     @Composable get() = ButtonDefaults.buttonColors(containerColor = GreenTint, contentColor = Green)
 
 @Composable
-internal fun RecommendationCtaBar(
-    isSaved: Boolean,
-    onSaveClick: () -> Unit,
-    onTourStartClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+internal fun RecommendationCtaBar(isSaved: Boolean, onSaveClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         HorizontalDivider(color = LineSoft, thickness = 1.dp)
         Row(
@@ -53,8 +48,8 @@ internal fun RecommendationCtaBar(
         ) {
             LbButton(
                 onClick = onSaveClick,
-                colors = if (isSaved) SavedButtonColors else LbButtonDefaults.whiteColors(),
-                border = BorderStroke(width = 1.dp, color = if (isSaved) GreenLine else Line2),
+                colors = if (isSaved) SavedButtonColors else LbButtonDefaults.greenColors(),
+                border = if (isSaved) BorderStroke(width = 1.dp, color = GreenLine) else null,
                 modifier = Modifier.weight(1f).height(46.dp),
             ) {
                 if (isSaved) {
@@ -68,17 +63,6 @@ internal fun RecommendationCtaBar(
                 }
                 Text(
                     text = stringResource(if (isSaved) R.string.recommendation_cta_saved else R.string.recommendation_cta_save),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-            LbButton(
-                onClick = onTourStartClick,
-                colors = LbButtonDefaults.greenColors(),
-                modifier = Modifier.weight(1f).height(46.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.recommendation_cta_tour_start),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
