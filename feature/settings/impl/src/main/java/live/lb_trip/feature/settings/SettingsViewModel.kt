@@ -28,6 +28,7 @@ class SettingsViewModel @Inject constructor(
         when (intent) {
             SettingsIntent.Retry -> viewModelScope.launch { load() }
             is SettingsIntent.MenuItemClick -> postSideEffect(SettingsSideEffect.ShowUnavailableMessage(intent.label))
+            SettingsIntent.RetakeDiagnosisClick -> postSideEffect(SettingsSideEffect.NavigateToDiagnosis)
             SettingsIntent.LogoutClick -> viewModelScope.launch { logout() }
         }
     }

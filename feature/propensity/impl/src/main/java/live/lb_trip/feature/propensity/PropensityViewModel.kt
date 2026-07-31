@@ -1,6 +1,8 @@
 package live.lb_trip.feature.propensity
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -8,12 +10,44 @@ import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.propensity.LbTripPropensityException
 import live.lb_trip.domain.model.Preference
 import live.lb_trip.domain.model.ValueConsumption
+import live.lb_trip.domain.usecase.GetPropensityResultUseCase
 import live.lb_trip.domain.usecase.SubmitPropensityUseCase
 
 @HiltViewModel
 class PropensityViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val submitPropensityUseCase: SubmitPropensityUseCase,
+    private val getPropensityResultUseCase: GetPropensityResultUseCase,
 ) : BaseViewModel<PropensityUiState, PropensityIntent, PropensitySideEffect>(PropensityUiState()) {
+
+    init {
+        val forceNew = savedStateHandle.toRoute<PropensityRoute>().forceNew
+        if (!forceNew) {
+            viewModelScope.launch { loadExistingResult() }
+        }
+    }
+
+    private suspend fun loadExistingResult() {
+        getPropensityResultUseCase().onSuccess { result ->
+            updateState {
+                it.copy(
+                    locality = result.preference.locality,
+                    frugality = result.preference.frugality,
+                    experientiality = result.preference.experientiality,
+                    vitality = result.preference.vitality,
+                    sociality = result.preference.sociality,
+                    accommodation = result.valueConsumption.accommodation,
+                    food = result.valueConsumption.food,
+                    experience = result.valueConsumption.experience,
+                    transportation = result.valueConsumption.transportation,
+                    cafeExhibition = result.valueConsumption.cafeExhibition,
+                    resultType = result.type,
+                    resultDescription = result.description,
+                )
+            }
+            postSideEffect(PropensitySideEffect.NavigateToResult)
+        }
+    }
 
     override fun onIntent(intent: PropensityIntent) {
         when (intent) {
