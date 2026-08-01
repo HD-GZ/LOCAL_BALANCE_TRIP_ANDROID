@@ -36,6 +36,9 @@ import live.lb_trip.feature.savedcourses.SavedCoursesRoute
 import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.savedCourseDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
+import live.lb_trip.feature.settings.EditProfileRoute
+import live.lb_trip.feature.settings.PROFILE_UPDATED_RESULT_KEY
+import live.lb_trip.feature.settings.editProfileScreen
 import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
@@ -86,7 +89,10 @@ class MainActivity : ComponentActivity() {
 private fun MainNavGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = HomeRoute) {
-        composable<HomeRoute> {
+        composable<HomeRoute> { backStackEntry ->
+            val profileUpdated by backStackEntry.savedStateHandle
+                .getStateFlow(PROFILE_UPDATED_RESULT_KEY, false)
+                .collectAsStateWithLifecycle()
             MainTabScreen(
                 onStartDiagnosis = { navController.navigate(PropensityRoute()) },
                 onNavigateToSavedCourseDetail = { savedCourseId ->
@@ -95,8 +101,20 @@ private fun MainNavGraph() {
                 onSavedAllClick = { navController.navigate(SavedCoursesRoute) },
                 onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute) },
                 onRetakeDiagnosis = { navController.navigate(PropensityRoute(forceNew = true)) },
+                onNavigateToEditProfile = { navController.navigate(EditProfileRoute) },
+                profileUpdated = profileUpdated,
+                onProfileUpdatedConsumed = {
+                    backStackEntry.savedStateHandle[PROFILE_UPDATED_RESULT_KEY] = false
+                },
             )
         }
+        editProfileScreen(
+            onBack = navController::popBackStack,
+            onSaved = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(PROFILE_UPDATED_RESULT_KEY, true)
+                navController.popBackStack()
+            },
+        )
         savedCoursesScreen(
             onBack = navController::popBackStack,
             onCourseClick = { savedCourseId -> navController.navigate(SavedCourseDetailRoute(savedCourseId)) },

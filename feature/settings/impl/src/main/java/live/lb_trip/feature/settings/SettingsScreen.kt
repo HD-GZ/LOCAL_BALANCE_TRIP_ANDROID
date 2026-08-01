@@ -38,7 +38,10 @@ import live.lb_trip.feature.settings.components.SettingsSavedCoursesRow
 fun MyInfoTabContent(
     onNavigateToSavedCourses: () -> Unit,
     onNavigateToDiagnosis: () -> Unit,
+    onNavigateToEditProfile: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    profileUpdated: Boolean,
+    onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -46,6 +49,7 @@ fun MyInfoTabContent(
     val loadErrorMessage = stringResource(R.string.settings_error_load)
     val retryActionLabel = stringResource(R.string.settings_action_retry)
     val unavailableTemplate = stringResource(R.string.settings_menu_unavailable_template)
+    val profileUpdatedMessage = stringResource(R.string.settings_profile_updated)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -62,7 +66,16 @@ fun MyInfoTabContent(
                 }
 
                 SettingsSideEffect.NavigateToDiagnosis -> onNavigateToDiagnosis()
+                SettingsSideEffect.NavigateToEditProfile -> onNavigateToEditProfile()
+                SettingsSideEffect.ShowProfileUpdated -> snackbarHostState.showSnackbar(profileUpdatedMessage)
             }
+        }
+    }
+
+    LaunchedEffect(profileUpdated) {
+        if (profileUpdated) {
+            viewModel.onIntent(SettingsIntent.ProfileUpdated)
+            onProfileUpdatedConsumed()
         }
     }
 
@@ -107,7 +120,7 @@ private fun MyInfoTabContentBody(
             SettingsProfileHeader(
                 name = state.name,
                 email = state.email,
-                onEditInfoClick = { onIntent(SettingsIntent.MenuItemClick(editInfoLabel)) },
+                onEditInfoClick = { onIntent(SettingsIntent.EditProfileClick) },
                 modifier = Modifier.background(Color.White),
             )
             HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
@@ -121,7 +134,7 @@ private fun MyInfoTabContentBody(
             SettingsMenuGroup(
                 label = stringResource(R.string.settings_group_label),
                 items = listOf(
-                    editInfoLabel to { onIntent(SettingsIntent.MenuItemClick(editInfoLabel)) },
+                    editInfoLabel to { onIntent(SettingsIntent.EditProfileClick) },
                     retakeDiagnosisLabel to { onIntent(SettingsIntent.RetakeDiagnosisClick) },
                     licensesLabel to { onIntent(SettingsIntent.MenuItemClick(licensesLabel)) },
                     termsLabel to { onIntent(SettingsIntent.MenuItemClick(termsLabel)) },

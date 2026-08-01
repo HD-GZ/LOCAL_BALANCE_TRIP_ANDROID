@@ -41,6 +41,9 @@ internal fun MainTabScreen(
     onSavedAllClick: () -> Unit,
     onNavigateToSavedCourses: () -> Unit,
     onRetakeDiagnosis: () -> Unit,
+    onNavigateToEditProfile: () -> Unit,
+    profileUpdated: Boolean,
+    onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(MainTab.HOME) }
@@ -104,7 +107,10 @@ internal fun MainTabScreen(
             MainTab.MY_INFO -> MyInfoTabContent(
                 onNavigateToSavedCourses = onNavigateToSavedCourses,
                 onNavigateToDiagnosis = onRetakeDiagnosis,
+                onNavigateToEditProfile = onNavigateToEditProfile,
                 snackbarHostState = snackbarHostState,
+                profileUpdated = profileUpdated,
+                onProfileUpdatedConsumed = onProfileUpdatedConsumed,
                 modifier = Modifier.padding(innerPadding),
             )
         }

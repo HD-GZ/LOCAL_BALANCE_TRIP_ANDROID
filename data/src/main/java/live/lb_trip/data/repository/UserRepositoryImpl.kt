@@ -3,8 +3,10 @@ package live.lb_trip.data.repository
 import kotlinx.coroutines.flow.Flow
 import live.lb_trip.data.datasource.local.TokenDataStore
 import live.lb_trip.data.datasource.remote.UserRemoteDataSource
+import live.lb_trip.data.dto.request.UserUpdateRequestDto
 import live.lb_trip.data.mapper.toDomain
 import live.lb_trip.domain.exception.user.LbTripUserException
+import live.lb_trip.domain.model.Gender
 import live.lb_trip.domain.model.Tokens
 import live.lb_trip.domain.model.UserProfile
 import live.lb_trip.domain.repository.UserRepository
@@ -37,5 +39,28 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getMyProfile(): Result<UserProfile> =
         suspendRunCatching {
             userRemoteDataSource.getMyProfile().toDomain()
+        }
+
+    override suspend fun updateProfile(
+        name: String,
+        birthDate: String,
+        gender: Gender,
+        password: String?,
+        passwordConfirm: String?,
+    ): Result<UserProfile> =
+        suspendRunCatching {
+            userRemoteDataSource.updateProfile(
+                UserUpdateRequestDto(
+                    name = name,
+                    birthDate = birthDate,
+                    gender = gender.name,
+                    password = password,
+                    passwordConfirm = passwordConfirm,
+                ),
+            ).toDomain()
+        }.mapApiFailure {
+            on(400, "INVALID_INPUT_VALUE") { ex ->
+                LbTripUserException.InvalidInputValueException(fields = ex.fieldErrors.map { it.first })
+            }
         }
 }
