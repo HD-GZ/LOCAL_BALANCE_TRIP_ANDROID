@@ -69,6 +69,7 @@ import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PolylineOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
@@ -95,7 +96,7 @@ internal fun TourScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is TourSideEffect.ShowLoadError -> {
+                is TourSideEffect.ShowLoadError -> launch {
                     val message = when (effect.reason) {
                         TourLoadErrorReason.CourseNotFound -> courseNotFoundMessage
                         TourLoadErrorReason.EmptyPlaces -> emptyPlacesMessage
@@ -108,7 +109,7 @@ internal fun TourScreen(
                 }
 
                 TourSideEffect.NavigateBack -> onBack()
-                TourSideEffect.CollapseSheet -> scaffoldState.bottomSheetState.partialExpand()
+                TourSideEffect.CollapseSheet -> launch { scaffoldState.bottomSheetState.partialExpand() }
             }
         }
     }
