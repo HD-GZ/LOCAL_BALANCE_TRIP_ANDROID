@@ -3,6 +3,11 @@ package live.lb_trip.data.datasource.remote
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import live.lb_trip.data.dto.request.UserUpdateRequestDto
 import live.lb_trip.data.dto.response.EmailAvailabilityResponseDto
 import live.lb_trip.data.dto.response.UserProfileResponseDto
 import live.lb_trip.data.dto.response.bodyOrThrow
@@ -23,4 +28,10 @@ class UserRemoteDataSource @Inject constructor(
 
     suspend fun getMyProfile(): UserProfileResponseDto =
         authClient.get("/users/me").bodyOrThrow()
+
+    suspend fun updateProfile(request: UserUpdateRequestDto): UserProfileResponseDto =
+        authClient.patch("/users/me") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.bodyOrThrow()
 }

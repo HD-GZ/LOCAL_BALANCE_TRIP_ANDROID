@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.convention.android.feature.impl)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
