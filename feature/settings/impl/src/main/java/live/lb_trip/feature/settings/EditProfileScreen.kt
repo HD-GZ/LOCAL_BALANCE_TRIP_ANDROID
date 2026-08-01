@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
@@ -85,10 +86,10 @@ fun EditProfileScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                EditProfileSideEffect.ShowLoadError -> snackbarHostState.showSnackbar(loadErrorMessage)
-                is EditProfileSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(effect.message)
+                EditProfileSideEffect.ShowLoadError -> launch { snackbarHostState.showSnackbar(loadErrorMessage) }
+                is EditProfileSideEffect.ShowSaveError -> launch { snackbarHostState.showSnackbar(effect.message) }
                 EditProfileSideEffect.SaveSuccess -> onSaved()
-                EditProfileSideEffect.ShowWithdrawUnavailable -> snackbarHostState.showSnackbar(withdrawUnavailableMessage)
+                EditProfileSideEffect.ShowWithdrawUnavailable -> launch { snackbarHostState.showSnackbar(withdrawUnavailableMessage) }
             }
         }
     }

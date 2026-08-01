@@ -85,7 +85,7 @@ internal fun SavedCourseDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is SavedCourseDetailSideEffect.ShowLoadError -> {
+                is SavedCourseDetailSideEffect.ShowLoadError -> launch {
                     val message = when (effect.reason) {
                         SavedCourseDetailLoadErrorReason.CourseNotFound -> courseNotFoundMessage
                         SavedCourseDetailLoadErrorReason.EmptyPlaces -> emptyPlacesMessage
@@ -96,8 +96,8 @@ internal fun SavedCourseDetailScreen(
                         viewModel.onIntent(SavedCourseDetailIntent.Retry)
                     }
                 }
-                SavedCourseDetailSideEffect.ShowReceiptsLoadError -> snackbarHostState.showSnackbar(receiptsErrorMessage)
-                SavedCourseDetailSideEffect.ShowReportLoadError -> snackbarHostState.showSnackbar(reportErrorMessage)
+                SavedCourseDetailSideEffect.ShowReceiptsLoadError -> launch { snackbarHostState.showSnackbar(receiptsErrorMessage) }
+                SavedCourseDetailSideEffect.ShowReportLoadError -> launch { snackbarHostState.showSnackbar(reportErrorMessage) }
                 is SavedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
                 is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
                 is SavedCourseDetailSideEffect.NavigateToReceiptCapture -> onNavigateToReceiptCapture(effect.savedCourseId)

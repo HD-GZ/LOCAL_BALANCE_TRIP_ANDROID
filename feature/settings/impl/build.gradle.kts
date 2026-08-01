@@ -11,4 +11,5 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core)
     implementation(projects.domain)
+    implementation(libs.aboutlibraries.compose.m3)
 }

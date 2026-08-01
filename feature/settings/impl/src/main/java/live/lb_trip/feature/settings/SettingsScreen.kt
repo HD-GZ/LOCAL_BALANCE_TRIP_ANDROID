@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.feature.settings.components.SettingsLogoutGroup
 import live.lb_trip.feature.settings.components.SettingsMenuGroup
@@ -39,6 +40,7 @@ fun MyInfoTabContent(
     onNavigateToSavedCourses: () -> Unit,
     onNavigateToDiagnosis: () -> Unit,
     onNavigateToEditProfile: () -> Unit,
+    onNavigateToLicenses: () -> Unit,
     snackbarHostState: SnackbarHostState,
     profileUpdated: Boolean,
     onProfileUpdatedConsumed: () -> Unit,
@@ -54,20 +56,21 @@ fun MyInfoTabContent(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                SettingsSideEffect.ShowLoadError -> {
+                SettingsSideEffect.ShowLoadError -> launch {
                     val result = snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
                         viewModel.onIntent(SettingsIntent.Retry)
                     }
                 }
 
-                is SettingsSideEffect.ShowUnavailableMessage -> {
+                is SettingsSideEffect.ShowUnavailableMessage -> launch {
                     snackbarHostState.showSnackbar(message = String.format(unavailableTemplate, effect.label))
                 }
 
                 SettingsSideEffect.NavigateToDiagnosis -> onNavigateToDiagnosis()
                 SettingsSideEffect.NavigateToEditProfile -> onNavigateToEditProfile()
-                SettingsSideEffect.ShowProfileUpdated -> snackbarHostState.showSnackbar(profileUpdatedMessage)
+                SettingsSideEffect.NavigateToLicenses -> onNavigateToLicenses()
+                SettingsSideEffect.ShowProfileUpdated -> launch { snackbarHostState.showSnackbar(profileUpdatedMessage) }
             }
         }
     }
@@ -136,7 +139,7 @@ private fun MyInfoTabContentBody(
                 items = listOf(
                     editInfoLabel to { onIntent(SettingsIntent.EditProfileClick) },
                     retakeDiagnosisLabel to { onIntent(SettingsIntent.RetakeDiagnosisClick) },
-                    licensesLabel to { onIntent(SettingsIntent.MenuItemClick(licensesLabel)) },
+                    licensesLabel to { onIntent(SettingsIntent.LicensesClick) },
                     termsLabel to { onIntent(SettingsIntent.MenuItemClick(termsLabel)) },
                     privacyLabel to { onIntent(SettingsIntent.MenuItemClick(privacyLabel)) },
                     contactLabel to { onIntent(SettingsIntent.MenuItemClick(contactLabel)) },

@@ -72,9 +72,9 @@ internal fun ReceiptCaptureScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                ReceiptCaptureSideEffect.ShowScanError -> snackbarHostState.showSnackbar(scanErrorMessage)
-                ReceiptCaptureSideEffect.ShowSubmitError -> snackbarHostState.showSnackbar(submitErrorMessage)
-                ReceiptCaptureSideEffect.ShowInvalidInput -> snackbarHostState.showSnackbar(invalidInputMessage)
+                ReceiptCaptureSideEffect.ShowScanError -> launch { snackbarHostState.showSnackbar(scanErrorMessage) }
+                ReceiptCaptureSideEffect.ShowSubmitError -> launch { snackbarHostState.showSnackbar(submitErrorMessage) }
+                ReceiptCaptureSideEffect.ShowInvalidInput -> launch { snackbarHostState.showSnackbar(invalidInputMessage) }
                 ReceiptCaptureSideEffect.NavigateBackWithSuccess -> onSubmitted()
             }
         }

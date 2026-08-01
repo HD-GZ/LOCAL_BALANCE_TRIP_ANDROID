@@ -37,8 +37,10 @@ import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.savedCourseDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
 import live.lb_trip.feature.settings.EditProfileRoute
+import live.lb_trip.feature.settings.LicensesRoute
 import live.lb_trip.feature.settings.PROFILE_UPDATED_RESULT_KEY
 import live.lb_trip.feature.settings.editProfileScreen
+import live.lb_trip.feature.settings.licensesScreen
 import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
@@ -102,6 +104,7 @@ private fun MainNavGraph() {
                 onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute) },
                 onRetakeDiagnosis = { navController.navigate(PropensityRoute(forceNew = true)) },
                 onNavigateToEditProfile = { navController.navigate(EditProfileRoute) },
+                onNavigateToLicenses = { navController.navigate(LicensesRoute) },
                 profileUpdated = profileUpdated,
                 onProfileUpdatedConsumed = {
                     backStackEntry.savedStateHandle[PROFILE_UPDATED_RESULT_KEY] = false
@@ -114,6 +117,10 @@ private fun MainNavGraph() {
                 navController.previousBackStackEntry?.savedStateHandle?.set(PROFILE_UPDATED_RESULT_KEY, true)
                 navController.popBackStack()
             },
+        )
+        licensesScreen(
+            librariesRawResId = R.raw.aboutlibraries,
+            onBack = navController::popBackStack,
         )
         savedCoursesScreen(
             onBack = navController::popBackStack,

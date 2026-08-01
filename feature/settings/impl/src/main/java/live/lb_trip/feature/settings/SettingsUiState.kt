@@ -12,5 +12,6 @@ sealed interface SettingsSideEffect {
     data class ShowUnavailableMessage(val label: String) : SettingsSideEffect
     data object NavigateToDiagnosis : SettingsSideEffect
     data object NavigateToEditProfile : SettingsSideEffect
+    data object NavigateToLicenses : SettingsSideEffect
     data object ShowProfileUpdated : SettingsSideEffect
 }

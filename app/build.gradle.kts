@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.convention.android.compose)
     alias(libs.plugins.convention.android.hilt)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.aboutlibraries)
 }
 
 val localProperties =
