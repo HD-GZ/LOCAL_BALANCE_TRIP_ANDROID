@@ -18,16 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,6 +50,7 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -99,7 +96,13 @@ private fun ReceiptCaptureScreenContent(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { ReceiptCaptureAppBar(onBackClick = onBack) },
+        topBar = {
+            LbTopBar(
+                title = stringResource(R.string.savedcourses_receipt_title),
+                onBackClick = onBack,
+                backContentDescription = stringResource(R.string.savedcourses_receipt_back_content_description),
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = LbColors.Paper,
     ) { innerPadding ->
@@ -243,34 +246,6 @@ private fun ReceiptVerifyStep(
                 )
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ReceiptCaptureAppBar(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = stringResource(R.string.savedcourses_receipt_title),
-                    color = LbColors.Ink,
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
-                        contentDescription = stringResource(R.string.savedcourses_receipt_back_content_description),
-                        tint = Color.Unspecified,
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = LbColors.Paper),
-        )
-        HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
     }
 }
 

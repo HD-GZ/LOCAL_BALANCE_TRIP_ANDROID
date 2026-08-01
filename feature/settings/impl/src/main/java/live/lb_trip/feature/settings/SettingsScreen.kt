@@ -116,7 +116,9 @@ private fun MyInfoTabContentBody(
             .verticalScroll(rememberScrollState()),
     ) {
         if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxWidth().padding(top = 40.dp), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = LbColors.Green)
             }
         } else {
