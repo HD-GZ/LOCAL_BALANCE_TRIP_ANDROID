@@ -61,6 +61,7 @@ import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.domain.model.Gender
 
 @Composable
@@ -75,9 +76,12 @@ internal fun SignupAccountInfoScreen(
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        SignupAppBar(
-            title = "회원가입",
+        LbTopBar(
             onBackClick = onBack,
+            backContentDescription = "뒤로",
+            title = "회원가입",
+            containerColor = Color.Transparent,
+            windowInsets = WindowInsets(0, 0, 0, 0),
         )
 
         Column(
@@ -215,9 +219,12 @@ internal fun SignupPersonalInfoScreen(
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        SignupAppBar(
-            title = "회원가입",
+        LbTopBar(
             onBackClick = onBack,
+            backContentDescription = "뒤로",
+            title = "회원가입",
+            containerColor = Color.Transparent,
+            windowInsets = WindowInsets(0, 0, 0, 0),
         )
 
         Column(
@@ -632,9 +639,12 @@ internal fun SignupEmailVerifyScreen(
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.statusBars),
     ) {
-        SignupAppBar(
-            title = "이메일 인증",
+        LbTopBar(
             onBackClick = onBack,
+            backContentDescription = "뒤로",
+            title = "이메일 인증",
+            containerColor = Color.Transparent,
+            windowInsets = WindowInsets(0, 0, 0, 0),
         )
 
         Column(
@@ -811,43 +821,6 @@ internal fun SignupCompleteScreen(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun SignupAppBar(
-    title: String,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(54.dp),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(40.dp),
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_back),
-                contentDescription = "뒤로",
-                tint = Color.Unspecified,
-            )
-        }
-        Text(
-            text = title,
-            color = LbColors.Ink,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = (-0.15).sp,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 56.dp),
-        )
     }
 }
 

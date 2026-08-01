@@ -22,15 +22,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -39,10 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,9 +44,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbScaleSelector
 import live.lb_trip.core.designsystem.component.LbStepIndicator
@@ -167,9 +161,10 @@ private fun PropensityStepShell(
 
     Box(modifier = modifier.fillMaxSize().background(Color.White)) {
         Column(modifier = Modifier.fillMaxSize()) {
-            PropensityBrandBar(
+            LbTopBar(
                 title = title,
                 onBackClick = onBack,
+                backContentDescription = stringResource(R.string.propensity_back_content_description),
             )
 
             Column(
@@ -215,38 +210,6 @@ private fun PropensityStepShell(
         if (state.isLoading) {
             LbLoadingOverlay()
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PropensityBrandBar(
-    title: String,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = title,
-                    color = TextPrimary,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
-                        contentDescription = stringResource(R.string.propensity_back_content_description),
-                        tint = Color.Unspecified,
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
-        )
-        HorizontalDivider(color = Border, thickness = 1.dp)
     }
 }
 

@@ -9,29 +9,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
-import live.lb_trip.core.designsystem.R as DesignSystemR
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.feature.savedcourses.R
 import live.lb_trip.feature.savedcourses.SavedCourseDetailTab
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SavedCourseDetailAppBar(
     regionName: String,
@@ -39,29 +30,13 @@ internal fun SavedCourseDetailAppBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        TopAppBar(
-            title = {
-                Column {
-                    if (regionName.isNotEmpty()) {
-                        Text(text = regionName, color = Ink3, fontSize = 11.sp)
-                    }
-                    Text(text = title, color = Ink, fontSize = 15.5.sp, fontWeight = FontWeight.Bold)
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
-                        contentDescription = stringResource(R.string.savedcourses_detail_back_content_description),
-                        tint = Color.Unspecified,
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Paper),
-        )
-        HorizontalDivider(color = LineSoft, thickness = 1.dp)
-    }
+    LbTopBar(
+        title = title,
+        subtitle = regionName.ifEmpty { null },
+        onBackClick = onBackClick,
+        backContentDescription = stringResource(R.string.savedcourses_detail_back_content_description),
+        modifier = modifier,
+    )
 }
 
 @Composable

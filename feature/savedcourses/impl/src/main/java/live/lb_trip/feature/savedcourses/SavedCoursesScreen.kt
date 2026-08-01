@@ -9,19 +9,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -52,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.domain.model.TravelStatus
 
@@ -108,7 +105,22 @@ private fun SavedCoursesScreenContent(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { SavedCoursesAppBar(count = state.courses.size, onBackClick = onBack) },
+        topBar = {
+            LbTopBar(
+                onBackClick = onBack,
+                backContentDescription = stringResource(R.string.savedcourses_back_content_description),
+                title = stringResource(R.string.savedcourses_title),
+                titleTrailing = {
+                    Text(
+                        text = stringResource(R.string.savedcourses_count_template, state.courses.size),
+                        color = LbColors.Green,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
+                },
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = Color.White,
     ) { innerPadding ->
@@ -134,41 +146,6 @@ private fun SavedCoursesScreenContent(
 
                 else -> SavedCoursesList(courses = state.courses, onCourseClick = onCourseClick)
             }
-        }
-    }
-}
-
-@Composable
-private fun SavedCoursesAppBar(count: Int, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .windowInsetsPadding(WindowInsets.statusBars)) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(end = 16.dp),
-        ) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
-                    contentDescription = stringResource(R.string.savedcourses_back_content_description),
-                    tint = Color.Unspecified,
-                )
-            }
-            Text(
-                text = stringResource(R.string.savedcourses_title),
-                color = LbColors.Ink,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
-                text = stringResource(R.string.savedcourses_count_template, count),
-                color = LbColors.Green,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(start = 6.dp),
-            )
         }
     }
 }

@@ -50,6 +50,7 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
@@ -108,7 +109,12 @@ private fun SigninScreenContent(
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars),
         ) {
-            SigninAppBar(onBackClick = onBack)
+            LbTopBar(
+                onBackClick = onBack,
+                backContentDescription = "뒤로",
+                containerColor = Color.Transparent,
+                windowInsets = WindowInsets(0, 0, 0, 0),
+            )
 
             Column(
                 modifier = Modifier
@@ -148,31 +154,6 @@ private fun SigninScreenContent(
 
         if (state.isLoading) {
             LbLoadingOverlay()
-        }
-    }
-}
-
-@Composable
-private fun SigninAppBar(
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(54.dp)
-            .padding(start = 10.dp),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier.size(40.dp),
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_back),
-                contentDescription = "뒤로",
-                tint = Color.Unspecified,
-            )
         }
     }
 }

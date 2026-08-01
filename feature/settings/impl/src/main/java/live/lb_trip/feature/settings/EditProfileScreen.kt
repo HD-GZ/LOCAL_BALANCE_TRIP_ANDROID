@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -64,11 +63,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
-import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.domain.model.Gender
 
 @Composable
@@ -115,7 +114,14 @@ private fun EditProfileScreenContent(
 
     Scaffold(
         modifier = modifier,
-        topBar = { EditProfileAppBar(onBackClick = onBack) },
+        topBar = {
+            LbTopBar(
+                onBackClick = onBack,
+                backContentDescription = stringResource(R.string.edit_profile_back_cd),
+                title = stringResource(R.string.edit_profile_title),
+                containerColor = LbColors.Paper,
+            )
+        },
         bottomBar = {
             if (!state.isLoading) {
                 EditProfileSubmitBar(state = state, onIntent = onIntent)
@@ -319,40 +325,6 @@ private fun EditProfileSubmitBar(
                 fontWeight = FontWeight.SemiBold,
             )
         }
-    }
-}
-
-@Composable
-private fun EditProfileAppBar(onBackClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(LbColors.Paper)
-            .windowInsetsPadding(WindowInsets.statusBars)
-            .height(54.dp),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier
-                .padding(start = 10.dp)
-                .size(40.dp),
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
-                contentDescription = stringResource(R.string.edit_profile_back_cd),
-                tint = Color.Unspecified,
-            )
-        }
-        Text(
-            text = stringResource(R.string.edit_profile_title),
-            color = LbColors.Ink,
-            fontSize = 15.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 56.dp),
-        )
     }
 }
 
