@@ -127,7 +127,9 @@ private fun SavedCourseTimelineStop(
                             .border(1.dp, LineSoft, RoundedCornerShape(12.dp))
                             .padding(13.dp),
                     ) {
-                        Text(text = stop.description, color = Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
+                        if (stop.description != null) {
+                            Text(text = stop.description, color = Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
+                        }
                         if (stop.hasAudioGuide) {
                             Spacer(modifier = Modifier.padding(top = 9.dp))
                             Row(verticalAlignment = Alignment.CenterVertically) {

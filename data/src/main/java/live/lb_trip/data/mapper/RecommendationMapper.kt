@@ -21,6 +21,7 @@ fun CourseDetailResponseDto.toDomain(): CourseDetail =
         regionName = regionName,
         title = title,
         places = places.map { it.toDomain() },
+        benefits = benefits.map { it.toDomain() },
     )
 
 fun PlaceResponseDto.toDomain(): CoursePlace =

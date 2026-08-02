@@ -10,6 +10,7 @@ data class RecommendationDetailUiState(
     val title: String = "",
     val stops: ImmutableList<CourseStop> = persistentListOf(),
     val expandedStopIndices: PersistentSet<Int> = persistentSetOf(0),
+    val benefits: ImmutableList<RecommendationBenefit> = persistentListOf(),
     val isSaved: Boolean = false,
     val isSaving: Boolean = false,
     val playingStopIndex: Int? = null,
@@ -19,7 +20,7 @@ sealed interface RecommendationDetailSideEffect {
     data class ShowLoadError(val reason: DetailLoadErrorReason) : RecommendationDetailSideEffect
     data object ShowSaveConfirmation : RecommendationDetailSideEffect
     data object ShowSaveError : RecommendationDetailSideEffect
-    data object ShowIncentiveStub : RecommendationDetailSideEffect
+    data class OpenBenefitUrl(val url: String) : RecommendationDetailSideEffect
 }
 
 enum class DetailLoadErrorReason {

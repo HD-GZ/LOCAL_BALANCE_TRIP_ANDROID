@@ -5,13 +5,14 @@ data class CourseDetail(
     val regionName: String,
     val title: String,
     val places: List<CoursePlace>,
+    val benefits: List<CourseBenefit>,
 )
 
 data class CoursePlace(
     val order: Int,
     val name: String,
-    val description: String,
-    val imageUrl: String,
+    val description: String?,
+    val imageUrl: String?,
     val longitude: Double,
     val latitude: Double,
     val walkMinutes: Int?,

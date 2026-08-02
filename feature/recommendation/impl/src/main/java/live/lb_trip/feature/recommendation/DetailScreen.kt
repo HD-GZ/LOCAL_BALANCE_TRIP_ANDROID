@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +39,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
-import live.lb_trip.feature.recommendation.components.IncentiveRow
+import live.lb_trip.feature.recommendation.components.BenefitRow
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
@@ -55,11 +56,11 @@ internal fun DetailScreen(
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val uriHandler = LocalUriHandler.current
 
     val snackbarHostState = remember { SnackbarHostState() }
     val saveConfirmationMessage = stringResource(R.string.recommendation_snackbar_save_confirmation)
     val saveErrorMessage = stringResource(R.string.recommendation_snackbar_save_error)
-    val incentiveStubMessage = stringResource(R.string.recommendation_snackbar_incentive_stub)
     val retryActionLabel = stringResource(R.string.recommendation_action_retry)
     val courseNotFoundMessage = stringResource(R.string.recommendation_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.recommendation_error_empty_places)
@@ -81,7 +82,7 @@ internal fun DetailScreen(
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
                 RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
-                RecommendationDetailSideEffect.ShowIncentiveStub -> snackbarHostState.showSnackbar(incentiveStubMessage)
+                is RecommendationDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
             }
         }
     }
@@ -154,24 +155,26 @@ private fun DetailScreenContent(
                     onTogglePlayback = { onIntent(RecommendationDetailIntent.PlaybackToggled(it)) },
                 )
 
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    HorizontalDivider(color = LineSoft, thickness = 1.dp, modifier = Modifier.padding(vertical = 18.dp))
+                if (state.benefits.isNotEmpty()) {
+                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        HorizontalDivider(color = LineSoft, thickness = 1.dp, modifier = Modifier.padding(vertical = 18.dp))
 
-                    Text(
-                        text = stringResource(R.string.recommendation_section_incentives),
-                        color = Ink,
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = stringResource(R.string.recommendation_section_incentives),
+                            color = Ink,
+                            fontSize = 13.5.sp,
+                            fontWeight = FontWeight.Bold,
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
 
-                    Column {
-                        RecommendationStubData.incentives.fastForEachIndexed { index, incentive ->
-                            if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
-                            IncentiveRow(
-                                incentive = incentive,
-                                onClick = { onIntent(RecommendationDetailIntent.IncentiveClicked) },
-                            )
+                        Column {
+                            state.benefits.fastForEachIndexed { index, benefit ->
+                                if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
+                                BenefitRow(
+                                    benefit = benefit,
+                                    onClick = { onIntent(RecommendationDetailIntent.BenefitClicked(benefit.url)) },
+                                )
+                            }
                         }
                     }
                 }

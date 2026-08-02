@@ -158,7 +158,9 @@ private fun TimelineStopDetail(
     ) {
         MapPlaceholder()
         Column(modifier = Modifier.padding(13.dp)) {
-            Text(text = stop.description, color = Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
+            if (stop.description != null) {
+                Text(text = stop.description, color = Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
+            }
             if (stop.hasAudioGuide) {
                 Spacer(modifier = Modifier.height(9.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {

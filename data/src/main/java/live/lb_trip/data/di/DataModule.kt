@@ -21,6 +21,7 @@ import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BearerTokens
 import io.ktor.client.plugins.auth.providers.bearer
 import io.ktor.client.plugins.HttpResponseValidator
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import android.util.Log
@@ -116,8 +117,15 @@ private const val RefreshTokenPath = "/auth/refresh"
 
 private val validatorJson = Json { ignoreUnknownKeys = true }
 
+private const val REQUEST_TIMEOUT_MILLIS = 60_000L
+
 private fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
     defaultRequest { url(baseUrl) }
+    install(HttpTimeout) {
+        requestTimeoutMillis = REQUEST_TIMEOUT_MILLIS
+        connectTimeoutMillis = REQUEST_TIMEOUT_MILLIS
+        socketTimeoutMillis = REQUEST_TIMEOUT_MILLIS
+    }
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = true

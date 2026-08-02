@@ -1,12 +1,11 @@
 package live.lb_trip.feature.recommendation.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +17,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.R as DesignSystemR
-import live.lb_trip.feature.recommendation.Incentive
+import live.lb_trip.feature.recommendation.RecommendationBenefit
 
 @Composable
-internal fun IncentiveRow(incentive: Incentive, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun BenefitRow(benefit: RecommendationBenefit, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -29,10 +28,11 @@ internal fun IncentiveRow(incentive: Incentive, onClick: () -> Unit, modifier: M
             .padding(vertical = 15.dp, horizontal = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.Bottom) {
-            Text(text = incentive.title, color = Ink, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(text = incentive.subtitle, color = Ink3, fontSize = 12.sp)
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = benefit.title, color = Ink, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            if (benefit.description != null) {
+                Text(text = benefit.description, color = Ink3, fontSize = 12.sp)
+            }
         }
         Icon(
             imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_chevron_right),

@@ -14,4 +14,6 @@ dependencies {
     implementation(projects.domain)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }
