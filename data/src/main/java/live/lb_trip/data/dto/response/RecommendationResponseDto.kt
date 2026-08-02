@@ -22,6 +22,7 @@ data class CourseDetailResponseDto(
     val regionName: String,
     val title: String,
     val places: List<PlaceResponseDto>,
+    val benefits: List<BenefitResponseDto> = emptyList(),
 )
 
 @Serializable

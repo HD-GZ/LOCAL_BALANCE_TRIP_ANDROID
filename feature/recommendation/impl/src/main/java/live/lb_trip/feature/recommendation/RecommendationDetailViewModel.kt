@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.recommendation.LbTripRecommendationException
+import live.lb_trip.domain.model.CourseBenefit
 import live.lb_trip.domain.model.CoursePlace
 import live.lb_trip.domain.usecase.GetCourseDetailUseCase
 import live.lb_trip.domain.usecase.SaveCourseUseCase
@@ -35,7 +36,8 @@ class RecommendationDetailViewModel @Inject constructor(
             is RecommendationDetailIntent.StopToggled -> toggleStopExpanded(intent.index)
             is RecommendationDetailIntent.PlaybackToggled -> toggleAudioPlayback(intent.stopIndex)
             RecommendationDetailIntent.SaveClicked -> saveCourse()
-            RecommendationDetailIntent.IncentiveClicked -> postSideEffect(RecommendationDetailSideEffect.ShowIncentiveStub)
+            is RecommendationDetailIntent.BenefitClicked ->
+                postSideEffect(RecommendationDetailSideEffect.OpenBenefitUrl(intent.url))
             RecommendationDetailIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
         }
     }
@@ -49,6 +51,7 @@ class RecommendationDetailViewModel @Inject constructor(
                         isLoading = false,
                         title = detail.title,
                         stops = detail.places.map(CoursePlace::toCourseStop).toPersistentList(),
+                        benefits = detail.benefits.map(CourseBenefit::toRecommendationBenefit).toPersistentList(),
                     )
                 }
                 if (detail.places.isEmpty()) {
@@ -107,6 +110,9 @@ private fun CoursePlace.toCourseStop(): CourseStop = CourseStop(
     description = description,
     audioUrl = audioUrl,
 )
+
+private fun CourseBenefit.toRecommendationBenefit(): RecommendationBenefit =
+    RecommendationBenefit(title = title, description = description, url = url)
 
 private fun loadErrorReasonFor(throwable: Throwable?): DetailLoadErrorReason = when (throwable) {
     is LbTripRecommendationException.CourseNotFoundException -> DetailLoadErrorReason.CourseNotFound

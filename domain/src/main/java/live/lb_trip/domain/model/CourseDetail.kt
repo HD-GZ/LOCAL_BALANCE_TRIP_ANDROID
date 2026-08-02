@@ -5,6 +5,7 @@ data class CourseDetail(
     val regionName: String,
     val title: String,
     val places: List<CoursePlace>,
+    val benefits: List<CourseBenefit>,
 )
 
 data class CoursePlace(
