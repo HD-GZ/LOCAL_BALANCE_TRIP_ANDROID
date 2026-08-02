@@ -37,7 +37,7 @@ data class SavedCourseStop(
     val name: String,
     val hasAudioGuide: Boolean,
     val walkDuration: String?,
-    val description: String,
+    val description: String?,
 )
 
 data class SavedCourseBenefit(

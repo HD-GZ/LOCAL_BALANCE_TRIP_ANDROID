@@ -28,8 +28,8 @@ data class CourseDetailResponseDto(
 data class PlaceResponseDto(
     val order: Int,
     val name: String,
-    val description: String,
-    val imageUrl: String,
+    val description: String? = null,
+    val imageUrl: String? = null,
     val longitude: Double,
     val latitude: Double,
     val walkMinutes: Int? = null,
