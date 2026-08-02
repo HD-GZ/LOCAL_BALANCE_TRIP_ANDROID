@@ -27,6 +27,7 @@ data class SavedCourseDetailUiState(
     val receipts: ImmutableList<SavedCourseReceipt> = persistentListOf(),
     val isReportLoading: Boolean = false,
     val isReportAvailable: Boolean = false,
+    val reportImageUrl: String? = null,
     val reportVisitedPlaceCount: Int = 0,
     val reportTotalSpentAmount: Int = 0,
     val reportTourEndedAt: String = "",

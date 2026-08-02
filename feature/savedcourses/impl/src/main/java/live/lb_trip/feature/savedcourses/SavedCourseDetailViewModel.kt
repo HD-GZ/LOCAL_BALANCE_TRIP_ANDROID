@@ -112,6 +112,7 @@ class SavedCourseDetailViewModel @Inject constructor(
                     it.copy(
                         isReportLoading = false,
                         isReportAvailable = true,
+                        reportImageUrl = report.imageUrl,
                         reportVisitedPlaceCount = report.visitedPlaceCount,
                         reportTotalSpentAmount = report.totalSpentAmount,
                         reportTourEndedAt = report.tourEndedAt,

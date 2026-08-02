@@ -27,6 +27,7 @@ collectionsImmutable = "0.5.1"
 naverMapCompose = "1.9.0"
 playServicesLocation = "21.4.0"
 aboutLibraries = "14.2.1"
+coil = "3.4.0"
 
 [libraries]
 android-gradle-tool = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -79,6 +80,8 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 naver-map-compose = { group = "io.github.fornewid", name = "naver-map-compose", version.ref = "naverMapCompose" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
