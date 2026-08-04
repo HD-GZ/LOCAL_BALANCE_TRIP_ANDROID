@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbTopBar
+import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.feature.savedcourses.R
 import live.lb_trip.feature.savedcourses.SavedCourseDetailTab
 
@@ -42,6 +43,7 @@ internal fun SavedCourseDetailAppBar(
 @Composable
 internal fun SavedCourseDetailCtaBar(
     tab: SavedCourseDetailTab,
+    status: TravelStatus,
     hasStops: Boolean,
     isReportAvailable: Boolean,
     onTourStartClick: () -> Unit,
@@ -61,7 +63,7 @@ internal fun SavedCourseDetailCtaBar(
             when (tab) {
                 SavedCourseDetailTab.COURSE -> LbButton(
                     onClick = onTourStartClick,
-                    enabled = hasStops,
+                    enabled = hasStops && status != TravelStatus.COMPLETED,
                     colors = LbButtonDefaults.greenColors(),
                     modifier = Modifier.weight(1f).height(46.dp),
                 ) {

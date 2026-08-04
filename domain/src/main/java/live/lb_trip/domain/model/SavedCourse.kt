@@ -40,6 +40,8 @@ data class SavedCourseReport(
     val durationMinutes: Long,
     val totalSpentAmount: Int,
     val tourEndedAt: String,
+    val distanceWalkedMeters: Float?,
+    val stepCount: Int?,
 )
 
 data class TourPlaceVisit(

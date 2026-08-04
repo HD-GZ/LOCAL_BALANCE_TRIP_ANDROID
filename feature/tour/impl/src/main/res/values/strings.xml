@@ -13,11 +13,18 @@
 
     <string name="tour_error_course_not_found">코스를 찾을 수 없어요.</string>
     <string name="tour_error_empty_places">표시할 장소 정보가 없어요.</string>
+    <string name="tour_error_start_failed">투어를 시작하지 못했어요. 종료가 안 될 수 있으니 다시 시도해 주세요.</string>
     <string name="tour_error_generic_detail">코스 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="tour_error_end_tour_failed">투어를 종료하지 못했어요. 다시 시도해 주세요.</string>
 
     <string name="tour_action_confirm">확인</string>
     <string name="tour_location_permission_rationale_title">위치 권한이 필요해요</string>
     <string name="tour_location_permission_rationale_message">자동으로 도착 처리를 하기 위해, 위치 권한을 허용해주세요.</string>
     <string name="tour_location_permission_denied_title">위치 권한이 거부되었어요</string>
     <string name="tour_location_permission_denied_message">위치 권한이 거부되어 자동으로 도착 처리를 할 수 없어요. 도착 후 수동으로 처리해주세요.</string>
+
+    <string name="tour_activity_recognition_permission_rationale_title">신체 활동 권한이 필요해요</string>
+    <string name="tour_activity_recognition_permission_rationale_message">투어 중 걸은 거리를 기록하기 위해, 신체 활동 권한을 허용해주세요.</string>
+    <string name="tour_activity_recognition_permission_denied_title">신체 활동 권한이 거부되었어요</string>
+    <string name="tour_activity_recognition_permission_denied_message">신체 활동 권한이 거부되어 걸은 거리를 기록할 수 없어요. 투어는 계속 진행할 수 있어요.</string>
 </resources>

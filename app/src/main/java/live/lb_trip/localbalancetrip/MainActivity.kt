@@ -33,6 +33,7 @@ import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.ReceiptCaptureRoute
 import live.lb_trip.feature.savedcourses.SavedCourseDetailRoute
 import live.lb_trip.feature.savedcourses.SavedCoursesRoute
+import live.lb_trip.feature.savedcourses.TOUR_ENDED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.savedCourseDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
@@ -149,7 +150,13 @@ private fun MainNavGraph() {
             navController = navController,
             onBack = navController::popBackStack,
         )
-        tourScreen(onBack = navController::popBackStack)
+        tourScreen(
+            onBack = navController::popBackStack,
+            onTourFinished = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(TOUR_ENDED_RESULT_KEY, true)
+                navController.popBackStack()
+            },
+        )
     }
 }
 

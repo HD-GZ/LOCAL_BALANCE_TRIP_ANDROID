@@ -22,6 +22,7 @@ data class TourStop(
 
 sealed interface TourSideEffect {
     data class ShowLoadError(val reason: TourLoadErrorReason) : TourSideEffect
+    data object ShowEndTourError : TourSideEffect
     data object NavigateBack : TourSideEffect
     data object CollapseSheet : TourSideEffect
 }
@@ -29,5 +30,6 @@ sealed interface TourSideEffect {
 enum class TourLoadErrorReason {
     CourseNotFound,
     EmptyPlaces,
+    TourStartFailed,
     Unknown,
 }

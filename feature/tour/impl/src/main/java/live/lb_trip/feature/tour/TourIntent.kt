@@ -7,4 +7,5 @@ sealed interface TourIntent {
     data object Retry : TourIntent
     data object LocationTrackingStarted : TourIntent
     data object LocationTrackingStopped : TourIntent
+    data object DistanceRecordingPermissionGranted : TourIntent
 }
