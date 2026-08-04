@@ -1,6 +1,7 @@
 package live.lb_trip.data.repository
 
 import javax.inject.Inject
+import live.lb_trip.data.datasource.local.SavedCourseDistanceLocalDataSource
 import live.lb_trip.data.datasource.remote.SavedCourseRemoteDataSource
 import live.lb_trip.data.dto.request.TourReceiptCreateRequestDto
 import live.lb_trip.data.mapper.toDomain
@@ -8,6 +9,7 @@ import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.Receipt
 import live.lb_trip.domain.model.ReceiptScan
 import live.lb_trip.domain.model.ReceiptSummary
+import live.lb_trip.domain.model.RecordedMovement
 import live.lb_trip.domain.model.SavedCourseDetail
 import live.lb_trip.domain.model.SavedCourseList
 import live.lb_trip.domain.model.SavedCourseReport
@@ -20,6 +22,7 @@ class SavedCourseRepositoryImpl
     @Inject
     constructor(
         private val savedCourseRemoteDataSource: SavedCourseRemoteDataSource,
+        private val savedCourseDistanceLocalDataSource: SavedCourseDistanceLocalDataSource,
     ) : SavedCourseRepository {
 
         override suspend fun getSavedCourses(): Result<SavedCourseList> =
@@ -43,7 +46,11 @@ class SavedCourseRepositoryImpl
 
         override suspend fun getSavedCourseReport(savedCourseId: Long): Result<SavedCourseReport> =
             suspendRunCatching {
-                savedCourseRemoteDataSource.getReport(savedCourseId).toDomain()
+                val report = savedCourseRemoteDataSource.getReport(savedCourseId).toDomain()
+                report.copy(
+                    distanceWalkedMeters = savedCourseDistanceLocalDataSource.get(savedCourseId),
+                    stepCount = savedCourseDistanceLocalDataSource.getSteps(savedCourseId),
+                )
             }.mapApiFailure {
                 on(404, "SAVED_COURSE_NOT_FOUND") throws LbTripSavedCourseException.SavedCourseNotFoundException()
                 on(409, "TOUR_REPORT_NOT_AVAILABLE") throws LbTripSavedCourseException.TourReportNotAvailableException()
@@ -73,6 +80,11 @@ class SavedCourseRepositoryImpl
                 on(404, "SAVED_COURSE_NOT_FOUND") throws LbTripSavedCourseException.SavedCourseNotFoundException()
                 on(409, "TOUR_NOT_IN_PROGRESS") throws LbTripSavedCourseException.TourNotInProgressException()
             }
+
+        override suspend fun saveTourMovement(savedCourseId: Long, movement: RecordedMovement) {
+            savedCourseDistanceLocalDataSource.save(savedCourseId, movement.distanceMeters)
+            savedCourseDistanceLocalDataSource.saveSteps(savedCourseId, movement.stepCount)
+        }
 
         override suspend fun scanReceipt(
             savedCourseId: Long,

@@ -65,6 +65,8 @@ fun SavedCourseReportResponseDto.toDomain(): SavedCourseReport =
         durationMinutes = durationMinutes,
         totalSpentAmount = totalSpentAmount,
         tourEndedAt = tourEndedAt,
+        distanceWalkedMeters = null,
+        stepCount = null,
     )
 
 private fun String.toTravelStatus(): TravelStatus = TravelStatus.valueOf(this)

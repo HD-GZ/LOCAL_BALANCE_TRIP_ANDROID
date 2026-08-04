@@ -31,6 +31,8 @@ data class SavedCourseDetailUiState(
     val reportVisitedPlaceCount: Int = 0,
     val reportTotalSpentAmount: Int = 0,
     val reportTourEndedAt: String = "",
+    val reportDistanceWalkedMeters: Float? = null,
+    val reportStepCount: Int? = null,
 )
 
 data class SavedCourseStop(

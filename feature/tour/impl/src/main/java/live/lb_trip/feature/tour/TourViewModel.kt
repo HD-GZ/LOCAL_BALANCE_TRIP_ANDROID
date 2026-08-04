@@ -9,10 +9,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.CoursePlace
@@ -23,6 +25,7 @@ import live.lb_trip.domain.usecase.EndTourUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
 import live.lb_trip.domain.usecase.ObserveLocationUseCase
 import live.lb_trip.domain.usecase.StartTourUseCase
+import live.lb_trip.domain.util.suspendRunCatching
 
 @HiltViewModel
 class TourViewModel @Inject constructor(
@@ -32,6 +35,7 @@ class TourViewModel @Inject constructor(
     private val startTourUseCase: StartTourUseCase,
     private val checkInTourPlaceUseCase: CheckInTourPlaceUseCase,
     private val endTourUseCase: EndTourUseCase,
+    private val distanceRecording: TourDistanceRecordingCoordinator,
 ) : BaseViewModel<TourUiState, TourIntent, TourSideEffect>(TourUiState()) {
 
     private val savedCourseId: Long = savedStateHandle.toRoute<TourRoute>().savedCourseId
@@ -40,6 +44,7 @@ class TourViewModel @Inject constructor(
     private var inRadiusSinceElapsedRealtime: Long? = null
     private var previousInRadiusDistanceMeters: Float? = null
     private var lastAcceptedFixElapsedRealtime: Long? = null
+    private var isEndingTour = false
 
     // Consecutive stops can be closer together than the arrival radius. Requiring a fix
     // outside the current target's radius before it can auto-arrive (instead of only rate
@@ -56,19 +61,22 @@ class TourViewModel @Inject constructor(
         when (intent) {
             TourIntent.NextStopArrived -> advanceToNextStop()
             is TourIntent.StopSelected -> selectStop(intent.index)
-            TourIntent.EndTourClicked -> {
-                // Fire-and-forget: ending the tour is best-effort bookkeeping, not something the
-                // user should have to wait on a network round trip for before leaving the screen.
-                viewModelScope.launch { endTourUseCase(savedCourseId) }
-                postSideEffect(TourSideEffect.NavigateBack)
-            }
+            TourIntent.EndTourClicked -> endTourAndNavigateBack()
             TourIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
-            TourIntent.LocationTrackingStarted -> startLocationTracking()
-            TourIntent.LocationTrackingStopped -> stopLocationTracking()
+            TourIntent.LocationTrackingStarted -> setLocationTracking(active = true)
+            TourIntent.LocationTrackingStopped -> setLocationTracking(active = false)
+            TourIntent.DistanceRecordingPermissionGranted ->
+                viewModelScope.launch { distanceRecording.onPermissionGranted(savedCourseId) }
         }
     }
 
-    private fun startLocationTracking() {
+    private fun setLocationTracking(active: Boolean) {
+        if (!active) {
+            locationJob?.cancel()
+            locationJob = null
+            resetDwellClock()
+            return
+        }
         if (locationJob?.isActive == true) return
         // Only the dwell clock restarts here, not the armed flag -- a background/foreground
         // cycle must not re-require leaving the target's radius, or a user who backgrounds
@@ -80,12 +88,6 @@ class TourViewModel @Inject constructor(
                 .catch { /* auto-arrival is best-effort; the manual button still works */ }
                 .collect(::onLocationChanged)
         }
-    }
-
-    private fun stopLocationTracking() {
-        locationJob?.cancel()
-        locationJob = null
-        resetDwellClock()
     }
 
     private fun onLocationChanged(location: LocationFix) {
@@ -148,16 +150,14 @@ class TourViewModel @Inject constructor(
     }
 
     private suspend fun loadCourseDetail() {
+        if (isEndingTour) return
         updateState { it.copy(isLoading = true) }
         coroutineScope {
             val detailDeferred = async { getSavedCourseDetailUseCase(savedCourseId) }
-            // Best-effort: transitions the course to TRAVELING server-side and returns each
-            // place's real placeId + visited flag, needed for check-in and to resume progress
-            // on a restarted tour. If this fails, the tour still works locally -- it just can't
-            // report accurate visit data to the backend.
             val startDeferred = async { startTourUseCase(savedCourseId) }
             val detailResult = detailDeferred.await()
-            val visitsByOrder = startDeferred.await().getOrNull().orEmpty().associateBy { it.order }
+            val startResult = startDeferred.await()
+            val visitsByOrder = startResult.getOrNull().orEmpty().associateBy { it.order }
 
             detailResult
                 .onSuccess { detail ->
@@ -175,6 +175,11 @@ class TourViewModel @Inject constructor(
                     if (detail.places.isEmpty()) {
                         postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.EmptyPlaces))
                     } else {
+                        if (startResult.isSuccess) {
+                            distanceRecording.onTourStarted(savedCourseId)
+                        } else {
+                            postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.TourStartFailed))
+                        }
                         checkInCurrentStop()
                     }
                 }
@@ -188,8 +193,7 @@ class TourViewModel @Inject constructor(
     private fun advanceToNextStop() {
         val lastIndex = currentState.stops.lastIndex
         if (currentState.currentStopIndex >= lastIndex) {
-            viewModelScope.launch { endTourUseCase(savedCourseId) }
-            postSideEffect(TourSideEffect.NavigateBack)
+            endTourAndNavigateBack()
             return
         }
         updateState { it.copy(currentStopIndex = it.currentStopIndex + 1) }
@@ -215,6 +219,21 @@ class TourViewModel @Inject constructor(
     private fun checkInCurrentStop() {
         val placeId = currentState.stops.getOrNull(currentState.currentStopIndex)?.placeId ?: return
         viewModelScope.launch { checkInTourPlaceUseCase(savedCourseId, placeId) }
+    }
+
+    private fun endTourAndNavigateBack() {
+        if (isEndingTour) return
+        isEndingTour = true
+        viewModelScope.launch {
+            val endTourResult = withContext(NonCancellable) { endTourUseCase(savedCourseId) }
+            if (endTourResult.isFailure) {
+                isEndingTour = false
+                postSideEffect(TourSideEffect.ShowEndTourError)
+                return@launch
+            }
+            withContext(NonCancellable) { suspendRunCatching { distanceRecording.finish(savedCourseId) } }
+            postSideEffect(TourSideEffect.NavigateBack)
+        }
     }
 }
 

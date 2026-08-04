@@ -41,6 +41,7 @@ import kotlinx.serialization.json.Json
 import live.lb_trip.data.datasource.local.TokenDataStore
 import live.lb_trip.data.di.qualifier.BaseUrl
 import live.lb_trip.data.di.qualifier.NoAuth
+import live.lb_trip.data.di.qualifier.TourDistanceDataStore
 import live.lb_trip.data.dto.request.TokenRefreshRequestDto
 import live.lb_trip.data.dto.response.ApiResponse
 import live.lb_trip.data.dto.response.TokenResponseDto
@@ -56,6 +57,14 @@ object DataModule {
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             produceFile = { context.preferencesDataStoreFile("tokens") },
+        )
+
+    @Provides
+    @Singleton
+    @TourDistanceDataStore
+    fun provideTourDistanceDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile("tour_distances") },
         )
 
     @Provides

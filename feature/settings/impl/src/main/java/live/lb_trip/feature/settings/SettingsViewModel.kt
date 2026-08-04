@@ -3,10 +3,13 @@ package live.lb_trip.feature.settings
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import live.lb_trip.core.viewmodel.BaseViewModel
+import live.lb_trip.domain.usecase.ClearDistanceRecordingUseCase
 import live.lb_trip.domain.usecase.ClearSessionUseCase
 import live.lb_trip.domain.usecase.GetSavedCoursesUseCase
 import live.lb_trip.domain.usecase.GetUserProfileUseCase
@@ -18,6 +21,7 @@ class SettingsViewModel @Inject constructor(
     private val getSavedCoursesUseCase: GetSavedCoursesUseCase,
     private val logoutUseCase: LogoutUseCase,
     private val clearSessionUseCase: ClearSessionUseCase,
+    private val clearDistanceRecordingUseCase: ClearDistanceRecordingUseCase,
 ) : BaseViewModel<SettingsUiState, SettingsIntent, SettingsSideEffect>(SettingsUiState()) {
 
     init {
@@ -63,6 +67,9 @@ class SettingsViewModel @Inject constructor(
 
     private suspend fun logout() {
         logoutUseCase()
-        clearSessionUseCase()
+        withContext(NonCancellable) {
+            clearDistanceRecordingUseCase()
+            clearSessionUseCase()
+        }
     }
 }

@@ -3,6 +3,7 @@ package live.lb_trip.domain.repository
 import live.lb_trip.domain.model.Receipt
 import live.lb_trip.domain.model.ReceiptScan
 import live.lb_trip.domain.model.ReceiptSummary
+import live.lb_trip.domain.model.RecordedMovement
 import live.lb_trip.domain.model.SavedCourseDetail
 import live.lb_trip.domain.model.SavedCourseList
 import live.lb_trip.domain.model.SavedCourseReport
@@ -25,6 +26,11 @@ interface SavedCourseRepository {
     ): Result<Unit>
 
     suspend fun endTour(savedCourseId: Long): Result<Unit>
+
+    suspend fun saveTourMovement(
+        savedCourseId: Long,
+        movement: RecordedMovement,
+    )
 
     suspend fun scanReceipt(
         savedCourseId: Long,

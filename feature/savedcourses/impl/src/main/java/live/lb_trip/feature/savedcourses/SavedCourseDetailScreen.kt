@@ -70,6 +70,8 @@ internal fun SavedCourseDetailScreen(
     onNavigateToReceiptCapture: (Long) -> Unit,
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
+    tourEnded: Boolean,
+    onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SavedCourseDetailViewModel = hiltViewModel(),
 ) {
@@ -114,6 +116,13 @@ internal fun SavedCourseDetailScreen(
         }
     }
 
+    LaunchedEffect(tourEnded) {
+        if (tourEnded) {
+            viewModel.onIntent(SavedCourseDetailIntent.Retry)
+            onTourEndedConsumed()
+        }
+    }
+
     val activity = LocalActivity.current
     if (activity != null) {
         SideEffect {
@@ -141,7 +150,6 @@ private fun SavedCourseDetailScreenContent(
 ) {
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
     val context = LocalContext.current
-    val view = LocalView.current
     val imageLoader = remember(context) {
         ImageLoader.Builder(context)
             .components { add(OkHttpNetworkFetcherFactory()) }
@@ -156,6 +164,7 @@ private fun SavedCourseDetailScreenContent(
         stringResource(R.string.savedcourses_detail_report_places_template, state.reportVisitedPlaceCount)
     val shareCardAmountLabel =
         stringResource(R.string.savedcourses_detail_receipt_amount_template, state.reportTotalSpentAmount)
+    val shareCardMovementLabels = rememberReportMovementLabels(state.reportDistanceWalkedMeters, state.reportStepCount)
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -176,6 +185,7 @@ private fun SavedCourseDetailScreenContent(
         bottomBar = {
             SavedCourseDetailCtaBar(
                 tab = state.selectedTab,
+                status = state.status,
                 hasStops = state.stops.isNotEmpty(),
                 isReportAvailable = state.isReportAvailable,
                 onTourStartClick = { onIntent(SavedCourseDetailIntent.TourStartClicked) },
@@ -217,6 +227,8 @@ private fun SavedCourseDetailScreenContent(
                             statusLabel = shareCardStatusLabel,
                             placesLabel = shareCardPlacesLabel,
                             amountLabel = shareCardAmountLabel,
+                            distanceLabel = shareCardMovementLabels.distance,
+                            stepsLabel = shareCardMovementLabels.steps,
                         )
                     }
                 }
@@ -353,6 +365,8 @@ private fun SavedCourseReportTab(
     statusLabel: String,
     placesLabel: String,
     amountLabel: String,
+    distanceLabel: String?,
+    stepsLabel: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
@@ -377,6 +391,14 @@ private fun SavedCourseReportTab(
         SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_places_label), value = placesLabel)
         HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
         SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_amount_label), value = amountLabel)
+        if (distanceLabel != null) {
+            HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
+            SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_distance_label), value = distanceLabel)
+        }
+        if (stepsLabel != null) {
+            HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
+            SavedCourseReportRow(label = stringResource(R.string.savedcourses_detail_report_steps_label), value = stepsLabel)
+        }
 
         if (state.reportImageUrl != null) {
             Spacer(modifier = Modifier.height(20.dp))
@@ -399,6 +421,19 @@ private fun SavedCourseReportTab(
             )
         }
     }
+}
+
+private data class ReportMovementLabels(val distance: String?, val steps: String?)
+
+@Composable
+private fun rememberReportMovementLabels(distanceMeters: Float?, stepCount: Int?): ReportMovementLabels {
+    val distanceLabel = distanceMeters?.let {
+        stringResource(R.string.savedcourses_detail_report_distance_template, it / METERS_PER_KILOMETER)
+    }
+    val stepsLabel = stepCount?.let {
+        stringResource(R.string.savedcourses_detail_report_steps_template, it)
+    }
+    return ReportMovementLabels(distance = distanceLabel, steps = stepsLabel)
 }
 
 @Composable
@@ -439,3 +474,5 @@ private fun SavedCourseDetailScreenPreview() {
         onIntent = {},
     )
 }
+
+private const val METERS_PER_KILOMETER = 1000f

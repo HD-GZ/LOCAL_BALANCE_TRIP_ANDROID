@@ -20,6 +20,9 @@ fun NavGraphBuilder.savedCourseDetailScreen(
         val receiptRegistered by backStackEntry.savedStateHandle
             .getStateFlow(RECEIPT_REGISTERED_RESULT_KEY, false)
             .collectAsStateWithLifecycle()
+        val tourEnded by backStackEntry.savedStateHandle
+            .getStateFlow(TOUR_ENDED_RESULT_KEY, false)
+            .collectAsStateWithLifecycle()
         SavedCourseDetailScreen(
             onBack = onBack,
             onNavigateToTour = onNavigateToTour,
@@ -27,6 +30,10 @@ fun NavGraphBuilder.savedCourseDetailScreen(
             receiptRegistered = receiptRegistered,
             onReceiptRegisteredConsumed = {
                 backStackEntry.savedStateHandle[RECEIPT_REGISTERED_RESULT_KEY] = false
+            },
+            tourEnded = tourEnded,
+            onTourEndedConsumed = {
+                backStackEntry.savedStateHandle[TOUR_ENDED_RESULT_KEY] = false
             },
         )
     }

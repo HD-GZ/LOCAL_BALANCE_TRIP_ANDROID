@@ -5,17 +5,20 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.minus
 import kotlinx.collections.immutable.plus
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.CourseBenefit
 import live.lb_trip.domain.model.CoursePlace
 import live.lb_trip.domain.model.Receipt
+import live.lb_trip.domain.model.ReceiptSummary
+import live.lb_trip.domain.model.SavedCourseDetail
 import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.usecase.GetReceiptsUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
@@ -55,82 +58,39 @@ class SavedCourseDetailViewModel @Inject constructor(
     private suspend fun load() {
         updateState { it.copy(isLoading = true, isReceiptsLoading = true, isReportLoading = true) }
         coroutineScope {
-            val detailDeferred = async { getSavedCourseDetailUseCase(savedCourseId) }
-            val receiptsDeferred = async { getReceiptsUseCase(savedCourseId) }
-            val reportDeferred = async { getSavedCourseReportUseCase(savedCourseId) }
-            val detailResult = detailDeferred.await()
-            val receiptsResult = receiptsDeferred.await()
-            val reportResult = reportDeferred.await()
-
-            detailResult
-                .onSuccess { detail ->
-                    updateState {
-                        it.copy(
-                            isLoading = false,
-                            regionName = detail.regionName,
-                            title = detail.title,
-                            status = detail.status,
-                            stops = detail.places.map(CoursePlace::toSavedCourseStop).toPersistentList(),
-                            benefits = detail.benefits.map(CourseBenefit::toSavedCourseBenefit).toPersistentList(),
-                        )
-                    }
-                    if (detail.places.isEmpty()) {
-                        postSideEffect(
-                            SavedCourseDetailSideEffect.ShowLoadError(SavedCourseDetailLoadErrorReason.EmptyPlaces),
-                        )
-                    }
-                }
-                .onFailure { throwable ->
-                    updateState { it.copy(isLoading = false) }
-                    postSideEffect(SavedCourseDetailSideEffect.ShowLoadError(loadErrorReasonFor(throwable)))
-                }
-
-            receiptsResult
-                .onSuccess { summary ->
-                    updateState {
-                        it.copy(
-                            isReceiptsLoading = false,
-                            hasLoadedReceipts = true,
-                            receiptTotalAmount = summary.totalAmount,
-                            receipts = summary.receipts.map(Receipt::toSavedCourseReceipt).toPersistentList(),
-                        )
-                    }
-                }
-                .onFailure {
-                    updateState { it.copy(isReceiptsLoading = false) }
-                    postSideEffect(SavedCourseDetailSideEffect.ShowReceiptsLoadError)
-                }
-
-            applyReportResult(reportResult)
+            launch { applyDetailResult(getSavedCourseDetailUseCase(savedCourseId)) }
+            launch { applyReceiptsResult(getReceiptsUseCase(savedCourseId)) }
+            launch { applyReportResult(fetchReportWithRetry()) }
         }
     }
 
-    private fun applyReportResult(result: Result<SavedCourseReport>) {
+    private fun applyDetailResult(result: Result<SavedCourseDetail>) {
         result
-            .onSuccess { report ->
+            .onSuccess { detail ->
                 updateState {
                     it.copy(
-                        isReportLoading = false,
-                        isReportAvailable = true,
-                        reportImageUrl = report.imageUrl,
-                        reportVisitedPlaceCount = report.visitedPlaceCount,
-                        reportTotalSpentAmount = report.totalSpentAmount,
-                        reportTourEndedAt = report.tourEndedAt,
+                        isLoading = false,
+                        regionName = detail.regionName,
+                        title = detail.title,
+                        status = detail.status,
+                        stops = detail.places.map(CoursePlace::toSavedCourseStop).toPersistentList(),
+                        benefits = detail.benefits.map(CourseBenefit::toSavedCourseBenefit).toPersistentList(),
+                    )
+                }
+                if (detail.places.isEmpty()) {
+                    postSideEffect(
+                        SavedCourseDetailSideEffect.ShowLoadError(SavedCourseDetailLoadErrorReason.EmptyPlaces),
                     )
                 }
             }
             .onFailure { throwable ->
-                updateState { it.copy(isReportLoading = false, isReportAvailable = false) }
-                // Tour not yet ended is expected for BEFORE_TRIP/TRAVELING courses, not an error to surface.
-                if (throwable !is LbTripSavedCourseException.TourReportNotAvailableException) {
-                    postSideEffect(SavedCourseDetailSideEffect.ShowReportLoadError)
-                }
+                updateState { it.copy(isLoading = false) }
+                postSideEffect(SavedCourseDetailSideEffect.ShowLoadError(loadErrorReasonFor(throwable)))
             }
     }
 
-    private suspend fun reloadReceipts() {
-        updateState { it.copy(isReceiptsLoading = true) }
-        getReceiptsUseCase(savedCourseId)
+    private fun applyReceiptsResult(result: Result<ReceiptSummary>) {
+        result
             .onSuccess { summary ->
                 updateState {
                     it.copy(
@@ -145,6 +105,46 @@ class SavedCourseDetailViewModel @Inject constructor(
                 updateState { it.copy(isReceiptsLoading = false) }
                 postSideEffect(SavedCourseDetailSideEffect.ShowReceiptsLoadError)
             }
+    }
+
+    private suspend fun fetchReportWithRetry(): Result<SavedCourseReport> {
+        var result = getSavedCourseReportUseCase(savedCourseId)
+        repeat(REPORT_RETRY_ATTEMPTS) {
+            if (result.exceptionOrNull() !is LbTripSavedCourseException.TourReportNotAvailableException) return result
+            delay(REPORT_RETRY_DELAY_MILLIS.milliseconds)
+            result = getSavedCourseReportUseCase(savedCourseId)
+        }
+        return result
+    }
+
+    private fun applyReportResult(result: Result<SavedCourseReport>) {
+        result
+            .onSuccess { report ->
+                updateState {
+                    it.copy(
+                        isReportLoading = false,
+                        isReportAvailable = true,
+                        reportImageUrl = report.imageUrl,
+                        reportVisitedPlaceCount = report.visitedPlaceCount,
+                        reportTotalSpentAmount = report.totalSpentAmount,
+                        reportTourEndedAt = report.tourEndedAt,
+                        reportDistanceWalkedMeters = report.distanceWalkedMeters,
+                        reportStepCount = report.stepCount,
+                    )
+                }
+            }
+            .onFailure { throwable ->
+                updateState { it.copy(isReportLoading = false, isReportAvailable = false) }
+                // Tour not yet ended is expected for BEFORE_TRIP/TRAVELING courses, not an error to surface.
+                if (throwable !is LbTripSavedCourseException.TourReportNotAvailableException) {
+                    postSideEffect(SavedCourseDetailSideEffect.ShowReportLoadError)
+                }
+            }
+    }
+
+    private suspend fun reloadReceipts() {
+        updateState { it.copy(isReceiptsLoading = true) }
+        applyReceiptsResult(getReceiptsUseCase(savedCourseId))
     }
 
     private fun toggleStopExpanded(index: Int) {
@@ -178,3 +178,6 @@ private fun loadErrorReasonFor(throwable: Throwable?): SavedCourseDetailLoadErro
     is LbTripSavedCourseException.SavedCourseNotFoundException -> SavedCourseDetailLoadErrorReason.CourseNotFound
     else -> SavedCourseDetailLoadErrorReason.Unknown
 }
+
+private const val REPORT_RETRY_ATTEMPTS = 2
+private const val REPORT_RETRY_DELAY_MILLIS = 700L

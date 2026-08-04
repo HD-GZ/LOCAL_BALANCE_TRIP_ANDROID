@@ -75,6 +75,7 @@ import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.feature.tour.components.TourRouteTimeline
+import live.lb_trip.feature.tour.location.rememberActivityRecognitionPermissionGranted
 import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 import live.lb_trip.core.designsystem.R as DesignSystemR
 
@@ -82,6 +83,7 @@ import live.lb_trip.core.designsystem.R as DesignSystemR
 @Composable
 internal fun TourScreen(
     onBack: () -> Unit,
+    onTourFinished: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TourViewModel = hiltViewModel(),
 ) {
@@ -91,7 +93,9 @@ internal fun TourScreen(
     val retryActionLabel = stringResource(R.string.tour_action_retry)
     val courseNotFoundMessage = stringResource(R.string.tour_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.tour_error_empty_places)
+    val tourStartFailedMessage = stringResource(R.string.tour_error_start_failed)
     val genericLoadErrorMessage = stringResource(R.string.tour_error_generic_detail)
+    val endTourErrorMessage = stringResource(R.string.tour_error_end_tour_failed)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -100,6 +104,7 @@ internal fun TourScreen(
                     val message = when (effect.reason) {
                         TourLoadErrorReason.CourseNotFound -> courseNotFoundMessage
                         TourLoadErrorReason.EmptyPlaces -> emptyPlacesMessage
+                        TourLoadErrorReason.TourStartFailed -> tourStartFailedMessage
                         TourLoadErrorReason.Unknown -> genericLoadErrorMessage
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
@@ -108,7 +113,14 @@ internal fun TourScreen(
                     }
                 }
 
-                TourSideEffect.NavigateBack -> onBack()
+                TourSideEffect.ShowEndTourError -> launch {
+                    val result = snackbarHostState.showSnackbar(message = endTourErrorMessage, actionLabel = retryActionLabel)
+                    if (result == SnackbarResult.ActionPerformed) {
+                        viewModel.onIntent(TourIntent.EndTourClicked)
+                    }
+                }
+
+                TourSideEffect.NavigateBack -> onTourFinished()
                 TourSideEffect.CollapseSheet -> launch { scaffoldState.bottomSheetState.partialExpand() }
             }
         }
@@ -129,6 +141,13 @@ internal fun TourScreen(
         }
         onStopOrDispose {
             viewModel.onIntent(TourIntent.LocationTrackingStopped)
+        }
+    }
+
+    val hasActivityRecognitionPermission = rememberActivityRecognitionPermissionGranted()
+    LaunchedEffect(hasActivityRecognitionPermission) {
+        if (hasActivityRecognitionPermission) {
+            viewModel.onIntent(TourIntent.DistanceRecordingPermissionGranted)
         }
     }
 

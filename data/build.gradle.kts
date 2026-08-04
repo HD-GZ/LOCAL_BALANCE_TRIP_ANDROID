@@ -23,4 +23,6 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.annotation.experimental)
     implementation(libs.play.services.location)
+    implementation(libs.play.services.fitness)
+    implementation(libs.kotlinx.coroutines.play.services)
 }
