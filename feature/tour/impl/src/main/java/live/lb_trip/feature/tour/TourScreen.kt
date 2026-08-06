@@ -182,6 +182,7 @@ private fun TourScreenContent(
             TourBottomSheetContent(
                 stops = state.stops,
                 currentStopIndex = state.currentStopIndex,
+                progressStopIndex = state.furthestStopIndex,
                 onEndTourClick = { onIntent(TourIntent.EndTourClicked) },
                 onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
             )
@@ -198,7 +199,7 @@ private fun TourScreenContent(
             )
 
             TourProgressChip(
-                completedCount = state.currentStopIndex + 1,
+                completedCount = state.furthestStopIndex + 1,
                 totalCount = state.stops.size,
                 modifier = Modifier
                     .align(Alignment.TopStart)
@@ -345,12 +346,13 @@ private fun TourMapMarker(order: Int, color: Color, modifier: Modifier = Modifie
 private fun TourBottomSheetContent(
     stops: ImmutableList<TourStop>,
     currentStopIndex: Int,
+    progressStopIndex: Int,
     onEndTourClick: () -> Unit,
     onNextStopClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isLastStop = currentStopIndex >= stops.lastIndex
-    val displayedStop = if (isLastStop) stops.getOrNull(currentStopIndex) else stops.getOrNull(currentStopIndex + 1)
+    val isLastStop = progressStopIndex >= stops.lastIndex
+    val displayedStop = if (isLastStop) stops.getOrNull(progressStopIndex) else stops.getOrNull(progressStopIndex + 1)
 
     Column(
         modifier = modifier

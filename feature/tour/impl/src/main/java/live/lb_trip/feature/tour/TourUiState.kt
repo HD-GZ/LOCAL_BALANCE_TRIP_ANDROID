@@ -9,6 +9,7 @@ data class TourUiState(
     val title: String = "",
     val stops: ImmutableList<TourStop> = persistentListOf(),
     val currentStopIndex: Int = 0,
+    val furthestStopIndex: Int = 0,
 )
 
 data class TourStop(
