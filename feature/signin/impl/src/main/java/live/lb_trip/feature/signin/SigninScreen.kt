@@ -61,6 +61,7 @@ import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 internal fun SigninScreen(
     onBack: () -> Unit,
     onNavigateToSignup: () -> Unit,
+    onNavigateToPasswordReset: () -> Unit,
     viewModel: SigninViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
 ) {
@@ -79,6 +80,7 @@ internal fun SigninScreen(
         onBack = onBack,
         onIntent = viewModel::onIntent,
         onNavigateToSignup = onNavigateToSignup,
+        onNavigateToPasswordReset = onNavigateToPasswordReset,
         modifier = modifier,
     )
 }
@@ -89,6 +91,7 @@ private fun SigninScreenContent(
     onBack: () -> Unit,
     onIntent: (SigninIntent) -> Unit,
     onNavigateToSignup: () -> Unit,
+    onNavigateToPasswordReset: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -140,7 +143,7 @@ private fun SigninScreenContent(
             SigninBottomAction(
                 isLoading = state.isLoading,
                 onLoginClick = { onIntent(SigninIntent.LoginClicked) },
-                onForgotPasswordClick = {},
+                onForgotPasswordClick = onNavigateToPasswordReset,
                 onSignupClick = onNavigateToSignup,
             )
         }
@@ -316,5 +319,6 @@ private fun SigninScreenPreview() {
         onBack = {},
         onIntent = {},
         onNavigateToSignup = {},
+        onNavigateToPasswordReset = {},
     )
 }

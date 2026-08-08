@@ -8,7 +8,12 @@ import io.ktor.http.contentType
 import live.lb_trip.data.dto.request.EmailVerificationConfirmRequestDto
 import live.lb_trip.data.dto.request.EmailVerificationResendRequestDto
 import live.lb_trip.data.dto.request.LoginRequestDto
+import live.lb_trip.data.dto.request.PasswordResetCodeRequestDto
+import live.lb_trip.data.dto.request.PasswordResetConfirmRequestDto
+import live.lb_trip.data.dto.request.PasswordResetRequestDto
 import live.lb_trip.data.dto.request.SignupRequestDto
+import live.lb_trip.data.dto.response.PasswordResetCodeResponseDto
+import live.lb_trip.data.dto.response.PasswordResetConfirmResponseDto
 import live.lb_trip.data.dto.response.TokenResponseDto
 import live.lb_trip.data.dto.response.UserResponseDto
 import live.lb_trip.data.dto.response.bodyOrThrow
@@ -49,4 +54,22 @@ class AuthRemoteDataSource @Inject constructor(
             contentType(ContentType.Application.Json)
             setBody(request)
         }.bodyOrThrow()
+
+    suspend fun requestPasswordReset(request: PasswordResetCodeRequestDto): PasswordResetCodeResponseDto =
+        noAuthClient.post("/auth/password-reset/request") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.bodyOrThrow()
+
+    suspend fun confirmPasswordReset(request: PasswordResetConfirmRequestDto): PasswordResetConfirmResponseDto =
+        noAuthClient.post("/auth/password-reset/confirm") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.bodyOrThrow()
+
+    suspend fun resetPassword(request: PasswordResetRequestDto) =
+        noAuthClient.post("/auth/password-reset") {
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.checkOrThrow()
 }
