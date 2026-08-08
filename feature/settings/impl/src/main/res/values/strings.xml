@@ -48,9 +48,8 @@
     <string name="edit_profile_gender_not_specified">선택 안 함</string>
 
     <string name="edit_profile_withdraw_link">탈퇴를 원하시나요? 회원탈퇴 ›</string>
-    <string name="edit_profile_withdraw_unavailable">회원탈퇴는 준비 중이에요.</string>
-    <string name="edit_profile_withdraw_sheet_title">정말로 탈퇴하시겠어요?</string>
-    <string name="edit_profile_withdraw_sheet_body">탈퇴 후에는 로컬밸런스 트립의 저장 코스·여행 프로필·혜택 정보를 사용할 수 없어요.</string>
+    <string name="edit_profile_withdraw_dialog_title">탈퇴하시겠어요?</string>
+    <string name="edit_profile_withdraw_dialog_body">탈퇴하면 모든 데이터가 삭제돼요. 정말 탈퇴하시겠어요?</string>
     <string name="edit_profile_withdraw_cancel">취소</string>
     <string name="edit_profile_withdraw_confirm">탈퇴하기</string>
 

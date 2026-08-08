@@ -8,4 +8,8 @@ sealed class LbTripUserException : LbTripException() {
     class InvalidInputValueException(
         val fields: List<String>,
     ) : LbTripUserException()
+
+    class UserNotFoundException : LbTripUserException()
+
+    class UserWithdrawnException : LbTripUserException()
 }

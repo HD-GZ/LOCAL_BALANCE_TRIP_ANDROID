@@ -63,4 +63,12 @@ class UserRepositoryImpl @Inject constructor(
                 LbTripUserException.InvalidInputValueException(fields = ex.fieldErrors.map { it.first })
             }
         }
+
+    override suspend fun withdraw(): Result<Unit> =
+        suspendRunCatching {
+            userRemoteDataSource.withdraw()
+        }.mapApiFailure {
+            on(404, "USER_NOT_FOUND") throws LbTripUserException.UserNotFoundException()
+            on(403, "USER_WITHDRAWN") throws LbTripUserException.UserWithdrawnException()
+        }
 }

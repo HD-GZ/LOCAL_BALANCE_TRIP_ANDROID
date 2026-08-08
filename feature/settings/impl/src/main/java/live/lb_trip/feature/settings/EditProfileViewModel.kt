@@ -3,11 +3,16 @@ package live.lb_trip.feature.settings
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.user.LbTripUserException
+import live.lb_trip.domain.usecase.ClearDistanceRecordingUseCase
+import live.lb_trip.domain.usecase.ClearSessionUseCase
 import live.lb_trip.domain.usecase.GetUserProfileUseCase
 import live.lb_trip.domain.usecase.UpdateUserProfileUseCase
+import live.lb_trip.domain.usecase.WithdrawUserUseCase
 
 @HiltViewModel
 class EditProfileViewModel
@@ -15,6 +20,9 @@ class EditProfileViewModel
     constructor(
         private val getUserProfileUseCase: GetUserProfileUseCase,
         private val updateUserProfileUseCase: UpdateUserProfileUseCase,
+        private val withdrawUserUseCase: WithdrawUserUseCase,
+        private val clearSessionUseCase: ClearSessionUseCase,
+        private val clearDistanceRecordingUseCase: ClearDistanceRecordingUseCase,
     ) : BaseViewModel<EditProfileUiState, EditProfileIntent, EditProfileSideEffect>(EditProfileUiState()) {
 
         init {
@@ -35,7 +43,7 @@ class EditProfileViewModel
                 EditProfileIntent.ToggleConfirmPasswordVisibility ->
                     updateState { it.copy(isConfirmPasswordVisible = !it.isConfirmPasswordVisible) }
                 EditProfileIntent.SaveClicked -> viewModelScope.launch { save() }
-                EditProfileIntent.WithdrawClicked -> postSideEffect(EditProfileSideEffect.ShowWithdrawUnavailable)
+                EditProfileIntent.WithdrawClicked -> viewModelScope.launch { withdraw() }
             }
         }
 
@@ -84,6 +92,20 @@ class EditProfileViewModel
             }
         }
 
+        private suspend fun withdraw() {
+            updateState { it.copy(isWithdrawing = true) }
+            withdrawUserUseCase()
+                .onSuccess {
+                    withContext(NonCancellable) {
+                        clearDistanceRecordingUseCase()
+                        clearSessionUseCase()
+                    }
+                }.onFailure { throwable ->
+                    updateState { it.copy(isWithdrawing = false) }
+                    postSideEffect(EditProfileSideEffect.ShowWithdrawError(withdrawFailureMessage(throwable)))
+                }
+        }
+
         private fun parseBirthDate(birthDate: String): Triple<String, Int, String> {
             val parts = birthDate.split("-")
             val year = parts.getOrNull(0).orEmpty()
@@ -105,5 +127,11 @@ class EditProfileViewModel
             "password" -> "비밀번호는 영문·숫자 포함 8자 이상이어야 해요."
             "passwordConfirm" -> "비밀번호가 일치하지 않아요."
             else -> null
+        }
+
+        private fun withdrawFailureMessage(throwable: Throwable): String = when (throwable) {
+            is LbTripUserException.UserWithdrawnException -> "이미 탈퇴한 계정이에요."
+            is LbTripUserException.UserNotFoundException -> "사용자 정보를 찾을 수 없어요."
+            else -> "회원 탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요."
         }
     }

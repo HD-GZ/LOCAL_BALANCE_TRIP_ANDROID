@@ -26,18 +26,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,6 +67,7 @@ import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.domain.model.Gender
 
 @Composable
@@ -80,7 +80,6 @@ fun EditProfileScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val loadErrorMessage = stringResource(R.string.edit_profile_error_load)
-    val withdrawUnavailableMessage = stringResource(R.string.edit_profile_withdraw_unavailable)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -88,7 +87,7 @@ fun EditProfileScreen(
                 EditProfileSideEffect.ShowLoadError -> launch { snackbarHostState.showSnackbar(loadErrorMessage) }
                 is EditProfileSideEffect.ShowSaveError -> launch { snackbarHostState.showSnackbar(effect.message) }
                 EditProfileSideEffect.SaveSuccess -> onSaved()
-                EditProfileSideEffect.ShowWithdrawUnavailable -> launch { snackbarHostState.showSnackbar(withdrawUnavailableMessage) }
+                is EditProfileSideEffect.ShowWithdrawError -> launch { snackbarHostState.showSnackbar(effect.message) }
             }
         }
     }
@@ -110,50 +109,55 @@ private fun EditProfileScreenContent(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
-    var showWithdrawSheet by remember { mutableStateOf(false) }
+    var showWithdrawDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            LbTopBar(
-                onBackClick = onBack,
-                backContentDescription = stringResource(R.string.edit_profile_back_cd),
-                title = stringResource(R.string.edit_profile_title),
-                containerColor = LbColors.Paper,
-            )
-        },
-        bottomBar = {
-            if (!state.isLoading) {
-                EditProfileSubmitBar(state = state, onIntent = onIntent)
+    Box(modifier = modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                LbTopBar(
+                    onBackClick = onBack,
+                    backContentDescription = stringResource(R.string.edit_profile_back_cd),
+                    title = stringResource(R.string.edit_profile_title),
+                    containerColor = LbColors.Paper,
+                )
+            },
+            bottomBar = {
+                if (!state.isLoading) {
+                    EditProfileSubmitBar(state = state, onIntent = onIntent)
+                }
+            },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            containerColor = LbColors.Paper,
+        ) { innerPadding ->
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(innerPadding),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = LbColors.Green)
+                }
+            } else {
+                EditProfileForm(
+                    state = state,
+                    onIntent = onIntent,
+                    onWithdrawLinkClick = { showWithdrawDialog = true },
+                    modifier = Modifier.padding(innerPadding),
+                )
             }
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = LbColors.Paper,
-    ) { innerPadding ->
-        if (state.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator(color = LbColors.Green)
-            }
-        } else {
-            EditProfileForm(
-                state = state,
-                onIntent = onIntent,
-                onWithdrawLinkClick = { showWithdrawSheet = true },
-                modifier = Modifier.padding(innerPadding),
-            )
+        }
+
+        if (state.isWithdrawing) {
+            LbLoadingOverlay()
         }
     }
 
-    if (showWithdrawSheet) {
-        WithdrawSheet(
-            onWithdrawClick = {
-                showWithdrawSheet = false
+    if (showWithdrawDialog) {
+        WithdrawConfirmDialog(
+            onConfirm = {
+                showWithdrawDialog = false
                 onIntent(EditProfileIntent.WithdrawClicked)
             },
-            onDismiss = { showWithdrawSheet = false },
+            onDismiss = { showWithdrawDialog = false },
         )
     }
 }
@@ -483,47 +487,38 @@ private fun GenderSegmented(selected: Gender, onSelect: (Gender) -> Unit, modifi
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun WithdrawSheet(onWithdrawClick: () -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(), modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
+private fun WithdrawConfirmDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        modifier = modifier,
+        title = {
             Text(
-                text = stringResource(R.string.edit_profile_withdraw_sheet_title),
-                color = LbColors.Ink,
-                fontSize = 17.sp,
+                text = stringResource(R.string.edit_profile_withdraw_dialog_title),
                 fontWeight = FontWeight.SemiBold,
             )
-            Spacer(modifier = Modifier.height(8.dp))
+        },
+        text = {
             Text(
-                text = stringResource(R.string.edit_profile_withdraw_sheet_body),
+                text = stringResource(R.string.edit_profile_withdraw_dialog_body),
                 color = LbColors.Ink2,
                 fontSize = 13.5.sp,
                 lineHeight = 20.sp,
             )
-            Spacer(modifier = Modifier.height(20.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                LbButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.weight(1f).height(50.dp),
-                    colors = LbButtonDefaults.whiteColors(),
-                ) {
-                    Text(text = stringResource(R.string.edit_profile_withdraw_cancel), fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold)
-                }
-                LbButton(
-                    onClick = onWithdrawClick,
-                    modifier = Modifier.weight(1f).height(50.dp),
-                    colors = LbButtonDefaults.whiteColors(),
-                ) {
-                    Text(
-                        text = stringResource(R.string.edit_profile_withdraw_confirm),
-                        color = LbColors.DangerStrong,
-                        fontSize = 14.5.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    text = stringResource(R.string.edit_profile_withdraw_confirm),
+                    color = LbColors.DangerStrong,
+                    fontWeight = FontWeight.SemiBold,
+                )
             }
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-    }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.edit_profile_withdraw_cancel))
+            }
+        },
+    )
 }
