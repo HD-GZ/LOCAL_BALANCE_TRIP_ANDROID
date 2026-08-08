@@ -173,6 +173,7 @@ private fun AuthNavGraph() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = OnboardingRoute) {
         signinScreen(
+            navController = navController,
             onBack = navController::popBackStack,
             onNavigateToSignup = { navController.navigate(SignupRoute) },
         )

@@ -5,10 +5,15 @@ import live.lb_trip.data.datasource.remote.AuthRemoteDataSource
 import live.lb_trip.data.dto.request.EmailVerificationConfirmRequestDto
 import live.lb_trip.data.dto.request.EmailVerificationResendRequestDto
 import live.lb_trip.data.dto.request.LoginRequestDto
+import live.lb_trip.data.dto.request.PasswordResetCodeRequestDto
+import live.lb_trip.data.dto.request.PasswordResetConfirmRequestDto
+import live.lb_trip.data.dto.request.PasswordResetRequestDto
 import live.lb_trip.data.dto.request.SignupRequestDto
 import live.lb_trip.data.mapper.toDomain
 import live.lb_trip.domain.exception.auth.LbTripAuthException
 import live.lb_trip.domain.model.Gender
+import live.lb_trip.domain.model.PasswordResetCodeIssued
+import live.lb_trip.domain.model.PasswordResetToken
 import live.lb_trip.domain.model.Tokens
 import live.lb_trip.domain.model.User
 import live.lb_trip.domain.repository.AuthRepository
@@ -90,5 +95,48 @@ class AuthRepositoryImpl @Inject constructor(
             on(400, "EMAIL_VERIFICATION_CODE_EXPIRED") throws LbTripAuthException.EmailVerificationCodeExpiredException()
             on(400, "EMAIL_VERIFICATION_CODE_USED") throws LbTripAuthException.EmailVerificationCodeUsedException()
             on(404, "EMAIL_VERIFICATION_CODE_NOT_FOUND") throws LbTripAuthException.EmailVerificationCodeNotFoundException()
+        }
+
+    override suspend fun requestPasswordReset(email: String): Result<PasswordResetCodeIssued> =
+        suspendRunCatching {
+            authRemoteDataSource.requestPasswordReset(
+                PasswordResetCodeRequestDto(email = email),
+            ).toDomain()
+        }.mapApiFailure {
+            on(400, "INVALID_INPUT_VALUE") { ex ->
+                LbTripAuthException.InvalidInputValueException(fields = ex.fieldErrors.map { it.first })
+            }
+            on(404, "USER_NOT_FOUND") throws LbTripAuthException.UserNotFoundException()
+            on(403, "USER_WITHDRAWN") throws LbTripAuthException.UserWithdrawnException()
+            on(403, "EMAIL_NOT_VERIFIED") throws LbTripAuthException.EmailNotVerifiedException()
+        }
+
+    override suspend fun confirmPasswordReset(email: String, code: String): Result<PasswordResetToken> =
+        suspendRunCatching {
+            authRemoteDataSource.confirmPasswordReset(
+                PasswordResetConfirmRequestDto(email = email, code = code),
+            ).toDomain()
+        }.mapApiFailure {
+            on(400, "PASSWORD_RESET_CODE_EXPIRED") throws LbTripAuthException.PasswordResetCodeExpiredException()
+            on(400, "PASSWORD_RESET_CODE_USED") throws LbTripAuthException.PasswordResetCodeUsedException()
+            on(404, "USER_NOT_FOUND") throws LbTripAuthException.UserNotFoundException()
+            on(404, "PASSWORD_RESET_CODE_NOT_FOUND") throws LbTripAuthException.PasswordResetCodeNotFoundException()
+            on(403, "USER_WITHDRAWN") throws LbTripAuthException.UserWithdrawnException()
+            on(403, "EMAIL_NOT_VERIFIED") throws LbTripAuthException.EmailNotVerifiedException()
+        }
+
+    override suspend fun resetPassword(resetToken: String, newPassword: String): Result<Unit> =
+        suspendRunCatching {
+            authRemoteDataSource.resetPassword(
+                PasswordResetRequestDto(resetToken = resetToken, newPassword = newPassword),
+            )
+        }.mapApiFailure {
+            on(400, "INVALID_INPUT_VALUE") { ex ->
+                LbTripAuthException.InvalidInputValueException(fields = ex.fieldErrors.map { it.first })
+            }
+            on(400, "PASSWORD_RESET_TOKEN_EXPIRED") throws LbTripAuthException.PasswordResetTokenExpiredException()
+            on(400, "PASSWORD_RESET_TOKEN_USED") throws LbTripAuthException.PasswordResetTokenUsedException()
+            on(404, "PASSWORD_RESET_TOKEN_NOT_FOUND") throws LbTripAuthException.PasswordResetTokenNotFoundException()
+            on(403, "USER_WITHDRAWN") throws LbTripAuthException.UserWithdrawnException()
         }
 }

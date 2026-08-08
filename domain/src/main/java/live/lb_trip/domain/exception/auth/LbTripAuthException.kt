@@ -26,4 +26,18 @@ sealed class LbTripAuthException : LbTripException() {
     class EmailVerificationCodeNotFoundException : LbTripAuthException()
 
     class UnauthorizedException : LbTripAuthException()
+
+    class UserWithdrawnException : LbTripAuthException()
+
+    class PasswordResetCodeExpiredException : LbTripAuthException()
+
+    class PasswordResetCodeUsedException : LbTripAuthException()
+
+    class PasswordResetCodeNotFoundException : LbTripAuthException()
+
+    class PasswordResetTokenExpiredException : LbTripAuthException()
+
+    class PasswordResetTokenUsedException : LbTripAuthException()
+
+    class PasswordResetTokenNotFoundException : LbTripAuthException()
 }
