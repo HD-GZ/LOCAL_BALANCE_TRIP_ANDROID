@@ -26,4 +26,6 @@ interface UserRepository {
         password: String?,
         passwordConfirm: String?,
     ): Result<UserProfile>
+
+    suspend fun withdraw(): Result<Unit>
 }

@@ -5,6 +5,7 @@ import live.lb_trip.domain.model.Gender
 data class EditProfileUiState(
     val isLoading: Boolean = true,
     val isSaving: Boolean = false,
+    val isWithdrawing: Boolean = false,
     val email: String = "",
     val name: String = "",
     val birthYear: String = "",
@@ -21,5 +22,5 @@ sealed interface EditProfileSideEffect {
     data object ShowLoadError : EditProfileSideEffect
     data object SaveSuccess : EditProfileSideEffect
     data class ShowSaveError(val message: String) : EditProfileSideEffect
-    data object ShowWithdrawUnavailable : EditProfileSideEffect
+    data class ShowWithdrawError(val message: String) : EditProfileSideEffect
 }
