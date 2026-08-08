@@ -13,5 +13,7 @@ sealed interface SettingsSideEffect {
     data object NavigateToDiagnosis : SettingsSideEffect
     data object NavigateToEditProfile : SettingsSideEffect
     data object NavigateToLicenses : SettingsSideEffect
+    data object NavigateToTerms : SettingsSideEffect
+    data object NavigateToPrivacy : SettingsSideEffect
     data object ShowProfileUpdated : SettingsSideEffect
 }

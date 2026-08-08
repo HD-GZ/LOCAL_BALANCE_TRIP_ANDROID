@@ -41,6 +41,8 @@ fun MyInfoTabContent(
     onNavigateToDiagnosis: () -> Unit,
     onNavigateToEditProfile: () -> Unit,
     onNavigateToLicenses: () -> Unit,
+    onNavigateToTerms: () -> Unit,
+    onNavigateToPrivacy: () -> Unit,
     snackbarHostState: SnackbarHostState,
     profileUpdated: Boolean,
     onProfileUpdatedConsumed: () -> Unit,
@@ -70,6 +72,8 @@ fun MyInfoTabContent(
                 SettingsSideEffect.NavigateToDiagnosis -> onNavigateToDiagnosis()
                 SettingsSideEffect.NavigateToEditProfile -> onNavigateToEditProfile()
                 SettingsSideEffect.NavigateToLicenses -> onNavigateToLicenses()
+                SettingsSideEffect.NavigateToTerms -> onNavigateToTerms()
+                SettingsSideEffect.NavigateToPrivacy -> onNavigateToPrivacy()
                 SettingsSideEffect.ShowProfileUpdated -> launch { snackbarHostState.showSnackbar(profileUpdatedMessage) }
             }
         }
@@ -142,8 +146,8 @@ private fun MyInfoTabContentBody(
                     editInfoLabel to { onIntent(SettingsIntent.EditProfileClick) },
                     retakeDiagnosisLabel to { onIntent(SettingsIntent.RetakeDiagnosisClick) },
                     licensesLabel to { onIntent(SettingsIntent.LicensesClick) },
-                    termsLabel to { onIntent(SettingsIntent.MenuItemClick(termsLabel)) },
-                    privacyLabel to { onIntent(SettingsIntent.MenuItemClick(privacyLabel)) },
+                    termsLabel to { onIntent(SettingsIntent.TermsClick) },
+                    privacyLabel to { onIntent(SettingsIntent.PrivacyClick) },
                     contactLabel to { onIntent(SettingsIntent.MenuItemClick(contactLabel)) },
                 ),
                 versionName = versionName,

@@ -12,4 +12,5 @@ dependencies {
     implementation(projects.core)
     implementation(projects.domain)
     implementation(libs.aboutlibraries.compose.m3)
+    implementation(libs.kotlinx.collections.immutable)
 }
