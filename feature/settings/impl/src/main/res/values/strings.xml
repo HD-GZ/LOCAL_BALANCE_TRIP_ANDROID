@@ -58,4 +58,9 @@
 
     <string name="licenses_title">오픈소스 라이선스</string>
     <string name="licenses_back_cd">뒤로</string>
+
+    <string name="terms_back_cd">뒤로</string>
+    <string name="terms_revision_template">시행일 %1$s · 버전 %2$s</string>
+    <string name="terms_error_load">약관을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="terms_action_retry">재시도</string>
 </resources>

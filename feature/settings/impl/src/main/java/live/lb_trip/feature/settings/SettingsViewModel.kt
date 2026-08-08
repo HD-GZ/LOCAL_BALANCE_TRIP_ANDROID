@@ -34,6 +34,8 @@ class SettingsViewModel @Inject constructor(
             is SettingsIntent.MenuItemClick -> postSideEffect(SettingsSideEffect.ShowUnavailableMessage(intent.label))
             SettingsIntent.EditProfileClick -> postSideEffect(SettingsSideEffect.NavigateToEditProfile)
             SettingsIntent.LicensesClick -> postSideEffect(SettingsSideEffect.NavigateToLicenses)
+            SettingsIntent.TermsClick -> postSideEffect(SettingsSideEffect.NavigateToTerms)
+            SettingsIntent.PrivacyClick -> postSideEffect(SettingsSideEffect.NavigateToPrivacy)
             SettingsIntent.RetakeDiagnosisClick -> postSideEffect(SettingsSideEffect.NavigateToDiagnosis)
             SettingsIntent.ProfileUpdated -> viewModelScope.launch {
                 load()

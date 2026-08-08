@@ -11,6 +11,7 @@ import live.lb_trip.data.repository.AuthRepositoryImpl
 import live.lb_trip.data.repository.PropensityRepositoryImpl
 import live.lb_trip.data.repository.RecommendationRepositoryImpl
 import live.lb_trip.data.repository.SavedCourseRepositoryImpl
+import live.lb_trip.data.repository.TermsRepositoryImpl
 import live.lb_trip.data.repository.UserRepositoryImpl
 import live.lb_trip.domain.repository.AuthRepository
 import live.lb_trip.domain.repository.DistanceRecorder
@@ -19,6 +20,7 @@ import live.lb_trip.domain.repository.LocationTracker
 import live.lb_trip.domain.repository.PropensityRepository
 import live.lb_trip.domain.repository.RecommendationRepository
 import live.lb_trip.domain.repository.SavedCourseRepository
+import live.lb_trip.domain.repository.TermsRepository
 import live.lb_trip.domain.repository.UserRepository
 import javax.inject.Singleton
 
@@ -46,6 +48,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsSavedCourseRepository(savedCourseRepositoryImpl: SavedCourseRepositoryImpl): SavedCourseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsTermsRepository(termsRepositoryImpl: TermsRepositoryImpl): TermsRepository
 
     @Binds
     @Singleton
