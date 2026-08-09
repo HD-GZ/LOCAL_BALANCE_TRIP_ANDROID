@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
@@ -43,13 +44,13 @@ fun MyInfoTabContent(
     onNavigateToLicenses: () -> Unit,
     onNavigateToTerms: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
-    snackbarHostState: SnackbarHostState,
     profileUpdated: Boolean,
     onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
     val loadErrorMessage = stringResource(R.string.settings_error_load)
     val retryActionLabel = stringResource(R.string.settings_action_retry)
     val unavailableTemplate = stringResource(R.string.settings_menu_unavailable_template)
@@ -86,12 +87,18 @@ fun MyInfoTabContent(
         }
     }
 
-    MyInfoTabContentBody(
-        state = state,
-        onNavigateToSavedCourses = onNavigateToSavedCourses,
-        onIntent = viewModel::onIntent,
-        modifier = modifier,
-    )
+    Box(modifier = modifier) {
+        MyInfoTabContentBody(
+            state = state,
+            onNavigateToSavedCourses = onNavigateToSavedCourses,
+            onIntent = viewModel::onIntent,
+            modifier = Modifier.fillMaxSize(),
+        )
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
+    }
 }
 
 @Composable

@@ -133,7 +133,8 @@ internal fun SavedCourseDetailScreen(
 
     SavedCourseDetailScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        onShowSnackbar = { message -> snackbarHostState.showSnackbar(message) },
         onBack = onBack,
         onIntent = viewModel::onIntent,
         modifier = modifier,
@@ -144,7 +145,8 @@ internal fun SavedCourseDetailScreen(
 @Composable
 private fun SavedCourseDetailScreenContent(
     state: SavedCourseDetailUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable () -> Unit,
+    onShowSnackbar: suspend (String) -> Unit,
     onBack: () -> Unit,
     onIntent: (SavedCourseDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -194,7 +196,7 @@ private fun SavedCourseDetailScreenContent(
                 onShareClick = { showShareSheet = true },
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = snackbarHost,
         containerColor = LbColors.Paper,
     ) { innerPadding ->
         if (state.isLoading) {
@@ -249,7 +251,7 @@ private fun SavedCourseDetailScreenContent(
                             ?: return@runCatching false
                         saveBitmapToGallery(context, bitmap, shareImageFileName())
                     }.getOrDefault(false)
-                    snackbarHostState.showSnackbar(if (saved) shareSavedMessage else shareFailedMessage)
+                    onShowSnackbar(if (saved) shareSavedMessage else shareFailedMessage)
                 }
             },
             onShareClick = {
@@ -261,7 +263,7 @@ private fun SavedCourseDetailScreenContent(
                             ?: return@runCatching false
                         shareBitmapImage(context, bitmap, shareImageFileName())
                     }.getOrDefault(false)
-                    if (!shared) snackbarHostState.showSnackbar(shareFailedMessage)
+                    if (!shared) onShowSnackbar(shareFailedMessage)
                 }
             },
         )
@@ -483,7 +485,8 @@ private fun SavedCourseDetailScreenPreview() {
             status = TravelStatus.BEFORE_TRIP,
             expandedStopIndices = persistentSetOf(0),
         ),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
+        onShowSnackbar = {},
         onBack = {},
         onIntent = {},
     )

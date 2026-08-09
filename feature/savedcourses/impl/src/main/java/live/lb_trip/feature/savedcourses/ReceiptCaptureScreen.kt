@@ -79,7 +79,7 @@ internal fun ReceiptCaptureScreen(
 
     ReceiptCaptureScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         onBack = onBack,
         onIntent = viewModel::onIntent,
         modifier = modifier,
@@ -89,7 +89,7 @@ internal fun ReceiptCaptureScreen(
 @Composable
 private fun ReceiptCaptureScreenContent(
     state: ReceiptCaptureUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable () -> Unit,
     onBack: () -> Unit,
     onIntent: (ReceiptCaptureIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -103,7 +103,7 @@ private fun ReceiptCaptureScreenContent(
                 backContentDescription = stringResource(R.string.savedcourses_receipt_back_content_description),
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = snackbarHost,
         containerColor = LbColors.Paper,
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
@@ -254,7 +254,7 @@ private fun ReceiptVerifyStep(
 private fun ReceiptCaptureScreenPreview() {
     ReceiptCaptureScreenContent(
         state = ReceiptCaptureUiState(step = ReceiptCaptureStep.PICK),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
         onBack = {},
         onIntent = {},
     )

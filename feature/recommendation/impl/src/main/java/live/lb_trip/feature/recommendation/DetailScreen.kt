@@ -3,6 +3,7 @@ package live.lb_trip.feature.recommendation
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -92,7 +93,14 @@ internal fun DetailScreen(
 
     DetailScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+            )
+        },
         onBack = onBack,
         onIntent = viewModel::onIntent,
         modifier = modifier,
@@ -102,7 +110,7 @@ internal fun DetailScreen(
 @Composable
 private fun DetailScreenContent(
     state: RecommendationDetailUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable BoxScope.() -> Unit,
     onBack: () -> Unit,
     onIntent: (RecommendationDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -210,12 +218,7 @@ private fun DetailScreenContent(
             }
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
+        snackbarHost()
 
         if (state.isLoading) {
             LbLoadingOverlay()
@@ -232,7 +235,7 @@ private fun DetailScreenPreview() {
             title = "전라북도 임실군 골목 미식 코스",
             expandedStopIndices = persistentSetOf(0, 2),
         ),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
         onBack = {},
         onIntent = {},
     )
