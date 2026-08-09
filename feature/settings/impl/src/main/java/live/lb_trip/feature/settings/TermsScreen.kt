@@ -34,7 +34,7 @@ import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.domain.model.TermsType
 
 @Composable
-fun TermsScreen(
+internal fun TermsScreen(
     type: TermsType,
     fallbackTitle: String,
     onBack: () -> Unit,
