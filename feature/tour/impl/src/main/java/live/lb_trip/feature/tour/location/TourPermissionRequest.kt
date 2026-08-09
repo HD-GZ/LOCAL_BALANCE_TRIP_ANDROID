@@ -29,7 +29,9 @@ internal data class TourPermissionRequest(
 internal fun rememberTourPermissionGranted(
     messages: TourPermissionRequest,
     isPermissionGranted: () -> Boolean,
-    requestPermission: ((Boolean) -> Unit) -> Unit,
+    permissionResult: Boolean?,
+    onPermissionResultConsumed: () -> Unit,
+    requestPermission: () -> Unit,
 ): Boolean {
     var isGranted by remember { mutableStateOf(isPermissionGranted()) }
     var hasRequested by rememberSaveable { mutableStateOf(false) }
@@ -47,16 +49,21 @@ internal fun rememberTourPermissionGranted(
         }
     }
 
+    LaunchedEffect(permissionResult) {
+        permissionResult?.let { result ->
+            isGranted = result
+            if (!result) showDeniedDialog = true
+            onPermissionResultConsumed()
+        }
+    }
+
     if (showRationaleDialog) {
         TourPermissionDialog(
             title = stringResource(messages.rationaleTitleResId),
             message = stringResource(messages.rationaleMessageResId),
             onConfirm = {
                 showRationaleDialog = false
-                requestPermission { granted ->
-                    isGranted = granted
-                    if (!isGranted) showDeniedDialog = true
-                }
+                requestPermission()
             },
         )
     }

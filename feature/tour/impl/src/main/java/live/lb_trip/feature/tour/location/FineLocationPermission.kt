@@ -8,7 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
@@ -17,12 +17,12 @@ import live.lb_trip.feature.tour.R
 @Composable
 internal fun rememberFineLocationPermissionGranted(): Boolean {
     val context = LocalContext.current
-    var onPermissionResult by remember { mutableStateOf<(Boolean) -> Unit>({}) }
+    var permissionResult by rememberSaveable { mutableStateOf<Boolean?>(null) }
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
     ) { result ->
-        onPermissionResult(result[Manifest.permission.ACCESS_FINE_LOCATION] == true)
+        permissionResult = result[Manifest.permission.ACCESS_FINE_LOCATION] == true
     }
 
     return rememberTourPermissionGranted(
@@ -33,8 +33,9 @@ internal fun rememberFineLocationPermissionGranted(): Boolean {
             deniedMessageResId = R.string.tour_location_permission_denied_message,
         ),
         isPermissionGranted = context::hasFineLocationPermission,
-        requestPermission = { onResult ->
-            onPermissionResult = onResult
+        permissionResult = permissionResult,
+        onPermissionResultConsumed = { permissionResult = null },
+        requestPermission = {
             launcher.launch(LOCATION_PERMISSIONS)
         },
     )
