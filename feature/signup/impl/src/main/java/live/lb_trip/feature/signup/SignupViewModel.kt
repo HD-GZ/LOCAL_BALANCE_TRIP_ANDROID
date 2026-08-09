@@ -1,6 +1,8 @@
 package live.lb_trip.feature.signup
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -16,6 +18,7 @@ import live.lb_trip.domain.usecase.SignupUseCase
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val signupUseCase: SignupUseCase,
     private val checkEmailAvailabilityUseCase: CheckEmailAvailabilityUseCase,
     private val confirmEmailVerificationUseCase: ConfirmEmailVerificationUseCase,
@@ -82,11 +85,11 @@ class SignupViewModel @Inject constructor(
                     if (available) {
                         postSideEffect(SignupSideEffect.NavigateToPersonalInfo)
                     } else {
-                        updateState { it.copy(errorMessage = "이미 사용 중인 이메일이에요.") }
+                        updateState { it.copy(errorMessage = context.getString(R.string.signup_error_duplicate_email)) }
                     }
                 }
                 .onFailure {
-                    updateState { it.copy(errorMessage = "이메일 확인에 실패했어요. 잠시 후 다시 시도해 주세요.") }
+                    updateState { it.copy(errorMessage = context.getString(R.string.signup_error_check_email)) }
                 }
             updateState { it.copy(isLoading = false) }
         }
@@ -124,15 +127,15 @@ class SignupViewModel @Inject constructor(
     private fun signupFailureMessage(throwable: Throwable): String = when (throwable) {
         is LbTripAuthException.InvalidInputValueException -> throwable.fields.firstNotNullOfOrNull { field ->
             invalidFieldMessage(field)
-        } ?: "입력값을 다시 확인해 주세요."
-        is LbTripAuthException.PasswordConfirmMismatchException -> "비밀번호가 일치하지 않아요."
-        is LbTripAuthException.RequiredAgreementNotAcceptedException -> "필수 약관에 동의해 주세요."
-        is LbTripAuthException.DuplicateEmailException -> "이미 사용 중인 이메일이에요."
-        else -> "회원가입에 실패했어요. 잠시 후 다시 시도해 주세요."
+        } ?: context.getString(R.string.signup_error_invalid_input)
+        is LbTripAuthException.PasswordConfirmMismatchException -> context.getString(R.string.signup_error_password_mismatch)
+        is LbTripAuthException.RequiredAgreementNotAcceptedException -> context.getString(R.string.signup_error_required_agreement)
+        is LbTripAuthException.DuplicateEmailException -> context.getString(R.string.signup_error_duplicate_email)
+        else -> context.getString(R.string.signup_error_failed)
     }
 
     private fun invalidFieldMessage(field: String): String? = when (field) {
-        "email" -> "올바른 이메일 형식이 아니에요."
+        "email" -> context.getString(R.string.signup_error_invalid_email)
         else -> sharedInvalidFieldMessage(field)
     }
 
@@ -146,7 +149,7 @@ class SignupViewModel @Inject constructor(
                     startTimer()
                 }
                 .onFailure {
-                    updateState { it.copy(errorMessage = "코드 재전송에 실패했어요.") }
+                    updateState { it.copy(errorMessage = context.getString(R.string.signup_error_resend_code)) }
                 }
             updateState { it.copy(isLoading = false) }
         }
@@ -163,10 +166,10 @@ class SignupViewModel @Inject constructor(
                 }
                 .onFailure { throwable ->
                     val message = when (throwable) {
-                        is LbTripAuthException.EmailVerificationCodeExpiredException -> "인증 코드가 만료됐어요."
-                        is LbTripAuthException.EmailVerificationCodeUsedException -> "이미 사용된 인증 코드예요."
-                        is LbTripAuthException.EmailVerificationCodeNotFoundException -> "인증 코드가 올바르지 않아요."
-                        else -> "인증에 실패했어요. 잠시 후 다시 시도해 주세요."
+                        is LbTripAuthException.EmailVerificationCodeExpiredException -> context.getString(R.string.signup_error_code_expired)
+                        is LbTripAuthException.EmailVerificationCodeUsedException -> context.getString(R.string.signup_error_code_used)
+                        is LbTripAuthException.EmailVerificationCodeNotFoundException -> context.getString(R.string.signup_error_code_invalid)
+                        else -> context.getString(R.string.signup_error_verification_failed)
                     }
                     updateState { it.copy(errorMessage = message) }
                 }

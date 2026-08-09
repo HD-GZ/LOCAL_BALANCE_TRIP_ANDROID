@@ -1,6 +1,8 @@
 package live.lb_trip.feature.signin
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -14,6 +16,7 @@ import live.lb_trip.domain.usecase.ResetPasswordUseCase
 
 @HiltViewModel
 class PasswordResetViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val requestPasswordResetUseCase: RequestPasswordResetUseCase,
     private val confirmPasswordResetUseCase: ConfirmPasswordResetUseCase,
     private val resetPasswordUseCase: ResetPasswordUseCase,
@@ -73,7 +76,7 @@ class PasswordResetViewModel @Inject constructor(
                         postSideEffect(PasswordResetSideEffect.NavigateToVerify)
                     }
                 }
-                .onFailure { throwable -> updateState { it.copy(errorMessage = requestFailureMessage(throwable)) } }
+                .onFailure { throwable -> updateState { it.copy(errorMessage = requestFailureMessage(context, throwable)) } }
             updateState { it.copy(isLoading = false) }
         }
     }
@@ -89,7 +92,7 @@ class PasswordResetViewModel @Inject constructor(
                     updateState { it.copy(resetToken = token.resetToken) }
                     postSideEffect(PasswordResetSideEffect.NavigateToNewPassword)
                 }
-                .onFailure { throwable -> updateState { it.copy(errorMessage = confirmFailureMessage(throwable)) } }
+                .onFailure { throwable -> updateState { it.copy(errorMessage = confirmFailureMessage(context, throwable)) } }
             updateState { it.copy(isLoading = false) }
         }
     }
@@ -100,7 +103,7 @@ class PasswordResetViewModel @Inject constructor(
             updateState { it.copy(isLoading = true, errorMessage = null) }
             resetPasswordUseCase(resetToken = current.resetToken, newPassword = current.newPassword)
                 .onSuccess { postSideEffect(PasswordResetSideEffect.NavigateToComplete) }
-                .onFailure { throwable -> updateState { it.copy(errorMessage = resetFailureMessage(throwable)) } }
+                .onFailure { throwable -> updateState { it.copy(errorMessage = resetFailureMessage(context, throwable)) } }
             updateState { it.copy(isLoading = false) }
         }
     }
@@ -116,29 +119,29 @@ class PasswordResetViewModel @Inject constructor(
     }
 }
 
-private fun requestFailureMessage(throwable: Throwable): String = when (throwable) {
-    is LbTripAuthException.InvalidInputValueException -> "올바른 이메일 형식이 아니에요."
-    is LbTripAuthException.UserNotFoundException -> "가입되지 않은 이메일이에요."
-    is LbTripAuthException.UserWithdrawnException -> "탈퇴한 계정이에요."
-    is LbTripAuthException.EmailNotVerifiedException -> "이메일 인증이 필요해요. 가입 시 받은 인증 메일을 확인해 주세요."
-    else -> "인증 코드 발송에 실패했어요. 잠시 후 다시 시도해 주세요."
+private fun requestFailureMessage(context: Context, throwable: Throwable): String = when (throwable) {
+    is LbTripAuthException.InvalidInputValueException -> context.getString(R.string.password_reset_error_invalid_email)
+    is LbTripAuthException.UserNotFoundException -> context.getString(R.string.password_reset_error_user_not_found)
+    is LbTripAuthException.UserWithdrawnException -> context.getString(R.string.password_reset_error_user_withdrawn)
+    is LbTripAuthException.EmailNotVerifiedException -> context.getString(R.string.password_reset_error_email_not_verified)
+    else -> context.getString(R.string.password_reset_error_request_failed)
 }
 
-private fun confirmFailureMessage(throwable: Throwable): String = when (throwable) {
-    is LbTripAuthException.PasswordResetCodeExpiredException -> "인증 코드가 만료됐어요."
-    is LbTripAuthException.PasswordResetCodeUsedException -> "이미 사용된 인증 코드예요."
-    is LbTripAuthException.PasswordResetCodeNotFoundException -> "인증 코드가 올바르지 않아요."
-    is LbTripAuthException.UserNotFoundException -> "가입되지 않은 이메일이에요."
-    is LbTripAuthException.UserWithdrawnException -> "탈퇴한 계정이에요."
-    is LbTripAuthException.EmailNotVerifiedException -> "이메일 인증이 필요해요."
-    else -> "인증에 실패했어요. 잠시 후 다시 시도해 주세요."
+private fun confirmFailureMessage(context: Context, throwable: Throwable): String = when (throwable) {
+    is LbTripAuthException.PasswordResetCodeExpiredException -> context.getString(R.string.password_reset_error_code_expired)
+    is LbTripAuthException.PasswordResetCodeUsedException -> context.getString(R.string.password_reset_error_code_used)
+    is LbTripAuthException.PasswordResetCodeNotFoundException -> context.getString(R.string.password_reset_error_code_invalid)
+    is LbTripAuthException.UserNotFoundException -> context.getString(R.string.password_reset_error_user_not_found)
+    is LbTripAuthException.UserWithdrawnException -> context.getString(R.string.password_reset_error_user_withdrawn)
+    is LbTripAuthException.EmailNotVerifiedException -> context.getString(R.string.password_reset_error_email_verification_needed)
+    else -> context.getString(R.string.password_reset_error_verification_failed)
 }
 
-private fun resetFailureMessage(throwable: Throwable): String = when (throwable) {
-    is LbTripAuthException.PasswordResetTokenExpiredException -> "재설정 시간이 만료됐어요. 처음부터 다시 시도해 주세요."
-    is LbTripAuthException.PasswordResetTokenUsedException -> "이미 처리된 요청이에요. 처음부터 다시 시도해 주세요."
-    is LbTripAuthException.PasswordResetTokenNotFoundException -> "재설정 요청을 찾을 수 없어요. 처음부터 다시 시도해 주세요."
-    is LbTripAuthException.UserWithdrawnException -> "탈퇴한 계정이에요."
-    is LbTripAuthException.InvalidInputValueException -> "비밀번호는 영문·숫자 포함 8자 이상이어야 해요."
-    else -> "비밀번호 변경에 실패했어요. 잠시 후 다시 시도해 주세요."
+private fun resetFailureMessage(context: Context, throwable: Throwable): String = when (throwable) {
+    is LbTripAuthException.PasswordResetTokenExpiredException -> context.getString(R.string.password_reset_error_token_expired)
+    is LbTripAuthException.PasswordResetTokenUsedException -> context.getString(R.string.password_reset_error_token_used)
+    is LbTripAuthException.PasswordResetTokenNotFoundException -> context.getString(R.string.password_reset_error_token_not_found)
+    is LbTripAuthException.UserWithdrawnException -> context.getString(R.string.password_reset_error_user_withdrawn)
+    is LbTripAuthException.InvalidInputValueException -> context.getString(R.string.password_reset_error_invalid_password)
+    else -> context.getString(R.string.password_reset_error_reset_failed)
 }

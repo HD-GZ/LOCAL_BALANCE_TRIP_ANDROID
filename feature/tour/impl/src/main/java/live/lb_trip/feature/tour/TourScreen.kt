@@ -71,13 +71,13 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.feature.tour.components.TourRouteTimeline
 import live.lb_trip.feature.tour.location.rememberActivityRecognitionPermissionGranted
 import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
-import live.lb_trip.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,6 +86,7 @@ internal fun TourScreen(
     onTourFinished: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TourViewModel = hiltViewModel(),
+    onIntent: (TourIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -109,14 +110,14 @@ internal fun TourScreen(
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(TourIntent.Retry)
+                        onIntent(TourIntent.Retry)
                     }
                 }
 
                 TourSideEffect.ShowEndTourError -> launch {
                     val result = snackbarHostState.showSnackbar(message = endTourErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(TourIntent.EndTourClicked)
+                        onIntent(TourIntent.EndTourClicked)
                     }
                 }
 
@@ -137,17 +138,17 @@ internal fun TourScreen(
     val hasLocationPermission = rememberFineLocationPermissionGranted()
     LifecycleStartEffect(hasLocationPermission) {
         if (hasLocationPermission) {
-            viewModel.onIntent(TourIntent.LocationTrackingStarted)
+            onIntent(TourIntent.LocationTrackingStarted)
         }
         onStopOrDispose {
-            viewModel.onIntent(TourIntent.LocationTrackingStopped)
+            onIntent(TourIntent.LocationTrackingStopped)
         }
     }
 
     val hasActivityRecognitionPermission = rememberActivityRecognitionPermissionGranted()
     LaunchedEffect(hasActivityRecognitionPermission) {
         if (hasActivityRecognitionPermission) {
-            viewModel.onIntent(TourIntent.DistanceRecordingPermissionGranted)
+            onIntent(TourIntent.DistanceRecordingPermissionGranted)
         }
     }
 
@@ -156,7 +157,7 @@ internal fun TourScreen(
         snackbarHostState = snackbarHostState,
         scaffoldState = scaffoldState,
         onBack = onBack,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }

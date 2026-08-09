@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -50,12 +51,12 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
+import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
 internal fun SigninScreen(
@@ -114,7 +115,7 @@ private fun SigninScreenContent(
         ) {
             LbTopBar(
                 onBackClick = onBack,
-                backContentDescription = "뒤로",
+                backContentDescription = stringResource(R.string.signin_back),
                 containerColor = Color.Transparent,
                 windowInsets = WindowInsets(0, 0, 0, 0),
             )
@@ -170,9 +171,9 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = buildAnnotatedString {
-                append("로컬")
-                withStyle(SpanStyle(color = LbColors.Green)) { append("밸런스") }
-                append(" 트립")
+                append(stringResource(R.string.signin_brand_prefix))
+                withStyle(SpanStyle(color = LbColors.Green)) { append(stringResource(R.string.signin_brand_highlight)) }
+                append(stringResource(R.string.signin_brand_suffix))
             },
             color = LbColors.Ink,
             fontSize = 23.sp,
@@ -181,7 +182,7 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(22.dp))
         Text(
-            text = "로그인",
+            text = stringResource(R.string.signin_title),
             color = LbColors.Green,
             fontSize = 11.sp,
             fontWeight = FontWeight.SemiBold,
@@ -189,7 +190,7 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(11.dp))
         Text(
-            text = "다시 오신 걸 환영해요",
+            text = stringResource(R.string.signin_welcome),
             color = LbColors.Ink,
             fontSize = 24.sp,
             fontWeight = FontWeight.SemiBold,
@@ -197,7 +198,7 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "내 취향과 예산에 맞춘 로컬 슬로우 트립을 이어서 설계해요.",
+            text = stringResource(R.string.signin_description),
             color = LbColors.Ink2,
             fontSize = 14.sp,
             fontWeight = FontWeight.Normal,
@@ -223,15 +224,15 @@ private fun SigninForm(
         LbInputField(
             value = email,
             onValueChange = onEmailChange,
-            label = "이메일",
-            placeholder = "local@email.com",
+            label = stringResource(R.string.signin_email),
+            placeholder = stringResource(R.string.signin_email_placeholder),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
         )
         LbInputField(
             value = password,
             onValueChange = onPasswordChange,
-            label = "비밀번호",
-            placeholder = "비밀번호 입력",
+            label = stringResource(R.string.signin_password),
+            placeholder = stringResource(R.string.signin_password_placeholder),
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             trailingIcon = {
@@ -241,7 +242,7 @@ private fun SigninForm(
                 ) {
                     Icon(
                         imageVector = ImageVector.vectorResource(R.drawable.ic_eye),
-                        contentDescription = if (isPasswordVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                        contentDescription = stringResource(if (isPasswordVisible) R.string.signin_password_hide else R.string.signin_password_show),
                         tint = Color.Unspecified,
                     )
                 }
@@ -276,7 +277,7 @@ private fun SigninBottomAction(
             colors = LbButtonDefaults.greenColors(),
         ) {
             Text(
-                text = "로그인",
+                text = stringResource(R.string.signin_title),
                 fontSize = 15.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.155).sp,
@@ -287,7 +288,7 @@ private fun SigninBottomAction(
             horizontalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = "비밀번호 찾기",
+                text = stringResource(R.string.signin_forgot_password),
                 color = LbColors.Ink2,
                 fontSize = 13.5.sp,
                 modifier = Modifier.clickable(onClick = onForgotPasswordClick),
@@ -301,7 +302,7 @@ private fun SigninBottomAction(
             )
             Spacer(modifier = Modifier.width(15.dp))
             Text(
-                text = "회원가입",
+                text = stringResource(R.string.signin_signup),
                 color = LbColors.Green,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.SemiBold,

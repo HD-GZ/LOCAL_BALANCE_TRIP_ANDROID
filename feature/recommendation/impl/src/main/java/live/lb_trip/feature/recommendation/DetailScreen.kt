@@ -41,23 +41,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
 import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
+import live.lb_trip.core.designsystem.component.LbTimeline
+import live.lb_trip.core.designsystem.component.LbTimelineStop
+import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
 import live.lb_trip.feature.recommendation.components.RecommendationBrandBar
 import live.lb_trip.feature.recommendation.components.RecommendationCtaBar
 import live.lb_trip.feature.recommendation.components.RecommendationFlowStepper
-import live.lb_trip.feature.recommendation.components.ScreenBg
-import live.lb_trip.core.designsystem.component.LbTimeline
-import live.lb_trip.core.designsystem.component.LbTimelineStop
-import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
 import live.lb_trip.feature.recommendation.components.RecommendationTimelineMapPlaceholder
+import live.lb_trip.feature.recommendation.components.ScreenBg
 
 @Composable
 internal fun DetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
+    onIntent: (RecommendationDetailIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
@@ -81,7 +82,7 @@ internal fun DetailScreen(
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(RecommendationDetailIntent.Retry)
+                        onIntent(RecommendationDetailIntent.Retry)
                     }
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
@@ -102,7 +103,7 @@ internal fun DetailScreen(
             )
         },
         onBack = onBack,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }

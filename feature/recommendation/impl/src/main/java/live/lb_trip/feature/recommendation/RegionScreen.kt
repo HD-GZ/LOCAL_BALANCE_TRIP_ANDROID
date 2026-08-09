@@ -54,6 +54,7 @@ internal fun RegionScreen(
     onRegionSelected: (regionId: Long, regionName: String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RegionViewModel = hiltViewModel(),
+    onIntent: (RegionIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -75,7 +76,7 @@ internal fun RegionScreen(
                         RegionLoadErrorReason.Unknown -> genericErrorMessage
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) viewModel.onIntent(RegionIntent.Retry)
+                    if (result == SnackbarResult.ActionPerformed) onIntent(RegionIntent.Retry)
                 }
             }
         }

@@ -8,6 +8,8 @@ import io.ktor.client.request.patch
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import live.lb_trip.data.di.qualifier.Auth
+import live.lb_trip.data.di.qualifier.NoAuth
 import live.lb_trip.data.dto.request.UserUpdateRequestDto
 import live.lb_trip.data.dto.response.EmailAvailabilityResponseDto
 import live.lb_trip.data.dto.response.UserProfileResponseDto
@@ -15,8 +17,6 @@ import live.lb_trip.data.dto.response.bodyOrThrow
 import live.lb_trip.data.dto.response.checkOrThrow
 import javax.inject.Inject
 import javax.inject.Singleton
-import live.lb_trip.data.di.qualifier.Auth
-import live.lb_trip.data.di.qualifier.NoAuth
 
 @Singleton
 class UserRemoteDataSource @Inject constructor(

@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -84,7 +85,7 @@ private fun HeroSection(modifier: Modifier = Modifier) {
             .background(GreenGradient),
     ) {
         LbChip(
-            label = "취향 · 가치소비 기반 AI 큐레이션",
+            label = stringResource(R.string.onboarding_eyebrow),
             colors = LbChipDefaults.glassColors(),
             sizes = LbChipDefaults.glassSizes(),
             leading = {
@@ -128,11 +129,11 @@ private fun HeroSection(modifier: Modifier = Modifier) {
         ) {
             Text(
                 text = buildAnnotatedString {
-                    append("내 취향과 예산에 맞춘\n")
+                    append(stringResource(R.string.onboarding_hero_prefix))
                     withStyle(SpanStyle(color = Color(0xFFBFE6CD))) {
-                        append("로컬 슬로우 트립")
+                        append(stringResource(R.string.onboarding_hero_highlight))
                     }
-                    append("을 설계해요")
+                    append(stringResource(R.string.onboarding_hero_suffix))
                 },
                 color = Color.White,
                 fontSize = 27.sp,
@@ -141,7 +142,7 @@ private fun HeroSection(modifier: Modifier = Modifier) {
                 letterSpacing = (-0.594).sp,
             )
             Text(
-                text = "친환경 로컬 코스 추천부터 KTX 할인·반값여행·관광주민증 혜택까지 자동으로 연결해요.",
+                text = stringResource(R.string.onboarding_description),
                 color = Color(0xFFD6E7DC),
                 fontSize = 13.5.sp,
                 lineHeight = 21.6.sp,
@@ -165,9 +166,9 @@ private fun ActionSection(
         verticalArrangement = Arrangement.spacedBy(11.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            LbChip(label = "KTX 할인")
-            LbChip(label = "반값여행")
-            LbChip(label = "관광주민증")
+            LbChip(label = stringResource(R.string.onboarding_chip_ktx))
+            LbChip(label = stringResource(R.string.onboarding_chip_half_price))
+            LbChip(label = stringResource(R.string.onboarding_chip_tourism_resident))
         }
         Spacer(modifier = Modifier.height(7.dp))
         LbButton(
@@ -178,7 +179,7 @@ private fun ActionSection(
             colors = LbButtonDefaults.greenColors(),
         ) {
             Text(
-                text = "이메일로 회원가입",
+                text = stringResource(R.string.onboarding_signup),
                 fontSize = 15.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.155).sp,
@@ -193,7 +194,7 @@ private fun ActionSection(
             border = BorderStroke(width = 1.dp, color = LbColors.Line2),
         ) {
             Text(
-                text = "이미 계정이 있어요 · 로그인",
+                text = stringResource(R.string.onboarding_signin),
                 fontSize = 15.5.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.155).sp,

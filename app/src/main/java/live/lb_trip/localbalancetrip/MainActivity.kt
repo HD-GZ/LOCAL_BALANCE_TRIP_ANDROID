@@ -63,16 +63,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        splashScreen.setKeepOnScreenCondition { viewModel.isLoggedIn.value == null }
+        splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.isLoggedIn == null }
 
         setContent {
-            val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle()
+            val uiState by viewModel.uiState.collectAsStateWithLifecycle()
             val context = LocalContext.current
             val sessionExpiredMessage = stringResource(R.string.main_session_expired)
 
             LaunchedEffect(Unit) {
-                viewModel.sessionExpiredEvent.collect {
-                    Toast.makeText(context, sessionExpiredMessage, Toast.LENGTH_LONG).show()
+                viewModel.sideEffect.collect { sideEffect ->
+                    when (sideEffect) {
+                        MainSideEffect.ShowSessionExpired -> {
+                            Toast.makeText(context, sessionExpiredMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
             }
 
@@ -81,7 +85,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    when (isLoggedIn) {
+                    when (uiState.isLoggedIn) {
                         true -> MainNavGraph()
                         false -> AuthNavGraph()
                         null -> Unit

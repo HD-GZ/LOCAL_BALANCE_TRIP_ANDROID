@@ -55,14 +55,14 @@ import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBenefitRow
+import live.lb_trip.core.designsystem.component.LbTimeline
+import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailAppBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptRow
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
-import live.lb_trip.core.designsystem.component.LbTimeline
-import live.lb_trip.core.designsystem.component.LbTimelineStop
 
 @Composable
 internal fun SavedCourseDetailScreen(
@@ -75,6 +75,7 @@ internal fun SavedCourseDetailScreen(
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SavedCourseDetailViewModel = hiltViewModel(),
+    onIntent: (SavedCourseDetailIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val view = LocalView.current
@@ -98,7 +99,7 @@ internal fun SavedCourseDetailScreen(
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(SavedCourseDetailIntent.Retry)
+                        onIntent(SavedCourseDetailIntent.Retry)
                     }
                 }
                 SavedCourseDetailSideEffect.ShowReceiptsLoadError -> launch { snackbarHostState.showSnackbar(receiptsErrorMessage) }
@@ -112,14 +113,14 @@ internal fun SavedCourseDetailScreen(
 
     LaunchedEffect(receiptRegistered) {
         if (receiptRegistered) {
-            viewModel.onIntent(SavedCourseDetailIntent.ReceiptRegistered)
+            onIntent(SavedCourseDetailIntent.ReceiptRegistered)
             onReceiptRegisteredConsumed()
         }
     }
 
     LaunchedEffect(tourEnded) {
         if (tourEnded) {
-            viewModel.onIntent(SavedCourseDetailIntent.Retry)
+            onIntent(SavedCourseDetailIntent.Retry)
             onTourEndedConsumed()
         }
     }
@@ -136,7 +137,7 @@ internal fun SavedCourseDetailScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         onShowSnackbar = { message -> snackbarHostState.showSnackbar(message) },
         onBack = onBack,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }

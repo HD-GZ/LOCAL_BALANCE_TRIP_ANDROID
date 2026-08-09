@@ -34,12 +34,13 @@ import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.domain.model.TermsType
 
 @Composable
-fun TermsScreen(
+internal fun TermsScreen(
     type: TermsType,
     fallbackTitle: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TermsViewModel = hiltViewModel(),
+    onIntent: (TermsIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -47,7 +48,7 @@ fun TermsScreen(
     val retryActionLabel = stringResource(R.string.terms_action_retry)
 
     LaunchedEffect(type) {
-        viewModel.onIntent(TermsIntent.Load(type))
+        onIntent(TermsIntent.Load(type))
     }
 
     LaunchedEffect(Unit) {
@@ -56,7 +57,7 @@ fun TermsScreen(
                 TermsSideEffect.ShowLoadError -> {
                     val result = snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(TermsIntent.Retry)
+                        onIntent(TermsIntent.Retry)
                     }
                 }
             }

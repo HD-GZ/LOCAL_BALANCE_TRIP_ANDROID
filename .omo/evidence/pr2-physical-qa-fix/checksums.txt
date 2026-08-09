@@ -1,0 +1,6 @@
+# Sanitized retained PNG manifest; all are fresh 1080x2340 RGBA PNG captures.
+d41ea9ab4d9c74ce9b1f4f563095b6eceb19157881a0493599448e720e1c94c5  01-authenticated-home.png
+df4e3f18e285dd3e854aae3ba65e8205f165336b325fcca2b8bd2528e5f4a66f  02-logged-out-onboarding.png
+ee7e156a4d8d23a8bedced2773f8ef79286f8af604904bad6c31204a1c8620c6  03-login.png
+8bf66c4a48d8e90f91cf9a881df175b9bfeb2e2ace8e9186e2bfff85401271c0  04-password-reset.png
+3e87e5f8faf4672b9e9c0ba68a6ac62cf414682f3930ccd4a3258688c0495ed7  05-signup-step1.png

@@ -8,16 +8,14 @@ import live.lb_trip.domain.repository.TermsRepository
 import live.lb_trip.domain.util.suspendRunCatching
 import javax.inject.Inject
 
-class TermsRepositoryImpl
-    @Inject
-    constructor(
-        private val termsRemoteDataSource: TermsRemoteDataSource,
-    ) : TermsRepository {
-        override suspend fun getTerms(type: TermsType): Result<Terms> =
-            suspendRunCatching {
-                termsRemoteDataSource.getTerms(type.toPathSegment()).toDomain()
-            }
-    }
+class TermsRepositoryImpl @Inject constructor(
+    private val termsRemoteDataSource: TermsRemoteDataSource,
+) : TermsRepository {
+    override suspend fun getTerms(type: TermsType): Result<Terms> =
+        suspendRunCatching {
+            termsRemoteDataSource.getTerms(type.toPathSegment()).toDomain()
+        }
+}
 
 private fun TermsType.toPathSegment(): String = when (this) {
     TermsType.SERVICE -> "service"

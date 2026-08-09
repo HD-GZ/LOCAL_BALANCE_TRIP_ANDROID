@@ -54,6 +54,7 @@ internal fun CourseScreen(
     onCourseSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CourseViewModel = hiltViewModel(),
+    onIntent: (CourseIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -73,7 +74,7 @@ internal fun CourseScreen(
                         CourseLoadErrorReason.Unknown -> genericErrorMessage
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) viewModel.onIntent(CourseIntent.Retry)
+                    if (result == SnackbarResult.ActionPerformed) onIntent(CourseIntent.Retry)
                 }
             }
         }

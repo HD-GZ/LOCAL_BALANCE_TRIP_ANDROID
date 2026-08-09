@@ -36,21 +36,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbBirthField
+import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
@@ -71,8 +72,8 @@ internal fun SignupAccountInfoScreen(
     ) {
         LbTopBar(
             onBackClick = onBack,
-            backContentDescription = "뒤로",
-            title = "회원가입",
+            backContentDescription = stringResource(R.string.signup_back),
+            title = stringResource(R.string.signup_title),
             containerColor = Color.Transparent,
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
@@ -87,7 +88,7 @@ internal fun SignupAccountInfoScreen(
             SignupStepBar(currentStep = 1, totalSteps = 2)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
-                text = "계정 정보를 입력해요",
+                text = stringResource(R.string.signup_account_heading),
                 color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -95,7 +96,7 @@ internal fun SignupAccountInfoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "로그인에 사용할 이메일과 비밀번호예요.",
+                text = stringResource(R.string.signup_account_description),
                 color = LbColors.Ink2,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
@@ -106,17 +107,17 @@ internal fun SignupAccountInfoScreen(
                     required = true,
                     value = state.email,
                     onValueChange = { onIntent(SignupIntent.EmailChanged(it)) },
-                    label = "이메일",
-                    placeholder = "local@email.com",
+                    label = stringResource(R.string.signup_email),
+                    placeholder = stringResource(R.string.signup_email_placeholder),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 )
                 LbInputField(
                     required = true,
                     value = state.password,
                     onValueChange = { onIntent(SignupIntent.PasswordChanged(it)) },
-                    label = "비밀번호",
-                    placeholder = "영문·숫자 8자 이상",
-                    hintText = "영문·숫자 포함 8자 이상",
+                    label = stringResource(R.string.signup_password),
+                    placeholder = stringResource(R.string.signup_password_placeholder),
+                    hintText = stringResource(R.string.signup_password_hint),
                     visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
@@ -126,7 +127,7 @@ internal fun SignupAccountInfoScreen(
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_eye),
-                                contentDescription = if (state.isPasswordVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                                contentDescription = stringResource(if (state.isPasswordVisible) R.string.signup_password_hide else R.string.signup_password_show),
                                 tint = Color.Unspecified,
                             )
                         }
@@ -136,8 +137,8 @@ internal fun SignupAccountInfoScreen(
                     required = true,
                     value = state.passwordConfirm,
                     onValueChange = { onIntent(SignupIntent.PasswordConfirmChanged(it)) },
-                    label = "비밀번호 확인",
-                    placeholder = "다시 입력",
+                    label = stringResource(R.string.signup_password_confirm),
+                    placeholder = stringResource(R.string.signup_reenter),
                     visualTransformation = if (state.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
@@ -147,7 +148,7 @@ internal fun SignupAccountInfoScreen(
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_eye),
-                                contentDescription = if (state.isConfirmPasswordVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                                contentDescription = stringResource(if (state.isConfirmPasswordVisible) R.string.signup_password_hide else R.string.signup_password_show),
                                 tint = Color.Unspecified,
                             )
                         }
@@ -179,7 +180,7 @@ internal fun SignupAccountInfoScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "다음 단계",
+                    text = stringResource(R.string.signup_next),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -187,9 +188,9 @@ internal fun SignupAccountInfoScreen(
             }
             Text(
                 text = buildAnnotatedString {
-                    append("이미 회원이신가요? ")
+                    append(stringResource(R.string.signup_existing_account))
                     withStyle(SpanStyle(color = LbColors.Green, fontWeight = FontWeight.SemiBold)) {
-                        append("로그인")
+                        append(stringResource(R.string.signup_signin))
                     }
                 },
                 color = LbColors.Ink2,
@@ -214,8 +215,8 @@ internal fun SignupPersonalInfoScreen(
     ) {
         LbTopBar(
             onBackClick = onBack,
-            backContentDescription = "뒤로",
-            title = "회원가입",
+            backContentDescription = stringResource(R.string.signup_back),
+            title = stringResource(R.string.signup_title),
             containerColor = Color.Transparent,
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
@@ -231,7 +232,7 @@ internal fun SignupPersonalInfoScreen(
             SignupStepBar(currentStep = 2, totalSteps = 2)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
-                text = "기본 정보를 입력해요",
+                text = stringResource(R.string.signup_personal_heading),
                 color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -239,7 +240,7 @@ internal fun SignupPersonalInfoScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "생년월일은 청년 혜택 판별에 쓰여요.",
+                text = stringResource(R.string.signup_personal_description),
                 color = LbColors.Ink2,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
@@ -250,8 +251,8 @@ internal fun SignupPersonalInfoScreen(
                 required = true,
                 value = state.name,
                 onValueChange = { onIntent(SignupIntent.NameChanged(it)) },
-                label = "이름",
-                placeholder = "홍길동",
+                label = stringResource(R.string.signup_name),
+                placeholder = stringResource(R.string.signup_name_placeholder),
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -262,7 +263,7 @@ internal fun SignupPersonalInfoScreen(
                 onYearChange = { onIntent(SignupIntent.BirthYearChanged(it)) },
                 onMonthChange = { onIntent(SignupIntent.BirthMonthChanged(it)) },
                 onDayChange = { onIntent(SignupIntent.BirthDayChanged(it)) },
-                label = "생년월일",
+                label = stringResource(R.string.signup_birth_date),
                 required = true,
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -272,7 +273,7 @@ internal fun SignupPersonalInfoScreen(
                 verticalArrangement = Arrangement.spacedBy(7.dp),
             ) {
                 Text(
-                    text = "성별",
+                    text = stringResource(R.string.signup_gender),
                     color = LbColors.Ink2,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
@@ -320,7 +321,7 @@ internal fun SignupPersonalInfoScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "다음 단계",
+                    text = stringResource(R.string.signup_next),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -337,9 +338,9 @@ private fun GenderSegmented(
     modifier: Modifier = Modifier,
 ) {
     val options = listOf(
-        Gender.MALE to "남성",
-        Gender.FEMALE to "여성",
-        Gender.NOT_SPECIFIED to "선택 안 함",
+        Gender.MALE to stringResource(R.string.signup_gender_male),
+        Gender.FEMALE to stringResource(R.string.signup_gender_female),
+        Gender.NOT_SPECIFIED to stringResource(R.string.signup_gender_not_specified),
     )
     Row(
         modifier = modifier
@@ -408,7 +409,7 @@ private fun AgreeBlock(
         ) {
             AgreeCheckbox(checked = allAgreed)
             Text(
-                text = "약관에 모두 동의합니다",
+                text = stringResource(R.string.signup_agree_all),
                 color = LbColors.Ink,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Medium,
@@ -424,19 +425,19 @@ private fun AgreeBlock(
 
         AgreeRow(
             checked = termsAgreed,
-            label = "서비스 이용약관",
+            label = stringResource(R.string.signup_terms),
             required = true,
             onClick = onToggleTos,
         )
         AgreeRow(
             checked = privacyAgreed,
-            label = "개인정보 처리방침",
+            label = stringResource(R.string.signup_privacy),
             required = true,
             onClick = onTogglePrivacy,
         )
         AgreeRow(
             checked = marketingAgreed,
-            label = "마케팅 수신 동의",
+            label = stringResource(R.string.signup_marketing),
             required = false,
             onClick = onToggleMarketing,
         )
@@ -461,7 +462,7 @@ private fun AgreeRow(
         AgreeCheckbox(checked = checked)
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
-                text = if (required) "[필수]" else "[선택]",
+                text = stringResource(if (required) R.string.signup_required else R.string.signup_optional),
                 color = if (required) LbColors.Green else LbColors.Ink3,
                 fontSize = 13.5.sp,
                 fontWeight = FontWeight.Medium,
@@ -513,8 +514,8 @@ internal fun SignupEmailVerifyScreen(
     ) {
         LbTopBar(
             onBackClick = onBack,
-            backContentDescription = "뒤로",
-            title = "이메일 인증",
+            backContentDescription = stringResource(R.string.signup_back),
+            title = stringResource(R.string.signup_verification_title),
             containerColor = Color.Transparent,
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
@@ -528,7 +529,7 @@ internal fun SignupEmailVerifyScreen(
         ) {
             Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "이메일을 확인해 주세요",
+                text = stringResource(R.string.signup_check_email),
                 color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -540,7 +541,7 @@ internal fun SignupEmailVerifyScreen(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(state.email) }
                     withStyle(SpanStyle(color = LbColors.Ink2, fontWeight = FontWeight.Normal)) {
-                        append(" 으로\n6자리 인증 코드를 보냈어요.")
+                        append(stringResource(R.string.signup_code_sent_suffix))
                     }
                 },
                 color = LbColors.Ink,
@@ -556,7 +557,7 @@ internal fun SignupEmailVerifyScreen(
             Spacer(modifier = Modifier.height(20.dp))
             Text(
                 text = buildAnnotatedString {
-                    append("남은 시간 ")
+                    append(stringResource(R.string.signup_remaining_time))
                     withStyle(SpanStyle(color = Color(0xFF3C875F), fontWeight = FontWeight.SemiBold)) {
                         append("%02d:%02d".format(minutes, seconds))
                     }
@@ -586,7 +587,7 @@ internal fun SignupEmailVerifyScreen(
                 border = BorderStroke(1.dp, LbColors.Line2),
             ) {
                 Text(
-                    text = "코드 재전송",
+                    text = stringResource(R.string.signup_resend_code),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -601,7 +602,7 @@ internal fun SignupEmailVerifyScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "인증 완료",
+                    text = stringResource(R.string.signup_confirm_code),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -650,9 +651,9 @@ internal fun SignupCompleteScreen(
                 Text(
                     text = buildAnnotatedString {
                         withStyle(SpanStyle(color = LbColors.Green)) {
-                            append(state.name.ifEmpty { "여행자" })
+                            append(state.name.ifEmpty { stringResource(R.string.signup_default_name) })
                         }
-                        append("님, 환영해요!")
+                        append(stringResource(R.string.signup_welcome_suffix))
                     },
                     color = LbColors.Ink,
                     fontSize = 25.sp,
@@ -662,7 +663,7 @@ internal fun SignupCompleteScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "이메일 인증이 완료되어 회원가입이 끝났어요.\n이제 취향에 맞는 로컬 슬로우 트립을 만나보세요.",
+                    text = stringResource(R.string.signup_complete_description),
                     color = LbColors.Ink2,
                     fontSize = 14.sp,
                     lineHeight = 23.1.sp,
@@ -686,7 +687,7 @@ internal fun SignupCompleteScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "로그인하고 여행 시작하기",
+                    text = stringResource(R.string.signup_start_trip),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,

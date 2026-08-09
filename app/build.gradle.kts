@@ -69,6 +69,7 @@ dependencies {
     implementation(projects.feature.signin.api)
     implementation(projects.feature.signin.impl)
     implementation(projects.feature.settings.impl)
+    implementation(projects.core)
     implementation(projects.core.designsystem)
 
     implementation(libs.androidx.core.ktx)
@@ -82,6 +83,7 @@ dependencies {
     implementation(libs.naver.map.compose)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

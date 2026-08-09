@@ -48,8 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.R as DesignSystemR
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.domain.model.TravelStatus
 
 @Composable
@@ -58,6 +58,7 @@ internal fun SavedCoursesScreen(
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SavedCoursesViewModel = hiltViewModel(),
+    onIntent: (SavedCoursesIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -71,7 +72,7 @@ internal fun SavedCoursesScreen(
                     val result =
                         snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(SavedCoursesIntent.Retry)
+                        onIntent(SavedCoursesIntent.Retry)
                     }
                 }
             }
