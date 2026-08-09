@@ -69,6 +69,7 @@ dependencies {
     implementation(projects.feature.signin.api)
     implementation(projects.feature.signin.impl)
     implementation(projects.feature.settings.impl)
+    implementation(projects.core)
     implementation(projects.core.designsystem)
 
     implementation(libs.androidx.core.ktx)
