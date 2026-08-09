@@ -114,7 +114,6 @@ internal fun MainTabScreen(
                 onNavigateToLicenses = onNavigateToLicenses,
                 onNavigateToTerms = onNavigateToTerms,
                 onNavigateToPrivacy = onNavigateToPrivacy,
-                snackbarHostState = snackbarHostState,
                 profileUpdated = profileUpdated,
                 onProfileUpdatedConsumed = onProfileUpdatedConsumed,
                 modifier = Modifier.padding(innerPadding),

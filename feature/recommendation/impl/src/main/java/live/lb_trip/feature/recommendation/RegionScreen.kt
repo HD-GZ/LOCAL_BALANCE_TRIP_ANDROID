@@ -4,6 +4,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -82,7 +83,14 @@ internal fun RegionScreen(
 
     RegionScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+            )
+        },
         onBack = onBack,
         onRegionSelected = onRegionSelected,
         modifier = modifier,
@@ -92,7 +100,7 @@ internal fun RegionScreen(
 @Composable
 private fun RegionScreenContent(
     state: RegionUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable BoxScope.() -> Unit,
     onBack: () -> Unit,
     onRegionSelected: (regionId: Long, regionName: String) -> Unit,
     modifier: Modifier = Modifier,
@@ -157,12 +165,7 @@ private fun RegionScreenContent(
             }
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
+        snackbarHost()
 
         if (state.isLoading) {
             LbLoadingOverlay()
@@ -180,7 +183,7 @@ private fun RegionScreenPreview() {
                 RecommendedRegion(id = 1, name = "전라남도 담양군", reason = "로컬 미식 상권이 풍부해요."),
             ),
         ),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
         onBack = {},
         onRegionSelected = { _, _ -> },
     )

@@ -92,7 +92,7 @@ fun EditProfileScreen(
         state = state,
         onBack = onBack,
         onIntent = viewModel::onIntent,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier,
     )
 }
@@ -102,7 +102,7 @@ private fun EditProfileScreenContent(
     state: EditProfileUiState,
     onBack: () -> Unit,
     onIntent: (EditProfileIntent) -> Unit,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showWithdrawDialog by remember { mutableStateOf(false) }
@@ -122,7 +122,7 @@ private fun EditProfileScreenContent(
                     EditProfileSubmitBar(state = state, onIntent = onIntent)
                 }
             },
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            snackbarHost = snackbarHost,
             containerColor = LbColors.Paper,
         ) { innerPadding ->
             if (state.isLoading) {

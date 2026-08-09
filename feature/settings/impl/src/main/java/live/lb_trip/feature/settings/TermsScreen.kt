@@ -67,7 +67,7 @@ fun TermsScreen(
         state = state,
         fallbackTitle = fallbackTitle,
         onBack = onBack,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier,
     )
 }
@@ -77,7 +77,7 @@ private fun TermsScreenContent(
     state: TermsUiState,
     fallbackTitle: String,
     onBack: () -> Unit,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -90,7 +90,7 @@ private fun TermsScreenContent(
                 containerColor = LbColors.Paper,
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = snackbarHost,
         containerColor = LbColors.Paper,
     ) { innerPadding ->
         if (state.isLoading) {

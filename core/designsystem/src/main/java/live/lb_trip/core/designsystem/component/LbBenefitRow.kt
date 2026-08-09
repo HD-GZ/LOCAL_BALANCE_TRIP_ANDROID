@@ -1,4 +1,4 @@
-package live.lb_trip.feature.savedcourses.components
+package live.lb_trip.core.designsystem.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,11 +16,16 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import live.lb_trip.core.designsystem.R as DesignSystemR
-import live.lb_trip.feature.savedcourses.SavedCourseBenefit
+import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.R
 
 @Composable
-internal fun SavedCourseBenefitRow(benefit: SavedCourseBenefit, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun LbBenefitRow(
+    title: String,
+    description: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -29,15 +34,15 @@ internal fun SavedCourseBenefitRow(benefit: SavedCourseBenefit, onClick: () -> U
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(text = benefit.title, color = Ink, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-            if (benefit.description != null) {
-                Text(text = benefit.description, color = Ink3, fontSize = 12.sp)
+            Text(text = title, color = LbColors.Ink, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+            if (description != null) {
+                Text(text = description, color = LbColors.Ink3, fontSize = 12.sp)
             }
         }
         Icon(
-            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_chevron_right),
+            imageVector = ImageVector.vectorResource(R.drawable.ic_chevron_right),
             contentDescription = null,
-            tint = Ink4,
+            tint = LbColors.Ink4,
             modifier = Modifier.size(16.dp),
         )
     }

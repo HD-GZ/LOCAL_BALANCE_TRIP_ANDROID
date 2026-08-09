@@ -88,7 +88,7 @@ internal fun SavedCoursesScreen(
 
     SavedCoursesScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         onBack = onBack,
         onCourseClick = onCourseClick,
         modifier = modifier,
@@ -98,7 +98,7 @@ internal fun SavedCoursesScreen(
 @Composable
 private fun SavedCoursesScreenContent(
     state: SavedCoursesUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable () -> Unit,
     onBack: () -> Unit,
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -121,7 +121,7 @@ private fun SavedCoursesScreenContent(
                 },
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = snackbarHost,
         containerColor = Color.White,
     ) { innerPadding ->
         Box(
@@ -233,7 +233,7 @@ private fun SavedCourseStatusBadge(status: TravelStatus, modifier: Modifier = Mo
 private fun SavedCoursesScreenPreview() {
     SavedCoursesScreenContent(
         state = SavedCoursesUiState(isLoading = false, courses = persistentListOf()),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
         onBack = {},
         onCourseClick = {},
     )

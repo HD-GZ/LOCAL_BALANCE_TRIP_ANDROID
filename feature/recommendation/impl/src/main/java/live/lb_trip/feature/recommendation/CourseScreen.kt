@@ -4,6 +4,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -81,7 +82,14 @@ internal fun CourseScreen(
     CourseScreenContent(
         regionName = viewModel.regionName,
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+            )
+        },
         onBack = onBack,
         onCourseSelected = onCourseSelected,
         modifier = modifier,
@@ -92,7 +100,7 @@ internal fun CourseScreen(
 private fun CourseScreenContent(
     regionName: String,
     state: CourseUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable BoxScope.() -> Unit,
     onBack: () -> Unit,
     onCourseSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -157,12 +165,7 @@ private fun CourseScreenContent(
             }
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
+        snackbarHost()
 
         if (state.isLoading) {
             LbLoadingOverlay()
@@ -181,7 +184,7 @@ private fun CourseScreenPreview() {
                 RecommendedCourse(id = 1, title = "남도 골목 미식 슬로우 트립", reason = "실속 소비 + 로컬 미식 성향을 반영했어요."),
             ),
         ),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
         onBack = {},
         onCourseSelected = {},
     )
