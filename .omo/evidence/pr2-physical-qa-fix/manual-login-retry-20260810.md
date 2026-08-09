@@ -2,7 +2,7 @@
 
 Date: 2026-08-10 (Asia/Seoul)
 
-Build identity: `acc616eb611c45de0c7ddcd0889e2c6bb981f29c`
+Build identity: `81773b944da3e1b4696dfce793747fa94d7aa673`
 
 APK SHA-256: `31a26cec0ede736b488fa15d4a8e16533a02797d52fef0b415f36a8bf4b1c2c1`
 
