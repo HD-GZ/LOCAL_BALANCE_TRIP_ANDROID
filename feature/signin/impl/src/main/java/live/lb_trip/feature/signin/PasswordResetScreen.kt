@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -62,7 +63,7 @@ internal fun PasswordResetEmailScreen(
     ) {
         LbTopBar(
             onBackClick = onBack,
-            backContentDescription = "뒤로",
+            backContentDescription = stringResource(R.string.signin_back),
             containerColor = Color.Transparent,
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
@@ -77,7 +78,7 @@ internal fun PasswordResetEmailScreen(
             PasswordResetStepBar(currentStep = 1)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
-                text = "비밀번호를 잊으셨나요?",
+                text = stringResource(R.string.password_reset_forgot_title),
                 color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -85,7 +86,7 @@ internal fun PasswordResetEmailScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "가입하신 이메일로 6자리 인증 코드를 보내드려요.",
+                text = stringResource(R.string.password_reset_email_description),
                 color = LbColors.Ink2,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
@@ -95,8 +96,8 @@ internal fun PasswordResetEmailScreen(
                 required = true,
                 value = state.email,
                 onValueChange = { onIntent(PasswordResetIntent.EmailChanged(it)) },
-                label = "이메일",
-                placeholder = "local@email.com",
+                label = stringResource(R.string.signin_email),
+                placeholder = stringResource(R.string.signin_email_placeholder),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             )
         }
@@ -119,7 +120,7 @@ internal fun PasswordResetEmailScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "인증 코드 받기",
+                    text = stringResource(R.string.password_reset_get_code),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -127,9 +128,9 @@ internal fun PasswordResetEmailScreen(
             }
             Text(
                 text = buildAnnotatedString {
-                    append("계정이 기억나셨나요? ")
+                    append(stringResource(R.string.password_reset_remembered))
                     withStyle(SpanStyle(color = LbColors.Green, fontWeight = FontWeight.SemiBold)) {
-                        append("로그인")
+                        append(stringResource(R.string.signin_title))
                     }
                 },
                 color = LbColors.Ink2,
@@ -157,7 +158,7 @@ internal fun PasswordResetVerifyScreen(
     ) {
         LbTopBar(
             onBackClick = onBack,
-            backContentDescription = "뒤로",
+            backContentDescription = stringResource(R.string.signin_back),
             containerColor = Color.Transparent,
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
@@ -173,7 +174,7 @@ internal fun PasswordResetVerifyScreen(
             PasswordResetStepBar(currentStep = 2)
             Spacer(modifier = Modifier.height(28.dp))
             Text(
-                text = "이메일을 확인해 주세요",
+                text = stringResource(R.string.password_reset_check_email),
                 color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -185,7 +186,7 @@ internal fun PasswordResetVerifyScreen(
                 text = buildAnnotatedString {
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(state.email) }
                     withStyle(SpanStyle(color = LbColors.Ink2, fontWeight = FontWeight.Normal)) {
-                        append(" 으로\n6자리 인증 코드를 보냈어요.")
+                        append(stringResource(R.string.password_reset_code_sent_suffix))
                     }
                 },
                 color = LbColors.Ink,
@@ -202,7 +203,7 @@ internal fun PasswordResetVerifyScreen(
             if (state.remainingSeconds > 0) {
                 Text(
                     text = buildAnnotatedString {
-                        append("남은 시간 ")
+                        append(stringResource(R.string.password_reset_remaining_time))
                         withStyle(SpanStyle(color = LbColors.Green, fontWeight = FontWeight.SemiBold)) {
                             append("%02d:%02d".format(minutes, seconds))
                         }
@@ -213,7 +214,7 @@ internal fun PasswordResetVerifyScreen(
                 )
             } else {
                 Text(
-                    text = "인증 시간이 만료됐어요. 코드를 재전송해 주세요.",
+                    text = stringResource(R.string.password_reset_expired),
                     color = LbColors.RequiredMark,
                     fontSize = 13.sp,
                     textAlign = TextAlign.Center,
@@ -240,7 +241,7 @@ internal fun PasswordResetVerifyScreen(
                 border = BorderStroke(1.dp, LbColors.Line2),
             ) {
                 Text(
-                    text = "코드 재전송",
+                    text = stringResource(R.string.password_reset_resend_code),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -255,7 +256,7 @@ internal fun PasswordResetVerifyScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "다음 단계",
+                    text = stringResource(R.string.password_reset_next),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -279,7 +280,7 @@ internal fun PasswordResetNewPasswordScreen(
     ) {
         LbTopBar(
             onBackClick = onBack,
-            backContentDescription = "뒤로",
+            backContentDescription = stringResource(R.string.signin_back),
             containerColor = Color.Transparent,
             windowInsets = WindowInsets(0, 0, 0, 0),
         )
@@ -294,7 +295,7 @@ internal fun PasswordResetNewPasswordScreen(
             PasswordResetStepBar(currentStep = 3)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
-                text = "새 비밀번호를 설정해요",
+                text = stringResource(R.string.password_reset_new_password_title),
                 color = LbColors.Ink,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -302,7 +303,7 @@ internal fun PasswordResetNewPasswordScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "이전에 사용하지 않은 비밀번호로 설정해 주세요.",
+                text = stringResource(R.string.password_reset_new_password_description),
                 color = LbColors.Ink2,
                 fontSize = 14.sp,
                 lineHeight = 22.4.sp,
@@ -313,9 +314,9 @@ internal fun PasswordResetNewPasswordScreen(
                     required = true,
                     value = state.newPassword,
                     onValueChange = { onIntent(PasswordResetIntent.NewPasswordChanged(it)) },
-                    label = "새 비밀번호",
-                    placeholder = "영문·숫자 8자 이상",
-                    hintText = "영문·숫자 포함 8자 이상",
+                    label = stringResource(R.string.password_reset_new_password),
+                    placeholder = stringResource(R.string.password_reset_password_placeholder),
+                    hintText = stringResource(R.string.password_reset_password_hint),
                     visualTransformation = if (state.isNewPasswordVisible) {
                         VisualTransformation.None
                     } else {
@@ -329,7 +330,7 @@ internal fun PasswordResetNewPasswordScreen(
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_eye),
-                                contentDescription = if (state.isNewPasswordVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                                contentDescription = stringResource(if (state.isNewPasswordVisible) R.string.signin_password_hide else R.string.signin_password_show),
                                 tint = Color.Unspecified,
                             )
                         }
@@ -339,8 +340,8 @@ internal fun PasswordResetNewPasswordScreen(
                     required = true,
                     value = state.newPasswordConfirm,
                     onValueChange = { onIntent(PasswordResetIntent.NewPasswordConfirmChanged(it)) },
-                    label = "새 비밀번호 확인",
-                    placeholder = "다시 입력",
+                    label = stringResource(R.string.password_reset_new_password_confirm),
+                    placeholder = stringResource(R.string.password_reset_reenter),
                     visualTransformation = if (state.isNewPasswordConfirmVisible) {
                         VisualTransformation.None
                     } else {
@@ -354,7 +355,7 @@ internal fun PasswordResetNewPasswordScreen(
                         ) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(R.drawable.ic_eye),
-                                contentDescription = if (state.isNewPasswordConfirmVisible) "비밀번호 숨기기" else "비밀번호 보기",
+                                contentDescription = stringResource(if (state.isNewPasswordConfirmVisible) R.string.signin_password_hide else R.string.signin_password_show),
                                 tint = Color.Unspecified,
                             )
                         }
@@ -383,7 +384,7 @@ internal fun PasswordResetNewPasswordScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "비밀번호 변경하기",
+                    text = stringResource(R.string.password_reset_change_password),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
@@ -427,7 +428,7 @@ internal fun PasswordResetCompleteScreen(
                 }
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    text = "비밀번호를 변경했어요",
+                    text = stringResource(R.string.password_reset_complete_title),
                     color = LbColors.Ink,
                     fontSize = 25.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -436,7 +437,7 @@ internal fun PasswordResetCompleteScreen(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "새 비밀번호로 다시 로그인해 주세요.\n이전 비밀번호는 더 이상 사용할 수 없어요.",
+                    text = stringResource(R.string.password_reset_complete_description),
                     color = LbColors.Ink2,
                     fontSize = 14.sp,
                     lineHeight = 23.1.sp,
@@ -460,7 +461,7 @@ internal fun PasswordResetCompleteScreen(
                 colors = LbButtonDefaults.greenColors(),
             ) {
                 Text(
-                    text = "로그인하러 가기",
+                    text = stringResource(R.string.password_reset_go_signin),
                     fontSize = 15.5.sp,
                     fontWeight = FontWeight.SemiBold,
                     letterSpacing = (-0.155).sp,
