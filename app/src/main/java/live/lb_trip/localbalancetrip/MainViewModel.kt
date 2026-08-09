@@ -3,8 +3,6 @@ package live.lb_trip.localbalancetrip
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
@@ -16,7 +14,10 @@ data class MainUiState(
     val isLoggedIn: Boolean? = null,
 )
 
-sealed interface MainIntent
+sealed interface MainIntent {
+    data class TokensChanged(val isLoggedIn: Boolean) : MainIntent
+    data object SessionValidationRequested : MainIntent
+}
 
 sealed interface MainSideEffect {
     data object ShowSessionExpired : MainSideEffect
@@ -28,23 +29,37 @@ class MainViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
 ) : BaseViewModel<MainUiState, MainIntent, MainSideEffect>(MainUiState()) {
 
+    private var hasResolvedInitialToken = false
+
     init {
         viewModelScope.launch {
             getTokensUseCase()
                 .map { it != null }
-                .collect { isLoggedIn -> updateState { it.copy(isLoggedIn = isLoggedIn) } }
-        }
-        viewModelScope.launch {
-            if (uiState.map { it.isLoggedIn }.filterNotNull().first()) validateSession()
+                .collect { isLoggedIn -> onIntent(MainIntent.TokensChanged(isLoggedIn)) }
         }
     }
 
-    override fun onIntent(intent: MainIntent) = Unit
+    override fun onIntent(intent: MainIntent) {
+        when (intent) {
+            is MainIntent.TokensChanged -> handleTokensChanged(intent)
+            MainIntent.SessionValidationRequested -> validateSession()
+        }
+    }
 
-    private suspend fun validateSession() {
-        val exception = getUserProfileUseCase().exceptionOrNull()
-        if (exception is ApiException && exception.statusCode == UNAUTHORIZED) {
-            postSideEffect(MainSideEffect.ShowSessionExpired)
+    private fun handleTokensChanged(intent: MainIntent.TokensChanged) {
+        updateState { it.copy(isLoggedIn = intent.isLoggedIn) }
+        if (!hasResolvedInitialToken) {
+            hasResolvedInitialToken = true
+            if (intent.isLoggedIn) onIntent(MainIntent.SessionValidationRequested)
+        }
+    }
+
+    private fun validateSession() {
+        viewModelScope.launch {
+            val exception = getUserProfileUseCase().exceptionOrNull()
+            if (exception is ApiException && exception.statusCode == UNAUTHORIZED) {
+                postSideEffect(MainSideEffect.ShowSessionExpired)
+            }
         }
     }
 
