@@ -26,31 +26,23 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBrush
+import live.lb_trip.core.designsystem.component.LbBirthField
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
@@ -262,13 +255,15 @@ internal fun SignupPersonalInfoScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            BirthField(
+            LbBirthField(
                 year = state.birthYear,
                 month = state.birthMonth,
                 day = state.birthDay,
                 onYearChange = { onIntent(SignupIntent.BirthYearChanged(it)) },
                 onMonthChange = { onIntent(SignupIntent.BirthMonthChanged(it)) },
                 onDayChange = { onIntent(SignupIntent.BirthDayChanged(it)) },
+                label = "생년월일",
+                required = true,
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -331,129 +326,6 @@ internal fun SignupPersonalInfoScreen(
                     letterSpacing = (-0.155).sp,
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun BirthField(
-    year: String,
-    month: Int,
-    day: String,
-    onYearChange: (String) -> Unit,
-    onMonthChange: (Int) -> Unit,
-    onDayChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var monthMenuExpanded by remember { mutableStateOf(false) }
-
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
-    ) {
-        Text(
-            text = buildAnnotatedString {
-                append("생년월일")
-                withStyle(SpanStyle(color = LbColors.RequiredMark, fontWeight = FontWeight.SemiBold)) {
-                    append(" *")
-                }
-            },
-            color = LbColors.Ink2,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Medium,
-            letterSpacing = (-0.065).sp,
-        )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            BasicTextField(
-                value = year,
-                onValueChange = { if (it.length <= 4 && it.all { c -> c.isDigit() }) onYearChange(it) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                cursorBrush = SolidColor(LbColors.Green),
-                textStyle = TextStyle(color = LbColors.Ink, fontSize = 15.5.sp),
-                modifier = Modifier.weight(2.2f),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp)
-                            .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.White)
-                            .padding(horizontal = 15.dp),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        if (year.isEmpty()) {
-                            Text(text = "YYYY", color = LbColors.Ink4, fontSize = 15.5.sp)
-                        }
-                        innerTextField()
-                    }
-                },
-            )
-
-            Box(modifier = Modifier.weight(1.5f)) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(52.dp)
-                        .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.White)
-                        .clickable { monthMenuExpanded = true }
-                        .padding(horizontal = 15.dp),
-                    contentAlignment = Alignment.CenterStart,
-                ) {
-                    Text(
-                        text = if (month == 0) "월" else "${month}월",
-                        color = if (month == 0) LbColors.Ink4 else LbColors.Ink,
-                        fontSize = 15.5.sp,
-                    )
-                }
-                DropdownMenu(
-                    expanded = monthMenuExpanded,
-                    onDismissRequest = { monthMenuExpanded = false },
-                ) {
-                    for (m in 1..12) {
-                        DropdownMenuItem(
-                            text = { Text("${m}월") },
-                            onClick = {
-                                onMonthChange(m)
-                                monthMenuExpanded = false
-                            },
-                        )
-                    }
-                }
-            }
-
-            BasicTextField(
-                value = day,
-                onValueChange = { if (it.length <= 2 && it.all { c -> c.isDigit() }) onDayChange(it) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                singleLine = true,
-                cursorBrush = SolidColor(LbColors.Green),
-                textStyle = TextStyle(color = LbColors.Ink, fontSize = 15.5.sp),
-                modifier = Modifier.weight(1.2f),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(52.dp)
-                            .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(Color.White)
-                            .padding(horizontal = 15.dp),
-                        contentAlignment = Alignment.CenterStart,
-                    ) {
-                        if (day.isEmpty()) {
-                            Text(text = "일", color = LbColors.Ink4, fontSize = 15.5.sp)
-                        }
-                        innerTextField()
-                    }
-                },
-            )
         }
     }
 }
