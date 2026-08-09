@@ -8,6 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.auth.LbTripAuthException
+import live.lb_trip.domain.exception.sharedInvalidFieldMessage
 import live.lb_trip.domain.usecase.CheckEmailAvailabilityUseCase
 import live.lb_trip.domain.usecase.ConfirmEmailVerificationUseCase
 import live.lb_trip.domain.usecase.ResendEmailVerificationUseCase
@@ -132,11 +133,7 @@ class SignupViewModel @Inject constructor(
 
     private fun invalidFieldMessage(field: String): String? = when (field) {
         "email" -> "올바른 이메일 형식이 아니에요."
-        "password" -> "비밀번호는 영문·숫자 포함 8자 이상이어야 해요."
-        "passwordConfirm" -> "비밀번호가 일치하지 않아요."
-        "name" -> "이름을 확인해 주세요."
-        "birthDate" -> "생년월일을 확인해 주세요."
-        else -> null
+        else -> sharedInvalidFieldMessage(field)
     }
 
     private fun resendCode() {
