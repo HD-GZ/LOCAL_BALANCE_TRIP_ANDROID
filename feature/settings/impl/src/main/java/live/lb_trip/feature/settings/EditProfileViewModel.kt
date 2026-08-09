@@ -6,6 +6,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import live.lb_trip.core.viewmodel.BaseViewModel
+import live.lb_trip.domain.exception.sharedInvalidFieldMessage
 import live.lb_trip.domain.exception.user.LbTripUserException
 import live.lb_trip.domain.usecase.ClearDistanceRecordingUseCase
 import live.lb_trip.domain.usecase.ClearSessionUseCase
@@ -114,17 +115,9 @@ class EditProfileViewModel @Inject constructor(
 
     private fun saveFailureMessage(throwable: Throwable): String = when (throwable) {
         is LbTripUserException.InvalidInputValueException ->
-            throwable.fields.firstNotNullOfOrNull { field -> invalidFieldMessage(field) }
+            throwable.fields.firstNotNullOfOrNull { field -> sharedInvalidFieldMessage(field) }
                 ?: "입력값을 다시 확인해 주세요."
         else -> "정보 수정에 실패했어요. 잠시 후 다시 시도해 주세요."
-    }
-
-    private fun invalidFieldMessage(field: String): String? = when (field) {
-        "name" -> "이름을 확인해 주세요."
-        "birthDate" -> "생년월일을 확인해 주세요."
-        "password" -> "비밀번호는 영문·숫자 포함 8자 이상이어야 해요."
-        "passwordConfirm" -> "비밀번호가 일치하지 않아요."
-        else -> null
     }
 
     private fun withdrawFailureMessage(throwable: Throwable): String = when (throwable) {

@@ -47,9 +47,6 @@
     <string name="signup_error_required_agreement">필수 약관에 동의해 주세요.</string>
     <string name="signup_error_failed">회원가입에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="signup_error_invalid_email">올바른 이메일 형식이 아니에요.</string>
-    <string name="signup_error_invalid_password">비밀번호는 영문·숫자 포함 8자 이상이어야 해요.</string>
-    <string name="signup_error_invalid_name">이름을 확인해 주세요.</string>
-    <string name="signup_error_invalid_birth_date">생년월일을 확인해 주세요.</string>
     <string name="signup_error_resend_code">코드 재전송에 실패했어요.</string>
     <string name="signup_error_code_expired">인증 코드가 만료됐어요.</string>
     <string name="signup_error_code_used">이미 사용된 인증 코드예요.</string>

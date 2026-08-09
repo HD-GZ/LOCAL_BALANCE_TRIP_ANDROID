@@ -54,10 +54,10 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.domain.model.TravelStatus
-import live.lb_trip.feature.savedcourses.components.SavedCourseBenefitRow
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailAppBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
@@ -134,7 +134,8 @@ internal fun SavedCourseDetailScreen(
 
     SavedCourseDetailScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        onShowSnackbar = { message -> snackbarHostState.showSnackbar(message) },
         onBack = onBack,
         onIntent = onIntent,
         modifier = modifier,
@@ -145,7 +146,8 @@ internal fun SavedCourseDetailScreen(
 @Composable
 private fun SavedCourseDetailScreenContent(
     state: SavedCourseDetailUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable () -> Unit,
+    onShowSnackbar: suspend (String) -> Unit,
     onBack: () -> Unit,
     onIntent: (SavedCourseDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -195,7 +197,7 @@ private fun SavedCourseDetailScreenContent(
                 onShareClick = { showShareSheet = true },
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = snackbarHost,
         containerColor = LbColors.Paper,
     ) { innerPadding ->
         if (state.isLoading) {
@@ -250,7 +252,7 @@ private fun SavedCourseDetailScreenContent(
                             ?: return@runCatching false
                         saveBitmapToGallery(context, bitmap, shareImageFileName())
                     }.getOrDefault(false)
-                    snackbarHostState.showSnackbar(if (saved) shareSavedMessage else shareFailedMessage)
+                    onShowSnackbar(if (saved) shareSavedMessage else shareFailedMessage)
                 }
             },
             onShareClick = {
@@ -262,7 +264,7 @@ private fun SavedCourseDetailScreenContent(
                             ?: return@runCatching false
                         shareBitmapImage(context, bitmap, shareImageFileName())
                     }.getOrDefault(false)
-                    if (!shared) snackbarHostState.showSnackbar(shareFailedMessage)
+                    if (!shared) onShowSnackbar(shareFailedMessage)
                 }
             },
         )
@@ -306,8 +308,9 @@ private fun SavedCourseOrderTab(
                 Column {
                     state.benefits.fastForEachIndexed { index, benefit ->
                         if (index > 0) HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-                        SavedCourseBenefitRow(
-                            benefit = benefit,
+                        LbBenefitRow(
+                            title = benefit.title,
+                            description = benefit.description,
                             onClick = { onIntent(SavedCourseDetailIntent.BenefitClicked(benefit.url)) },
                         )
                     }
@@ -483,7 +486,8 @@ private fun SavedCourseDetailScreenPreview() {
             status = TravelStatus.BEFORE_TRIP,
             expandedStopIndices = persistentSetOf(0),
         ),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
+        onShowSnackbar = {},
         onBack = {},
         onIntent = {},
     )

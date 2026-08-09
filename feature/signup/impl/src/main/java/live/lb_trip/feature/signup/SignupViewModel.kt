@@ -10,6 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.auth.LbTripAuthException
+import live.lb_trip.domain.exception.sharedInvalidFieldMessage
 import live.lb_trip.domain.usecase.CheckEmailAvailabilityUseCase
 import live.lb_trip.domain.usecase.ConfirmEmailVerificationUseCase
 import live.lb_trip.domain.usecase.ResendEmailVerificationUseCase
@@ -135,11 +136,7 @@ class SignupViewModel @Inject constructor(
 
     private fun invalidFieldMessage(field: String): String? = when (field) {
         "email" -> context.getString(R.string.signup_error_invalid_email)
-        "password" -> context.getString(R.string.signup_error_invalid_password)
-        "passwordConfirm" -> context.getString(R.string.signup_error_password_mismatch)
-        "name" -> context.getString(R.string.signup_error_invalid_name)
-        "birthDate" -> context.getString(R.string.signup_error_invalid_birth_date)
-        else -> null
+        else -> sharedInvalidFieldMessage(field)
     }
 
     private fun resendCode() {

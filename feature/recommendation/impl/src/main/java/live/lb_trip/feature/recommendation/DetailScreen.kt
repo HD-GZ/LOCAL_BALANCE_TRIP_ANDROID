@@ -3,6 +3,7 @@ package live.lb_trip.feature.recommendation
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -38,11 +39,11 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
+import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
-import live.lb_trip.feature.recommendation.components.BenefitRow
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
@@ -93,7 +94,14 @@ internal fun DetailScreen(
 
     DetailScreenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
+            )
+        },
         onBack = onBack,
         onIntent = onIntent,
         modifier = modifier,
@@ -103,7 +111,7 @@ internal fun DetailScreen(
 @Composable
 private fun DetailScreenContent(
     state: RecommendationDetailUiState,
-    snackbarHostState: SnackbarHostState,
+    snackbarHost: @Composable BoxScope.() -> Unit,
     onBack: () -> Unit,
     onIntent: (RecommendationDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -192,8 +200,9 @@ private fun DetailScreenContent(
                         Column {
                             state.benefits.fastForEachIndexed { index, benefit ->
                                 if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
-                                BenefitRow(
-                                    benefit = benefit,
+                                LbBenefitRow(
+                                    title = benefit.title,
+                                    description = benefit.description,
                                     onClick = { onIntent(RecommendationDetailIntent.BenefitClicked(benefit.url)) },
                                 )
                             }
@@ -210,12 +219,7 @@ private fun DetailScreenContent(
             }
         }
 
-        SnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
-        )
+        snackbarHost()
 
         if (state.isLoading) {
             LbLoadingOverlay()
@@ -232,7 +236,7 @@ private fun DetailScreenPreview() {
             title = "전라북도 임실군 골목 미식 코스",
             expandedStopIndices = persistentSetOf(0, 2),
         ),
-        snackbarHostState = remember { SnackbarHostState() },
+        snackbarHost = {},
         onBack = {},
         onIntent = {},
     )
