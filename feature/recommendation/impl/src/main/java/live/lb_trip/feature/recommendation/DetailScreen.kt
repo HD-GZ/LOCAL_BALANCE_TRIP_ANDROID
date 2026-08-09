@@ -38,8 +38,8 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
+import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
-import live.lb_trip.feature.recommendation.components.BenefitRow
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
@@ -191,8 +191,9 @@ private fun DetailScreenContent(
                         Column {
                             state.benefits.fastForEachIndexed { index, benefit ->
                                 if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
-                                BenefitRow(
-                                    benefit = benefit,
+                                LbBenefitRow(
+                                    title = benefit.title,
+                                    description = benefit.description,
                                     onClick = { onIntent(RecommendationDetailIntent.BenefitClicked(benefit.url)) },
                                 )
                             }

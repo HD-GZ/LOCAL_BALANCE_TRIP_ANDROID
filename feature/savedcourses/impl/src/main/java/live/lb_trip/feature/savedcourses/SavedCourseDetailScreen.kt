@@ -54,8 +54,8 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.domain.model.TravelStatus
-import live.lb_trip.feature.savedcourses.components.SavedCourseBenefitRow
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailAppBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
@@ -305,8 +305,9 @@ private fun SavedCourseOrderTab(
                 Column {
                     state.benefits.fastForEachIndexed { index, benefit ->
                         if (index > 0) HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-                        SavedCourseBenefitRow(
-                            benefit = benefit,
+                        LbBenefitRow(
+                            title = benefit.title,
+                            description = benefit.description,
                             onClick = { onIntent(SavedCourseDetailIntent.BenefitClicked(benefit.url)) },
                         )
                     }
