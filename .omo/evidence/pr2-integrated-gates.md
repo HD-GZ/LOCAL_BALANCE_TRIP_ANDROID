@@ -1,6 +1,6 @@
 # PR2 integrated gate receipt
 
-Validated source: `81773b944da3e1b4696dfce793747fa94d7aa673`
+Validated source: `f7223ff4de947aee02236d136d64e60f6207369f`
 
 Command:
 

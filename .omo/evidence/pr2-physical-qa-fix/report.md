@@ -2,7 +2,7 @@
 
 Date: 2026-08-10 (Asia/Seoul)
 
-Build identity: `81773b944da3e1b4696dfce793747fa94d7aa673` (source-equivalent rewrite; captured APK bytes unchanged)
+Build identity: `f7223ff4de947aee02236d136d64e60f6207369f` (evidence-only descendant; captured APK bytes unchanged)
 
 APK: `app/build/outputs/apk/debug/app-debug.apk`; timestamp `2026-08-10 01:07:36 +0900`; SHA-256 `31a26cec0ede736b488fa15d4a8e16533a02797d52fef0b415f36a8bf4b1c2c1`
 
