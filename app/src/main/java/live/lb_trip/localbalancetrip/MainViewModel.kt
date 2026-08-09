@@ -3,6 +3,7 @@ package live.lb_trip.localbalancetrip
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
@@ -30,6 +31,7 @@ class MainViewModel @Inject constructor(
 ) : BaseViewModel<MainUiState, MainIntent, MainSideEffect>(MainUiState()) {
 
     private var hasResolvedInitialToken = false
+    private var sessionValidationJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -48,14 +50,20 @@ class MainViewModel @Inject constructor(
 
     private fun handleTokensChanged(intent: MainIntent.TokensChanged) {
         updateState { it.copy(isLoggedIn = intent.isLoggedIn) }
+        if (!intent.isLoggedIn) {
+            sessionValidationJob?.cancel()
+            sessionValidationJob = null
+            return
+        }
         if (!hasResolvedInitialToken) {
             hasResolvedInitialToken = true
-            if (intent.isLoggedIn) onIntent(MainIntent.SessionValidationRequested)
+            onIntent(MainIntent.SessionValidationRequested)
         }
     }
 
     private fun validateSession() {
-        viewModelScope.launch {
+        sessionValidationJob?.cancel()
+        sessionValidationJob = viewModelScope.launch {
             val exception = getUserProfileUseCase().exceptionOrNull()
             if (exception is ApiException && exception.statusCode == UNAUTHORIZED) {
                 postSideEffect(MainSideEffect.ShowSessionExpired)
