@@ -51,12 +51,12 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.component.LbBrush
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
+import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
 internal fun SigninScreen(

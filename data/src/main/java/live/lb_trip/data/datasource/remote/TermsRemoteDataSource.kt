@@ -9,11 +9,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TermsRemoteDataSource
-    @Inject
-    constructor(
-        @NoAuth private val noAuthClient: HttpClient,
-    ) {
-        suspend fun getTerms(type: String): TermsResponseDto =
-            noAuthClient.get("/terms/$type").bodyOrThrow()
-    }
+class TermsRemoteDataSource @Inject constructor(
+    @NoAuth private val noAuthClient: HttpClient,
+) {
+    suspend fun getTerms(type: String): TermsResponseDto =
+        noAuthClient.get("/terms/$type").bodyOrThrow()
+}

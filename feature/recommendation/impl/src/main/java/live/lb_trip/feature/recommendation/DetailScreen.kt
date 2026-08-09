@@ -39,6 +39,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
+import live.lb_trip.core.designsystem.component.LbTimeline
+import live.lb_trip.core.designsystem.component.LbTimelineStop
+import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
 import live.lb_trip.feature.recommendation.components.BenefitRow
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
@@ -46,11 +49,8 @@ import live.lb_trip.feature.recommendation.components.Paper
 import live.lb_trip.feature.recommendation.components.RecommendationBrandBar
 import live.lb_trip.feature.recommendation.components.RecommendationCtaBar
 import live.lb_trip.feature.recommendation.components.RecommendationFlowStepper
-import live.lb_trip.feature.recommendation.components.ScreenBg
-import live.lb_trip.core.designsystem.component.LbTimeline
-import live.lb_trip.core.designsystem.component.LbTimelineStop
-import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
 import live.lb_trip.feature.recommendation.components.RecommendationTimelineMapPlaceholder
+import live.lb_trip.feature.recommendation.components.ScreenBg
 
 @Composable
 internal fun DetailScreen(

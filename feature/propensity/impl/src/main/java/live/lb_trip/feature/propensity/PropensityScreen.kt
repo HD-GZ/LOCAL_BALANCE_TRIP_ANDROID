@@ -46,10 +46,10 @@ import androidx.core.view.WindowCompat
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
-import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbScaleSelector
 import live.lb_trip.core.designsystem.component.LbStepIndicator
+import live.lb_trip.core.designsystem.component.LbTopBar
 
 private val TextPrimary = LbColors.Ink
 private val TextSecondary = LbColors.Ink2

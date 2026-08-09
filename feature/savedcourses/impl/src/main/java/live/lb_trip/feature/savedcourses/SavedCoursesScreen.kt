@@ -48,8 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.designsystem.R as DesignSystemR
+import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.domain.model.TravelStatus
 
 @Composable

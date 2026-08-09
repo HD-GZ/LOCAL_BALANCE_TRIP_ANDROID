@@ -71,13 +71,13 @@ import com.naver.maps.map.compose.rememberCameraPositionState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.feature.tour.components.TourRouteTimeline
 import live.lb_trip.feature.tour.location.rememberActivityRecognitionPermissionGranted
 import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
-import live.lb_trip.core.designsystem.R as DesignSystemR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

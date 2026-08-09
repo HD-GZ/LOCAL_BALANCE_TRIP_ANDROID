@@ -47,11 +47,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbTopBar
-import live.lb_trip.core.designsystem.R as DesignSystemR
 
 @Composable
 internal fun ReceiptCaptureScreen(

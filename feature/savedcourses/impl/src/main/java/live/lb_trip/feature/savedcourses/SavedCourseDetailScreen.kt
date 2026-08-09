@@ -54,6 +54,8 @@ import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbTimeline
+import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.feature.savedcourses.components.SavedCourseBenefitRow
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailAppBar
@@ -61,8 +63,6 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptRow
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
-import live.lb_trip.core.designsystem.component.LbTimeline
-import live.lb_trip.core.designsystem.component.LbTimelineStop
 
 @Composable
 internal fun SavedCourseDetailScreen(
