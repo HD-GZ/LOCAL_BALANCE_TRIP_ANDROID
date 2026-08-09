@@ -4,6 +4,5 @@
   <CurrentIssues>
     <ID>LongParameterList:AuthRepository.kt$AuthRepository$( name: String, email: String, password: String, passwordConfirm: String, birthDate: String, gender: Gender, termsAgreed: Boolean, privacyAgreed: Boolean, marketingAgreed: Boolean, )</ID>
     <ID>LongParameterList:SignupUseCase.kt$SignupUseCase$( name: String, email: String, password: String, passwordConfirm: String, birthDate: String, gender: Gender, termsAgreed: Boolean, privacyAgreed: Boolean, marketingAgreed: Boolean, )</ID>
-    <ID>TooGenericExceptionCaught:SuspendRunCatching.kt$e: Throwable</ID>
   </CurrentIssues>
 </SmellBaseline>
