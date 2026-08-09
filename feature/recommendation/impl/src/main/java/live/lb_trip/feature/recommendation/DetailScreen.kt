@@ -57,6 +57,7 @@ internal fun DetailScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
+    onIntent: (RecommendationDetailIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
@@ -80,7 +81,7 @@ internal fun DetailScreen(
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(RecommendationDetailIntent.Retry)
+                        onIntent(RecommendationDetailIntent.Retry)
                     }
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
@@ -94,7 +95,7 @@ internal fun DetailScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onBack = onBack,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }

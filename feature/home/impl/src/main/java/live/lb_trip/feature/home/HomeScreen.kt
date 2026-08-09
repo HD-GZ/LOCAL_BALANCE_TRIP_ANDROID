@@ -70,6 +70,7 @@ fun HomeTabContent(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    onIntent: (HomeIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val loadErrorMessage = stringResource(R.string.home_error_courses_load)
@@ -81,7 +82,7 @@ fun HomeTabContent(
                 HomeSideEffect.ShowCoursesLoadError -> {
                     val result = snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(HomeIntent.Retry)
+                        onIntent(HomeIntent.Retry)
                     }
                 }
             }

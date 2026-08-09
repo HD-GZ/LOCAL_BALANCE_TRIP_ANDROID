@@ -86,6 +86,7 @@ internal fun TourScreen(
     onTourFinished: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TourViewModel = hiltViewModel(),
+    onIntent: (TourIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -109,14 +110,14 @@ internal fun TourScreen(
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(TourIntent.Retry)
+                        onIntent(TourIntent.Retry)
                     }
                 }
 
                 TourSideEffect.ShowEndTourError -> launch {
                     val result = snackbarHostState.showSnackbar(message = endTourErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(TourIntent.EndTourClicked)
+                        onIntent(TourIntent.EndTourClicked)
                     }
                 }
 
@@ -137,17 +138,17 @@ internal fun TourScreen(
     val hasLocationPermission = rememberFineLocationPermissionGranted()
     LifecycleStartEffect(hasLocationPermission) {
         if (hasLocationPermission) {
-            viewModel.onIntent(TourIntent.LocationTrackingStarted)
+            onIntent(TourIntent.LocationTrackingStarted)
         }
         onStopOrDispose {
-            viewModel.onIntent(TourIntent.LocationTrackingStopped)
+            onIntent(TourIntent.LocationTrackingStopped)
         }
     }
 
     val hasActivityRecognitionPermission = rememberActivityRecognitionPermissionGranted()
     LaunchedEffect(hasActivityRecognitionPermission) {
         if (hasActivityRecognitionPermission) {
-            viewModel.onIntent(TourIntent.DistanceRecordingPermissionGranted)
+            onIntent(TourIntent.DistanceRecordingPermissionGranted)
         }
     }
 
@@ -156,7 +157,7 @@ internal fun TourScreen(
         snackbarHostState = snackbarHostState,
         scaffoldState = scaffoldState,
         onBack = onBack,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }

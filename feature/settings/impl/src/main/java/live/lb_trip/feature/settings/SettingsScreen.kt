@@ -48,6 +48,7 @@ fun MyInfoTabContent(
     onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel = hiltViewModel(),
+    onIntent: (SettingsIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val loadErrorMessage = stringResource(R.string.settings_error_load)
@@ -61,7 +62,7 @@ fun MyInfoTabContent(
                 SettingsSideEffect.ShowLoadError -> launch {
                     val result = snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(SettingsIntent.Retry)
+                        onIntent(SettingsIntent.Retry)
                     }
                 }
 
@@ -81,7 +82,7 @@ fun MyInfoTabContent(
 
     LaunchedEffect(profileUpdated) {
         if (profileUpdated) {
-            viewModel.onIntent(SettingsIntent.ProfileUpdated)
+            onIntent(SettingsIntent.ProfileUpdated)
             onProfileUpdatedConsumed()
         }
     }
@@ -89,7 +90,7 @@ fun MyInfoTabContent(
     MyInfoTabContentBody(
         state = state,
         onNavigateToSavedCourses = onNavigateToSavedCourses,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }

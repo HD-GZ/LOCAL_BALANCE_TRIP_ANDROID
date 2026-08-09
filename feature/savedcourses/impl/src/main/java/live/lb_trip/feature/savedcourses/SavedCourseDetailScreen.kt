@@ -75,6 +75,7 @@ internal fun SavedCourseDetailScreen(
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: SavedCourseDetailViewModel = hiltViewModel(),
+    onIntent: (SavedCourseDetailIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val view = LocalView.current
@@ -98,7 +99,7 @@ internal fun SavedCourseDetailScreen(
                     }
                     val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {
-                        viewModel.onIntent(SavedCourseDetailIntent.Retry)
+                        onIntent(SavedCourseDetailIntent.Retry)
                     }
                 }
                 SavedCourseDetailSideEffect.ShowReceiptsLoadError -> launch { snackbarHostState.showSnackbar(receiptsErrorMessage) }
@@ -112,14 +113,14 @@ internal fun SavedCourseDetailScreen(
 
     LaunchedEffect(receiptRegistered) {
         if (receiptRegistered) {
-            viewModel.onIntent(SavedCourseDetailIntent.ReceiptRegistered)
+            onIntent(SavedCourseDetailIntent.ReceiptRegistered)
             onReceiptRegisteredConsumed()
         }
     }
 
     LaunchedEffect(tourEnded) {
         if (tourEnded) {
-            viewModel.onIntent(SavedCourseDetailIntent.Retry)
+            onIntent(SavedCourseDetailIntent.Retry)
             onTourEndedConsumed()
         }
     }
@@ -135,7 +136,7 @@ internal fun SavedCourseDetailScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onBack = onBack,
-        onIntent = viewModel::onIntent,
+        onIntent = onIntent,
         modifier = modifier,
     )
 }
