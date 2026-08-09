@@ -47,7 +47,10 @@ import live.lb_trip.feature.recommendation.components.RecommendationBrandBar
 import live.lb_trip.feature.recommendation.components.RecommendationCtaBar
 import live.lb_trip.feature.recommendation.components.RecommendationFlowStepper
 import live.lb_trip.feature.recommendation.components.ScreenBg
-import live.lb_trip.feature.recommendation.components.Timeline
+import live.lb_trip.core.designsystem.component.LbTimeline
+import live.lb_trip.core.designsystem.component.LbTimelineStop
+import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
+import live.lb_trip.feature.recommendation.components.RecommendationTimelineMapPlaceholder
 
 @Composable
 internal fun DetailScreen(
@@ -147,12 +150,30 @@ private fun DetailScreenContent(
                 }
                 Spacer(modifier = Modifier.height(14.dp))
 
-                Timeline(
-                    stops = state.stops,
+                LbTimeline(
+                    stops = state.stops.map {
+                        LbTimelineStop(
+                            order = it.order,
+                            name = it.name,
+                            description = it.description,
+                            walkDuration = it.walkDuration,
+                            hasAudioGuide = it.hasAudioGuide,
+                        )
+                    },
                     expandedIndices = state.expandedStopIndices,
-                    playingStopIndex = state.playingStopIndex,
+                    audioGuideLabel = stringResource(R.string.recommendation_audio_guide_label),
+                    walkDurationLabel = { walkDuration ->
+                        stringResource(R.string.recommendation_walk_time_template, walkDuration)
+                    },
                     onToggle = { onIntent(RecommendationDetailIntent.StopToggled(it)) },
-                    onTogglePlayback = { onIntent(RecommendationDetailIntent.PlaybackToggled(it)) },
+                    detailHeader = { RecommendationTimelineMapPlaceholder() },
+                    audioContent = { index ->
+                        AudioMiniPlayer(
+                            isPlaying = state.playingStopIndex == index,
+                            onPlayPauseClick = { onIntent(RecommendationDetailIntent.PlaybackToggled(index)) },
+                        )
+                    },
+                    detailBottomPadding = 7.dp,
                 )
 
                 if (state.benefits.isNotEmpty()) {
