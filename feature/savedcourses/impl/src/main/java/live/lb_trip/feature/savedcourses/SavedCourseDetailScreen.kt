@@ -61,7 +61,8 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptRow
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
-import live.lb_trip.feature.savedcourses.components.SavedCourseTimeline
+import live.lb_trip.core.designsystem.component.LbTimeline
+import live.lb_trip.core.designsystem.component.LbTimelineStop
 
 @Composable
 internal fun SavedCourseDetailScreen(
@@ -274,9 +275,21 @@ private fun SavedCourseOrderTab(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        SavedCourseTimeline(
-            stops = state.stops,
+        LbTimeline(
+            stops = state.stops.map {
+                LbTimelineStop(
+                    order = it.order,
+                    name = it.name,
+                    description = it.description,
+                    walkDuration = it.walkDuration,
+                    hasAudioGuide = it.hasAudioGuide,
+                )
+            },
             expandedIndices = state.expandedStopIndices,
+            audioGuideLabel = stringResource(R.string.savedcourses_detail_audio_guide_label),
+            walkDurationLabel = { walkDuration ->
+                stringResource(R.string.savedcourses_detail_walk_time_template, walkDuration)
+            },
             onToggle = { onIntent(SavedCourseDetailIntent.StopToggled(it)) },
         )
 
