@@ -42,7 +42,9 @@ class PropensityViewModel @Inject constructor(
                     transportation = result.valueConsumption.transportation,
                     cafeExhibition = result.valueConsumption.cafeExhibition,
                     resultType = result.type,
+                    resultCode = result.code,
                     resultDescription = result.description,
+                    resultImageUrl = result.imageUrl,
                 )
             }
             postSideEffect(PropensitySideEffect.NavigateToResult)
@@ -87,7 +89,14 @@ class PropensityViewModel @Inject constructor(
                     cafeExhibition = current.cafeExhibition,
                 ),
             ).onSuccess { result ->
-                updateState { it.copy(resultType = result.type, resultDescription = result.description) }
+                updateState {
+                    it.copy(
+                        resultType = result.type,
+                        resultCode = result.code,
+                        resultDescription = result.description,
+                        resultImageUrl = result.imageUrl,
+                    )
+                }
                 postSideEffect(PropensitySideEffect.NavigateToResult)
             }.onFailure { throwable ->
                 if (throwable is LbTripPropensityException.UnauthenticatedException) {
@@ -110,7 +119,7 @@ class PropensityViewModel @Inject constructor(
             it.copy(
                 locality = 3, frugality = 3, experientiality = 3, vitality = 3, sociality = 3,
                 accommodation = 3, food = 3, experience = 3, transportation = 3, cafeExhibition = 3,
-                resultType = null, resultDescription = null,
+                resultType = null, resultCode = null, resultDescription = null, resultImageUrl = null,
             )
         }
         postSideEffect(PropensitySideEffect.RestartToPreference)

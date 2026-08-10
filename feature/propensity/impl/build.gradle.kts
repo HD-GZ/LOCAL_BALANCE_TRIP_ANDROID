@@ -12,4 +12,6 @@ dependencies {
     implementation(projects.core.designsystem)
     implementation(projects.core)
     implementation(projects.domain)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }

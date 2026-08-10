@@ -12,7 +12,9 @@ data class PropensityResponseDto(
 @Serializable
 data class PropensityResultResponseDto(
     val type: String? = null,
+    val code: String? = null,
     val description: String? = null,
+    val imageUrl: String? = null,
 )
 
 @Serializable
