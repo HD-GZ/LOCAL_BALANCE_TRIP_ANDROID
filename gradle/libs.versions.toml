@@ -29,6 +29,7 @@ playServicesLocation = "21.4.0"
 aboutLibraries = "14.2.1"
 coil = "3.4.0"
 playServicesFitness = "21.3.0"
+robolectric = "4.16.1"
 
 [libraries]
 android-gradle-tool = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -86,6 +87,7 @@ play-services-fitness = { group = "com.google.android.gms", name = "play-service
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

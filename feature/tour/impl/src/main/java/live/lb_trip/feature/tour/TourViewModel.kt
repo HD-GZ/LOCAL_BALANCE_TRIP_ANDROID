@@ -1,6 +1,5 @@
 package live.lb_trip.feature.tour
 
-import android.location.Location
 import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -26,6 +25,7 @@ import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
 import live.lb_trip.domain.usecase.ObserveLocationUseCase
 import live.lb_trip.domain.usecase.StartTourUseCase
 import live.lb_trip.domain.util.suspendRunCatching
+import live.lb_trip.feature.tour.location.TourArrivalDetector
 
 @HiltViewModel
 class TourViewModel @Inject constructor(
@@ -41,7 +41,7 @@ class TourViewModel @Inject constructor(
     private val savedCourseId: Long = savedStateHandle.toRoute<TourRoute>().savedCourseId
 
     private var locationJob: Job? = null
-    private var inRadiusSinceElapsedRealtime: Long? = null
+    private val arrivalDetector = TourArrivalDetector()
     private var isEndingTour = false
 
     private var furthestStopIndex = 0
@@ -67,11 +67,11 @@ class TourViewModel @Inject constructor(
         if (!active) {
             locationJob?.cancel()
             locationJob = null
-            resetDwellClock()
+            arrivalDetector.reset()
             return
         }
         if (locationJob?.isActive == true) return
-        resetDwellClock()
+        arrivalDetector.reset()
         locationJob = viewModelScope.launch {
             observeLocationUseCase()
                 .catch { }
@@ -80,29 +80,16 @@ class TourViewModel @Inject constructor(
     }
 
     private fun onLocationChanged(location: LocationFix) {
-        val accuracy = location.accuracyMeters
-        if (accuracy != null && accuracy > MAX_ACCURACY_METERS) return
-        if (location.ageMillis > MAX_LOCATION_AGE_MILLIS) return
-
-        val stops = currentState.stops
-        val target = stops.getOrNull(furthestStopIndex + 1) ?: return
-
-        val distance = distanceMeters(location.latitude, location.longitude, target.latitude, target.longitude)
-        val now = SystemClock.elapsedRealtime()
-
-        if (!(distance <= ARRIVAL_RADIUS_METERS)) {
-            resetDwellClock()
-            return
+        val target = currentState.stops.getOrNull(furthestStopIndex + 1) ?: return
+        val arrived = arrivalDetector.onLocationChanged(
+            location = location,
+            targetLatitude = target.latitude,
+            targetLongitude = target.longitude,
+            nowElapsedRealtime = SystemClock.elapsedRealtime(),
+        )
+        if (arrived) {
+            advanceToNextStop()
         }
-
-        val since = inRadiusSinceElapsedRealtime ?: now.also { inRadiusSinceElapsedRealtime = it }
-        if (now - since < ARRIVAL_DWELL_MILLIS) return
-
-        advanceToNextStop()
-    }
-
-    private fun resetDwellClock() {
-        inRadiusSinceElapsedRealtime = null
     }
 
     private suspend fun loadCourseDetail() {
@@ -130,7 +117,7 @@ class TourViewModel @Inject constructor(
                             furthestStopIndex = initialIndex,
                         )
                     }
-                    resetDwellClock()
+                    arrivalDetector.reset()
                     if (detail.places.isEmpty()) {
                         postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.EmptyPlaces))
                     } else {
@@ -157,7 +144,7 @@ class TourViewModel @Inject constructor(
         }
         furthestStopIndex += 1
         updateState { it.copy(currentStopIndex = furthestStopIndex, furthestStopIndex = furthestStopIndex) }
-        resetDwellClock()
+        arrivalDetector.reset()
         checkInCurrentStop()
         postSideEffect(TourSideEffect.CollapseSheet)
     }
@@ -194,7 +181,7 @@ class TourViewModel @Inject constructor(
     }
 }
 
-private fun restoredStopIndex(visitsByOrder: Map<Int, TourPlaceVisit>, lastIndex: Int): Int {
+internal fun restoredStopIndex(visitsByOrder: Map<Int, TourPlaceVisit>, lastIndex: Int): Int {
     if (visitsByOrder.isEmpty()) return 0
     val firstUnvisitedOrder = visitsByOrder.values.filterNot { it.visited }.minOfOrNull { it.order }
     val index = firstUnvisitedOrder?.let { it - 1 } ?: lastIndex
@@ -215,13 +202,3 @@ private fun loadErrorReasonFor(throwable: Throwable?): TourLoadErrorReason = whe
     else -> TourLoadErrorReason.Unknown
 }
 
-private fun distanceMeters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Float {
-    val results = FloatArray(1)
-    Location.distanceBetween(lat1, lon1, lat2, lon2, results)
-    return results[0]
-}
-
-private const val ARRIVAL_RADIUS_METERS = 200f
-private const val ARRIVAL_DWELL_MILLIS = 5_000L
-private const val MAX_ACCURACY_METERS = 50f
-private const val MAX_LOCATION_AGE_MILLIS = 60_000L
