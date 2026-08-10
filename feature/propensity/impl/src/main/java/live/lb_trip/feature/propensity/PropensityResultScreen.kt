@@ -1,10 +1,8 @@
 package live.lb_trip.feature.propensity
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
-import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.feature.propensity.components.Brand
@@ -84,27 +80,19 @@ private fun ResultStepContent(
                 imageLoader = imageLoader,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(96.dp)
-                    .clip(CircleShape)
-                    .border(BorderStroke(1.dp, OutlineBorder), CircleShape),
+                    .size(128.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .border(BorderStroke(1.dp, OutlineBorder), RoundedCornerShape(16.dp)),
             )
             Spacer(modifier = Modifier.height(14.dp))
         }
         if (!state.resultCode.isNullOrBlank()) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(100.dp))
-                    .background(LbColors.GreenTint)
-                    .border(BorderStroke(1.dp, LbColors.GreenLine), RoundedCornerShape(100.dp))
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
-            ) {
-                Text(
-                    text = state.resultCode,
-                    color = Brand,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+            Text(
+                text = state.resultCode,
+                color = Brand,
+                fontSize = 23.sp,
+                fontWeight = FontWeight.Bold,
+            )
             Spacer(modifier = Modifier.height(10.dp))
         }
         Text(
