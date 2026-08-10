@@ -13,13 +13,17 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.SnackbarHost
@@ -131,6 +135,8 @@ private fun SigninScreenContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -146,8 +152,6 @@ private fun SigninScreenContent(
                     onTogglePasswordVisibility = { onIntent(SigninIntent.TogglePasswordVisibility) },
                 )
             }
-
-            Spacer(modifier = Modifier.weight(1f))
 
             SigninBottomAction(
                 isLoading = state.isLoading,
@@ -271,7 +275,7 @@ private fun SigninBottomAction(
         modifier = modifier
             .fillMaxWidth()
             .background(LbBrush.BottomFadeGradient)
-            .windowInsetsPadding(WindowInsets.navigationBars)
+            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
             .padding(start = 24.dp, end = 24.dp, top = 14.dp, bottom = 14.dp),
         verticalArrangement = Arrangement.spacedBy(13.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
