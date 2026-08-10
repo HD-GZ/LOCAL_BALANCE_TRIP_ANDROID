@@ -13,6 +13,8 @@ sealed class LbTripSavedCourseException : LbTripException() {
 
     class SavedCoursePlaceNotFoundException : LbTripSavedCourseException()
 
+    class TourReceiptNotFoundException : LbTripSavedCourseException()
+
     class TourAlreadyCompletedException : LbTripSavedCourseException()
 
     class TourNotInProgressException : LbTripSavedCourseException()

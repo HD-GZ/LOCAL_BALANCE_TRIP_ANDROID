@@ -19,3 +19,11 @@ data class ReceiptScan(
     val amount: Int?,
     val paidDate: String?,
 )
+
+data class ReceiptDetail(
+    val receiptId: Long,
+    val merchantName: String,
+    val amount: Int,
+    val paidDate: String,
+    val imageUrl: String,
+)

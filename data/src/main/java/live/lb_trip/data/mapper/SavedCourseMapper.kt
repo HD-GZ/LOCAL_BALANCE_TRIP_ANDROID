@@ -1,6 +1,7 @@
 package live.lb_trip.data.mapper
 
 import live.lb_trip.data.dto.response.BenefitResponseDto
+import live.lb_trip.data.dto.response.ReceiptDetailResponseDto
 import live.lb_trip.data.dto.response.ReceiptResponseDto
 import live.lb_trip.data.dto.response.ReceiptScanResponseDto
 import live.lb_trip.data.dto.response.ReceiptSummaryResponseDto
@@ -10,6 +11,7 @@ import live.lb_trip.data.dto.response.SavedCourseReportResponseDto
 import live.lb_trip.data.dto.response.SavedCourseResponseDto
 import live.lb_trip.domain.model.CourseBenefit
 import live.lb_trip.domain.model.Receipt
+import live.lb_trip.domain.model.ReceiptDetail
 import live.lb_trip.domain.model.ReceiptScan
 import live.lb_trip.domain.model.ReceiptSummary
 import live.lb_trip.domain.model.SavedCourse
@@ -47,6 +49,15 @@ fun ReceiptSummaryResponseDto.toDomain(): ReceiptSummary =
 
 fun ReceiptResponseDto.toDomain(): Receipt =
     Receipt(receiptId = receiptId, merchantName = merchantName, amount = amount, paidDate = paidDate)
+
+fun ReceiptDetailResponseDto.toDomain(): ReceiptDetail =
+    ReceiptDetail(
+        receiptId = receiptId,
+        merchantName = merchantName,
+        amount = amount,
+        paidDate = paidDate,
+        imageUrl = imageUrl,
+    )
 
 fun ReceiptScanResponseDto.toDomain(): ReceiptScan =
     ReceiptScan(

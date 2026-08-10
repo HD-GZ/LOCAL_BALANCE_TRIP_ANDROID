@@ -1,5 +1,6 @@
 package live.lb_trip.feature.savedcourses.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,10 +15,16 @@ import androidx.compose.ui.unit.sp
 import live.lb_trip.feature.savedcourses.SavedCourseReceipt
 
 @Composable
-internal fun SavedCourseReceiptRow(receipt: SavedCourseReceipt, amountLabel: String, modifier: Modifier = Modifier) {
+internal fun SavedCourseReceiptRow(
+    receipt: SavedCourseReceipt,
+    amountLabel: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(vertical = 11.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
