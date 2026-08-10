@@ -5,7 +5,6 @@ sealed interface SavedCourseDetailIntent {
     data class StopToggled(val index: Int) : SavedCourseDetailIntent
     data class BenefitClicked(val url: String) : SavedCourseDetailIntent
     data object TourStartClicked : SavedCourseDetailIntent
-    data object RegisterReceiptClicked : SavedCourseDetailIntent
     data object Retry : SavedCourseDetailIntent
     data object ReceiptRegistered : SavedCourseDetailIntent
 }

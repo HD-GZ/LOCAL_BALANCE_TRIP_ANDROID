@@ -1,5 +1,6 @@
 package live.lb_trip.localbalancetrip
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -148,8 +149,8 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
         savedCourseDetailScreen(
             onBack = navController::popBackStack,
             onNavigateToTour = { savedCourseId -> navController.navigate(TourRoute(savedCourseId)) },
-            onNavigateToReceiptCapture = { savedCourseId ->
-                navController.navigate(ReceiptCaptureRoute(savedCourseId))
+            onNavigateToReceiptCapture = { savedCourseId, imageUri ->
+                navController.navigate(ReceiptCaptureRoute(savedCourseId, imageUri.toString()))
             },
         )
         receiptCaptureScreen(

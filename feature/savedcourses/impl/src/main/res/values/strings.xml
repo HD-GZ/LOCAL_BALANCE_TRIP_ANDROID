@@ -51,8 +51,9 @@
     <string name="savedcourses_detail_back_content_description">뒤로</string>
 
     <string name="savedcourses_receipt_title">영수증 등록</string>
-    <string name="savedcourses_receipt_pick_guide">영수증 사진을 선택해 주세요.</string>
-    <string name="savedcourses_receipt_pick_button">사진 선택하기</string>
+    <string name="savedcourses_receipt_source_sheet_title">영수증 사진 등록</string>
+    <string name="savedcourses_receipt_source_gallery">갤러리에서 선택하기</string>
+    <string name="savedcourses_receipt_source_camera">촬영하기</string>
     <string name="savedcourses_receipt_scanning">영수증을 인식하고 있어요…</string>
     <string name="savedcourses_receipt_verify_title">인식 결과 확인</string>
     <string name="savedcourses_receipt_field_merchant">가맹점명</string>

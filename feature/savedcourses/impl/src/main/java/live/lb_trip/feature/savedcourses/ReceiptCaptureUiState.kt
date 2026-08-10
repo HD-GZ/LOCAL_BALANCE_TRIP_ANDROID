@@ -1,14 +1,13 @@
 package live.lb_trip.feature.savedcourses
 
 enum class ReceiptCaptureStep {
-    PICK,
     SCANNING,
     VERIFY,
     SUBMITTING,
 }
 
 data class ReceiptCaptureUiState(
-    val step: ReceiptCaptureStep = ReceiptCaptureStep.PICK,
+    val step: ReceiptCaptureStep = ReceiptCaptureStep.SCANNING,
     val imageId: Long? = null,
     val merchantName: String = "",
     val amount: String = "",

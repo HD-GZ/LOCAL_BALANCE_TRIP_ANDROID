@@ -45,7 +45,6 @@ class ReceiptCaptureViewModel @Inject constructor(
                 }
             }
             .onFailure {
-                updateState { it.copy(step = ReceiptCaptureStep.PICK) }
                 postSideEffect(ReceiptCaptureSideEffect.ShowScanError)
             }
     }

@@ -37,6 +37,7 @@ class SavedCourseDetailViewModel @Inject constructor(
     private val savedCourseId: Long = savedStateHandle.toRoute<SavedCourseDetailRoute>().savedCourseId
 
     init {
+        updateState { it.copy(savedCourseId = savedCourseId) }
         viewModelScope.launch { load() }
     }
 
@@ -48,8 +49,6 @@ class SavedCourseDetailViewModel @Inject constructor(
                 postSideEffect(SavedCourseDetailSideEffect.OpenBenefitUrl(intent.url))
             SavedCourseDetailIntent.TourStartClicked ->
                 postSideEffect(SavedCourseDetailSideEffect.NavigateToTour(savedCourseId))
-            SavedCourseDetailIntent.RegisterReceiptClicked ->
-                postSideEffect(SavedCourseDetailSideEffect.NavigateToReceiptCapture(savedCourseId))
             SavedCourseDetailIntent.Retry -> viewModelScope.launch { load() }
             SavedCourseDetailIntent.ReceiptRegistered -> viewModelScope.launch { reloadReceipts() }
         }
