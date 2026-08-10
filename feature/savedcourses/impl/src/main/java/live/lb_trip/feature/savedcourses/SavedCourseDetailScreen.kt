@@ -61,6 +61,7 @@ internal fun SavedCourseDetailScreen(
     onBack: () -> Unit,
     onNavigateToTour: (Long) -> Unit,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
+    onNavigateToReceiptDetail: (Long, Long) -> Unit,
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
     tourEnded: Boolean,
@@ -130,6 +131,7 @@ internal fun SavedCourseDetailScreen(
         onBack = onBack,
         onIntent = onIntent,
         onNavigateToReceiptCapture = onNavigateToReceiptCapture,
+        onNavigateToReceiptDetail = onNavigateToReceiptDetail,
         modifier = modifier,
     )
 }
@@ -143,6 +145,7 @@ private fun SavedCourseDetailScreenContent(
     onBack: () -> Unit,
     onIntent: (SavedCourseDetailIntent) -> Unit,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
+    onNavigateToReceiptDetail: (Long, Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
@@ -221,7 +224,10 @@ private fun SavedCourseDetailScreenContent(
                 ) {
                     when (SavedCourseDetailTab.entries[page]) {
                         SavedCourseDetailTab.COURSE -> SavedCourseOrderTab(state = state, onIntent = onIntent)
-                        SavedCourseDetailTab.RECEIPT -> SavedCourseReceiptTab(state = state)
+                        SavedCourseDetailTab.RECEIPT -> SavedCourseReceiptTab(
+                            state = state,
+                            onReceiptClick = { receiptId -> onNavigateToReceiptDetail(state.savedCourseId, receiptId) },
+                        )
                         SavedCourseDetailTab.REPORT -> SavedCourseReportTab(
                             state = state,
                             imageLoader = imageLoader,
@@ -334,5 +340,6 @@ private fun SavedCourseDetailScreenPreview() {
         onBack = {},
         onIntent = {},
         onNavigateToReceiptCapture = { _, _ -> },
+        onNavigateToReceiptDetail = { _, _ -> },
     )
 }

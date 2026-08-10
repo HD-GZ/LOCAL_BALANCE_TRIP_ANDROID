@@ -18,6 +18,7 @@ fun NavGraphBuilder.savedCourseDetailScreen(
     onBack: () -> Unit,
     onNavigateToTour: (Long) -> Unit,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
+    onNavigateToReceiptDetail: (Long, Long) -> Unit,
 ) {
     composable<SavedCourseDetailRoute> { backStackEntry ->
         val receiptRegistered by backStackEntry.savedStateHandle
@@ -30,6 +31,7 @@ fun NavGraphBuilder.savedCourseDetailScreen(
             onBack = onBack,
             onNavigateToTour = onNavigateToTour,
             onNavigateToReceiptCapture = onNavigateToReceiptCapture,
+            onNavigateToReceiptDetail = onNavigateToReceiptDetail,
             receiptRegistered = receiptRegistered,
             onReceiptRegisteredConsumed = {
                 backStackEntry.savedStateHandle[RECEIPT_REGISTERED_RESULT_KEY] = false
@@ -46,5 +48,11 @@ fun NavGraphBuilder.receiptCaptureScreen(onBack: () -> Unit, onSubmitted: () -> 
     composable<ReceiptCaptureRoute> { backStackEntry ->
         val route = backStackEntry.toRoute<ReceiptCaptureRoute>()
         ReceiptCaptureScreen(imageUri = route.imageUri.toUri(), onBack = onBack, onSubmitted = onSubmitted)
+    }
+}
+
+fun NavGraphBuilder.receiptDetailScreen(onBack: () -> Unit, onUpdated: () -> Unit, onDeleted: () -> Unit) {
+    composable<ReceiptDetailRoute> {
+        ReceiptDetailScreen(onBack = onBack, onUpdated = onUpdated, onDeleted = onDeleted)
     }
 }

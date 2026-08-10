@@ -26,7 +26,11 @@ import live.lb_trip.feature.savedcourses.R
 import live.lb_trip.feature.savedcourses.SavedCourseDetailUiState
 
 @Composable
-internal fun SavedCourseReceiptTab(state: SavedCourseDetailUiState, modifier: Modifier = Modifier) {
+internal fun SavedCourseReceiptTab(
+    state: SavedCourseDetailUiState,
+    onReceiptClick: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         if (state.isReceiptsLoading) {
             Box(modifier = Modifier.fillMaxWidth().padding(top = 24.dp), contentAlignment = Alignment.Center) {
@@ -72,6 +76,7 @@ internal fun SavedCourseReceiptTab(state: SavedCourseDetailUiState, modifier: Mo
                         SavedCourseReceiptRow(
                             receipt = receipt,
                             amountLabel = stringResource(R.string.savedcourses_detail_receipt_amount_template, receipt.amount),
+                            onClick = { onReceiptClick(receipt.receiptId) },
                         )
                     }
                 }

@@ -57,6 +57,21 @@ data class ReceiptScanResponseDto(
 )
 
 @Serializable
+data class ReceiptDetailResponseDto(
+    val receiptId: Long,
+    val merchantName: String,
+    val amount: Int,
+    val paidDate: String,
+    val imageUrl: String,
+)
+
+@Serializable
+data class ReceiptDownloadUrlResponseDto(
+    val downloadUrl: String,
+    val expiresAt: String,
+)
+
+@Serializable
 data class SavedCourseReportResponseDto(
     val courseName: String,
     val imageUrl: String? = null,

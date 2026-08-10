@@ -34,10 +34,12 @@ import live.lb_trip.feature.recommendation.RecommendationRoute
 import live.lb_trip.feature.recommendation.recommendationScreen
 import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.ReceiptCaptureRoute
+import live.lb_trip.feature.savedcourses.ReceiptDetailRoute
 import live.lb_trip.feature.savedcourses.SavedCourseDetailRoute
 import live.lb_trip.feature.savedcourses.SavedCoursesRoute
 import live.lb_trip.feature.savedcourses.TOUR_ENDED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.receiptCaptureScreen
+import live.lb_trip.feature.savedcourses.receiptDetailScreen
 import live.lb_trip.feature.savedcourses.savedCourseDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
 import live.lb_trip.feature.settings.EditProfileRoute
@@ -152,10 +154,23 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
             onNavigateToReceiptCapture = { savedCourseId, imageUri ->
                 navController.navigate(ReceiptCaptureRoute(savedCourseId, imageUri.toString()))
             },
+            onNavigateToReceiptDetail = { savedCourseId, receiptId ->
+                navController.navigate(ReceiptDetailRoute(savedCourseId, receiptId))
+            },
         )
         receiptCaptureScreen(
             onBack = navController::popBackStack,
             onSubmitted = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(RECEIPT_REGISTERED_RESULT_KEY, true)
+                navController.popBackStack()
+            },
+        )
+        receiptDetailScreen(
+            onBack = navController::popBackStack,
+            onUpdated = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(RECEIPT_REGISTERED_RESULT_KEY, true)
+            },
+            onDeleted = {
                 navController.previousBackStackEntry?.savedStateHandle?.set(RECEIPT_REGISTERED_RESULT_KEY, true)
                 navController.popBackStack()
             },

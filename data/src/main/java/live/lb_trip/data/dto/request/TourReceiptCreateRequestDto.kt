@@ -9,3 +9,10 @@ data class TourReceiptCreateRequestDto(
     val amount: Int,
     val paidDate: String,
 )
+
+@Serializable
+data class TourReceiptUpdateRequestDto(
+    val merchantName: String,
+    val amount: Int,
+    val paidDate: String,
+)
