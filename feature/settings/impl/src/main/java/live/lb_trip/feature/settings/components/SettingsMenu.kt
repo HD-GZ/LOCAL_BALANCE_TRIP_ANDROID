@@ -63,10 +63,12 @@ fun SettingsSavedCoursesRow(count: Int, onClick: () -> Unit, modifier: Modifier 
     }
 }
 
+data class SettingsMenuItem(val label: String, val onClick: () -> Unit)
+
 @Composable
 fun SettingsMenuGroup(
     label: String,
-    items: List<Pair<String, () -> Unit>>,
+    items: List<SettingsMenuItem>,
     versionName: String,
     modifier: Modifier = Modifier,
 ) {
@@ -86,8 +88,8 @@ fun SettingsMenuGroup(
                 .background(Color.White)
                 .border(1.dp, LbColors.Line, RoundedCornerShape(14.dp)),
         ) {
-            items.forEachIndexed { index, (itemLabel, onItemClick) ->
-                SettingsMenuRow(label = itemLabel, onClick = onItemClick)
+            items.forEachIndexed { index, item ->
+                SettingsMenuRow(label = item.label, onClick = item.onClick)
                 if (index != items.lastIndex) HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
             }
             HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)

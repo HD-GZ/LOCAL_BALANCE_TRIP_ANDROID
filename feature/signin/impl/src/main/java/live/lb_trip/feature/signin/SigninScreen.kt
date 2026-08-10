@@ -76,6 +76,14 @@ internal fun SigninScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                SigninSideEffect.LoginSucceeded -> onBack()
+            }
+        }
+    }
+
     SigninScreenContent(
         state = state,
         onBack = onBack,

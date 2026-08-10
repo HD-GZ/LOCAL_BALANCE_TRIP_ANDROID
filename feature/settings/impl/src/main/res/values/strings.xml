@@ -15,7 +15,14 @@
 
     <string name="settings_logout">로그아웃</string>
 
-    <string name="settings_footer">로컬밸런스 트립 · 인구감소지역 로컬 여행 서비스</string>
+    <string name="settings_guest_title">로그인이 필요해요</string>
+    <string name="settings_guest_description">저장한 코스와 적립 내역을 볼 수 있어요</string>
+    <string name="settings_guest_login_cta">로그인</string>
+
+    <string name="settings_auth_prompt_title">로그인이 필요해요</string>
+    <string name="settings_auth_prompt_body">로그인이 필요한 기능이에요.\n지원 정책은 로그인 없이도 볼 수 있어요.</string>
+    <string name="settings_auth_prompt_confirm">로그인</string>
+    <string name="settings_auth_prompt_dismiss">다음에</string>
 
     <string name="settings_error_load">내 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="settings_action_retry">재시도</string>
