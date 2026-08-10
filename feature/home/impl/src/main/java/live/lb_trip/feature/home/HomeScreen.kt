@@ -75,6 +75,7 @@ fun HomeTabContent(
     onCourseClick: (Long) -> Unit,
     onPopularCourseClick: (Long) -> Unit,
     onPolicyAllClick: () -> Unit,
+    onNavigateToRecommendedRegion: (Long, String) -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
@@ -84,7 +85,6 @@ fun HomeTabContent(
     val uriHandler = LocalUriHandler.current
     val loadErrorMessage = stringResource(R.string.home_error_courses_load)
     val retryActionLabel = stringResource(R.string.home_action_retry)
-    val recommendedRegionUnavailableMessage = stringResource(R.string.home_feed_recommended_region_unavailable)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -96,9 +96,8 @@ fun HomeTabContent(
                     }
                 }
                 is HomeSideEffect.OpenUrl -> uriHandler.openUri(effect.url)
-                HomeSideEffect.ShowRecommendedRegionUnavailable -> {
-                    snackbarHostState.showSnackbar(recommendedRegionUnavailableMessage)
-                }
+                is HomeSideEffect.NavigateToRecommendedRegion ->
+                    onNavigateToRecommendedRegion(effect.regionId, effect.regionName)
             }
         }
     }

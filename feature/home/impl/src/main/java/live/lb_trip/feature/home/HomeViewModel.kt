@@ -55,7 +55,7 @@ class HomeViewModel @Inject constructor(
 
     private fun handleFeedItemClicked(item: HomeFeedItem) {
         if (item is HomeFeedItem.RecommendedRegionItem) {
-            postSideEffect(HomeSideEffect.ShowRecommendedRegionUnavailable)
+            postSideEffect(HomeSideEffect.NavigateToRecommendedRegion(regionId = item.id, regionName = item.title))
         }
     }
 

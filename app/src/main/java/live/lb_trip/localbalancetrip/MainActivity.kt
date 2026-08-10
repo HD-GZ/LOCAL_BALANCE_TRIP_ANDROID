@@ -25,11 +25,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.PolicyListRoute
+import live.lb_trip.feature.home.PopularCourseDetailRoute
 import live.lb_trip.feature.home.policyListScreen
+import live.lb_trip.feature.home.popularCourseDetailScreen
 import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
 import live.lb_trip.feature.propensity.propensityScreen
-import live.lb_trip.feature.recommendation.CourseDetailRoute
+import live.lb_trip.feature.recommendation.CourseRoute
 import live.lb_trip.feature.recommendation.RecommendationRoute
 import live.lb_trip.feature.recommendation.recommendationScreen
 import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
@@ -123,7 +125,10 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
                 onNavigateToTerms = { navController.navigate(TermsRoute) },
                 onNavigateToPrivacy = { navController.navigate(PrivacyRoute) },
                 onNavigateToPolicyList = { navController.navigate(PolicyListRoute) },
-                onNavigateToCourseDetail = { courseId -> navController.navigate(CourseDetailRoute(courseId)) },
+                onNavigateToPopularCourseDetail = { courseId -> navController.navigate(PopularCourseDetailRoute(courseId)) },
+                onNavigateToRecommendedRegion = { regionId, regionName ->
+                    navController.navigate(CourseRoute(regionId = regionId, regionName = regionName))
+                },
                 profileUpdated = profileUpdated,
                 onProfileUpdatedConsumed = {
                     backStackEntry.savedStateHandle[PROFILE_UPDATED_RESULT_KEY] = false
@@ -131,6 +136,7 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
             )
         }
         policyListScreen(onBack = navController::popBackStack)
+        popularCourseDetailScreen(onBack = navController::popBackStack)
         editProfileScreen(
             onBack = navController::popBackStack,
             onSaved = {

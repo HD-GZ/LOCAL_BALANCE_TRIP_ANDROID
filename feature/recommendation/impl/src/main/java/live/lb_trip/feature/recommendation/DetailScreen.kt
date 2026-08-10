@@ -39,11 +39,11 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
+import live.lb_trip.core.designsystem.component.LbAudioPlayer
 import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
-import live.lb_trip.feature.recommendation.components.AudioMiniPlayer
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
@@ -70,6 +70,9 @@ internal fun DetailScreen(
     val courseNotFoundMessage = stringResource(R.string.recommendation_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.recommendation_error_empty_places)
     val genericLoadErrorMessage = stringResource(R.string.recommendation_error_generic_detail)
+    val playContentDescription = stringResource(R.string.recommendation_content_description_play)
+    val pauseContentDescription = stringResource(R.string.recommendation_content_description_pause)
+    val audioTimePlaceholder = stringResource(R.string.recommendation_audio_time_placeholder)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -104,6 +107,9 @@ internal fun DetailScreen(
         },
         onBack = onBack,
         onIntent = onIntent,
+        playContentDescription = playContentDescription,
+        pauseContentDescription = pauseContentDescription,
+        audioTimePlaceholder = audioTimePlaceholder,
         modifier = modifier,
     )
 }
@@ -114,6 +120,9 @@ private fun DetailScreenContent(
     snackbarHost: @Composable BoxScope.() -> Unit,
     onBack: () -> Unit,
     onIntent: (RecommendationDetailIntent) -> Unit,
+    playContentDescription: String,
+    pauseContentDescription: String,
+    audioTimePlaceholder: String,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -177,9 +186,12 @@ private fun DetailScreenContent(
                     onToggle = { onIntent(RecommendationDetailIntent.StopToggled(it)) },
                     detailHeader = { RecommendationTimelineMapPlaceholder() },
                     audioContent = { index ->
-                        AudioMiniPlayer(
+                        LbAudioPlayer(
                             isPlaying = state.playingStopIndex == index,
                             onPlayPauseClick = { onIntent(RecommendationDetailIntent.PlaybackToggled(index)) },
+                            playContentDescription = playContentDescription,
+                            pauseContentDescription = pauseContentDescription,
+                            positionLabel = audioTimePlaceholder,
                         )
                     },
                     detailBottomPadding = 7.dp,
@@ -239,5 +251,8 @@ private fun DetailScreenPreview() {
         snackbarHost = {},
         onBack = {},
         onIntent = {},
+        playContentDescription = "재생",
+        pauseContentDescription = "일시정지",
+        audioTimePlaceholder = "0:00 / 2:14",
     )
 }

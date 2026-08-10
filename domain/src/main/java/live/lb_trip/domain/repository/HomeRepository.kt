@@ -1,5 +1,6 @@
 package live.lb_trip.domain.repository
 
+import live.lb_trip.domain.model.CourseDetail
 import live.lb_trip.domain.model.HeroItem
 import live.lb_trip.domain.model.HomeFeedItem
 import live.lb_trip.domain.model.PopularCourse
@@ -17,6 +18,8 @@ interface HomeRepository {
     suspend fun getIncentives(): Result<List<RegionIncentives>>
 
     suspend fun getPopularCourses(): Result<List<PopularCourse>>
+
+    suspend fun getPopularCourseDetail(courseId: Long): Result<CourseDetail>
 
     suspend fun getHomeFeed(): Result<List<HomeFeedItem>>
 }

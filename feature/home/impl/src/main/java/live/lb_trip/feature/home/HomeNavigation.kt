@@ -8,3 +8,9 @@ fun NavGraphBuilder.policyListScreen(onBack: () -> Unit) {
         PolicyListScreen(onBack = onBack)
     }
 }
+
+fun NavGraphBuilder.popularCourseDetailScreen(onBack: () -> Unit) {
+    composable<PopularCourseDetailRoute> {
+        PopularCourseDetailScreen(onBack = onBack)
+    }
+}

@@ -40,7 +40,6 @@
     <string name="home_status_before_trip">여행 전</string>
     <string name="home_status_traveling">여행 중</string>
     <string name="home_status_completed">완주</string>
-    <string name="home_feed_recommended_region_unavailable">추천 지역 상세는 준비 중이에요.</string>
     <string name="home_feed_login_title">아직 저장한 코스가 없어요</string>
     <string name="home_feed_login_desc">로그인하면 내 여행 성향을 진단하고 코스를 저장할 수 있어요.</string>
     <string name="home_feed_login_cta">로그인하고 저장하기</string>
@@ -49,4 +48,24 @@
 
     <string name="home_error_courses_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="home_action_retry">재시도</string>
+
+    <string name="home_course_detail_back_content_description">뒤로</string>
+    <string name="home_course_detail_section_course_order">코스 순서</string>
+    <string name="home_course_detail_section_benefits">이 코스 적용 가능 혜택</string>
+    <string name="home_course_detail_meta_places_label">방문 장소</string>
+    <string name="home_course_detail_meta_walk_label">총 도보</string>
+    <string name="home_course_detail_meta_audio_label">오디오 가이드</string>
+    <string name="home_course_detail_meta_places_value">%1$d곳</string>
+    <string name="home_course_detail_meta_walk_value">%1$d분</string>
+    <string name="home_course_detail_meta_audio_value">%1$d개</string>
+    <string name="home_course_detail_audio_guide_label">오디오 가이드</string>
+    <string name="home_course_detail_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="home_course_detail_walk_time_template">다음 장소까지 도보 %1$s</string>
+    <string name="home_course_detail_content_description_play">재생</string>
+    <string name="home_course_detail_content_description_pause">일시정지</string>
+    <string name="home_course_detail_navigate_cta">길찾기</string>
+    <string name="home_course_detail_map_app_unavailable">지도 앱을 열 수 없어요.</string>
+    <string name="home_course_detail_error_course_not_found">코스를 찾을 수 없어요.</string>
+    <string name="home_course_detail_error_empty_places">표시할 장소 정보가 없어요.</string>
+    <string name="home_course_detail_error_generic">코스 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
 </resources>

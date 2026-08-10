@@ -12,6 +12,7 @@ import live.lb_trip.data.dto.response.HomeIncentivesResponseDto
 import live.lb_trip.data.dto.response.HomePopularCoursesResponseDto
 import live.lb_trip.data.dto.response.HomeProfileSummaryResponseDto
 import live.lb_trip.data.dto.response.HomeProfileTypesResponseDto
+import live.lb_trip.data.dto.response.PopularCourseDetailResponseDto
 import live.lb_trip.data.dto.response.bodyOrThrow
 
 @Singleton
@@ -27,6 +28,9 @@ class HomeRemoteDataSource @Inject constructor(
 
     suspend fun getPopularCourses(): HomePopularCoursesResponseDto =
         noAuthClient.get("/home/popular-courses").bodyOrThrow()
+
+    suspend fun getPopularCourseDetail(courseId: Long): PopularCourseDetailResponseDto =
+        noAuthClient.get("/home/popular-courses/$courseId").bodyOrThrow()
 
     suspend fun getProfileSummary(): HomeProfileSummaryResponseDto = authClient.get("/home/profile-summary").bodyOrThrow()
 
