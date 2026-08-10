@@ -35,7 +35,7 @@
     <string name="home_status_completed">완주</string>
     <string name="home_feed_recommended_region_unavailable">추천 지역 상세는 준비 중이에요.</string>
     <string name="home_feed_login_title">아직 저장한 코스가 없어요</string>
-    <string name="home_feed_login_desc">취향 진단은 로그인 없이도 살펴볼 수 있어요.\n코스를 저장하려면 로그인해 주세요.</string>
+    <string name="home_feed_login_desc">로그인하면 내 여행 성향을 진단하고 코스를 저장할 수 있어요.</string>
     <string name="home_feed_login_cta">로그인하고 저장하기</string>
 
     <string name="home_popular_section_title">지금 인기 있는 코스</string>

@@ -118,7 +118,7 @@ private fun PolicyListBody(
         verticalArrangement = Arrangement.spacedBy(11.dp),
         modifier = modifier.fillMaxSize(),
     ) {
-        items(cards, key = { it.regionName + it.title }) { card ->
+        items(cards, key = { it.regionName + it.title + it.url }) { card ->
             IncentiveCard(card = card, onClick = { onCardClick(card) })
         }
     }

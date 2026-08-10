@@ -62,8 +62,8 @@ import live.lb_trip.domain.model.ProfileSummary
 import live.lb_trip.domain.model.ProfileType
 import live.lb_trip.feature.home.components.IncentiveCard
 
-private val HeroScrimTop = Color(0x00163524)
-private val HeroScrimBottom = Color(0xE6122A20)
+private val HeroScrimTop = Color(0xE6122A20)
+private val HeroScrimBottom = Color(0x33163524)
 private val HeroChipBackground = Color(0x33FFFFFF)
 private val HeroGhostBackground = Color(0x21FFFFFF)
 
@@ -133,6 +133,11 @@ private fun HomeTabContentBody(
     onFeedItemClick: (HomeFeedItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val imageLoader = remember(context) {
+        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -142,14 +147,15 @@ private fun HomeTabContentBody(
     ) {
         HomeHero(
             heroItems = state.heroItems,
+            imageLoader = imageLoader,
             onDiagnosisClick = onDiagnosisClick,
             onPolicyAllClick = onPolicyAllClick,
         )
 
         if (state.isDiagnosed && state.profileSummary != null) {
-            HomeMyTypeSection(summary = state.profileSummary, onRetakeClick = onDiagnosisClick)
+            HomeMyTypeSection(summary = state.profileSummary, imageLoader = imageLoader, onRetakeClick = onDiagnosisClick)
         } else if (!state.isTypeSectionLoading) {
-            HomeTypeStripSection(types = state.profileTypes, onStartClick = onDiagnosisClick)
+            HomeTypeStripSection(types = state.profileTypes, imageLoader = imageLoader, onStartClick = onDiagnosisClick)
         }
 
         HomeIncentiveSection(
@@ -161,6 +167,7 @@ private fun HomeTabContentBody(
 
         HomeFeedSection(
             state = state,
+            imageLoader = imageLoader,
             onSavedAllClick = onSavedAllClick,
             onFeedItemClick = onFeedItemClick,
             onNavigateToSignin = onNavigateToSignin,
@@ -172,14 +179,11 @@ private fun HomeTabContentBody(
 @Composable
 private fun HomeHero(
     heroItems: ImmutableList<HeroItem>,
+    imageLoader: ImageLoader,
     onDiagnosisClick: () -> Unit,
     onPolicyAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    val imageLoader = remember(context) {
-        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
-    }
     val heroItem = heroItems.firstOrNull()
 
     Box(
@@ -332,7 +336,12 @@ internal fun HomeSectionHeader(
 }
 
 @Composable
-private fun HomeTypeStripSection(types: ImmutableList<ProfileType>, onStartClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun HomeTypeStripSection(
+    types: ImmutableList<ProfileType>,
+    imageLoader: ImageLoader,
+    onStartClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     if (types.isEmpty()) return
     Column(modifier = modifier.fillMaxWidth()) {
         HomeSectionHeader(
@@ -346,18 +355,14 @@ private fun HomeTypeStripSection(types: ImmutableList<ProfileType>, onStartClick
             modifier = Modifier.padding(top = 12.dp),
         ) {
             items(types, key = { it.code }) { type ->
-                HomeTypeCard(type = type, onClick = onStartClick)
+                HomeTypeCard(type = type, imageLoader = imageLoader, onClick = onStartClick)
             }
         }
     }
 }
 
 @Composable
-private fun HomeTypeCard(type: ProfileType, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val imageLoader = remember(context) {
-        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
-    }
+private fun HomeTypeCard(type: ProfileType, imageLoader: ImageLoader, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
@@ -399,7 +404,12 @@ private fun HomeTypeCard(type: ProfileType, onClick: () -> Unit, modifier: Modif
 }
 
 @Composable
-private fun HomeMyTypeSection(summary: ProfileSummary, onRetakeClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun HomeMyTypeSection(
+    summary: ProfileSummary,
+    imageLoader: ImageLoader,
+    onRetakeClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier.fillMaxWidth()) {
         HomeSectionHeader(
             title = stringResource(R.string.home_mytype_section_title),
@@ -417,10 +427,6 @@ private fun HomeMyTypeSection(summary: ProfileSummary, onRetakeClick: () -> Unit
                 .padding(20.dp),
         ) {
             Row(verticalAlignment = Alignment.Top) {
-                val context = LocalContext.current
-                val imageLoader = remember(context) {
-                    ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
-                }
                 AsyncImage(
                     model = summary.imageUrl,
                     contentDescription = null,
@@ -504,7 +510,7 @@ private fun HomeIncentiveSection(
             contentPadding = PaddingValues(horizontal = 20.dp),
             modifier = Modifier.padding(top = 13.dp),
         ) {
-            items(cards.take(4), key = { it.regionName + it.title }) { card ->
+            items(cards.take(4), key = { it.regionName + it.title + it.url }) { card ->
                 IncentiveCard(card = card, onClick = { onCardClick(card) }, modifier = Modifier.width(280.dp))
             }
         }

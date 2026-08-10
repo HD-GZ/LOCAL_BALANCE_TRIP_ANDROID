@@ -19,7 +19,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,7 +26,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +45,7 @@ import live.lb_trip.domain.model.TravelStatus
 @Composable
 internal fun HomeFeedSection(
     state: HomeUiState,
+    imageLoader: ImageLoader,
     onSavedAllClick: () -> Unit,
     onFeedItemClick: (HomeFeedItem) -> Unit,
     onNavigateToSignin: () -> Unit,
@@ -74,6 +73,7 @@ internal fun HomeFeedSection(
                         items(state.popularCourses, key = { it.courseId }) { course ->
                             HomePopularCourseCard(
                                 course = course,
+                                imageLoader = imageLoader,
                                 onClick = { onPopularCourseClick(course.courseId) },
                                 modifier = Modifier.width(220.dp),
                             )
@@ -97,7 +97,12 @@ internal fun HomeFeedSection(
             modifier = Modifier.padding(top = 12.dp),
         ) {
             items(state.feed, key = { it.id.toString() + (it is HomeFeedItem.SavedCourseItem) }) { item ->
-                HomeFeedCard(item = item, onClick = { onFeedItemClick(item) }, modifier = Modifier.width(230.dp))
+                HomeFeedCard(
+                    item = item,
+                    imageLoader = imageLoader,
+                    onClick = { onFeedItemClick(item) },
+                    modifier = Modifier.width(230.dp),
+                )
             }
         }
     }
@@ -145,11 +150,7 @@ private fun String.toTravelStatusLabelOrNull(): String? {
 }
 
 @Composable
-private fun HomeFeedCard(item: HomeFeedItem, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val imageLoader = remember(context) {
-        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
-    }
+private fun HomeFeedCard(item: HomeFeedItem, imageLoader: ImageLoader, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val isRecommended = item is HomeFeedItem.RecommendedRegionItem
     val flagLabel = if (isRecommended) {
         stringResource(R.string.home_feed_flag_recommended)
@@ -228,11 +229,7 @@ private fun HomeFeedCard(item: HomeFeedItem, onClick: () -> Unit, modifier: Modi
 }
 
 @Composable
-private fun HomePopularCourseCard(course: PopularCourse, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val imageLoader = remember(context) {
-        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
-    }
+private fun HomePopularCourseCard(course: PopularCourse, imageLoader: ImageLoader, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(15.dp))
