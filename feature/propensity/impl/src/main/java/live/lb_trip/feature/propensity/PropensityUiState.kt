@@ -21,4 +21,5 @@ sealed interface PropensitySideEffect {
     data object NavigateToRecommendation : PropensitySideEffect
     data object NavigateToResult : PropensitySideEffect
     data object RestartToPreference : PropensitySideEffect
+    data object NavigateToSignin : PropensitySideEffect
 }

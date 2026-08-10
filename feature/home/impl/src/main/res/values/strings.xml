@@ -3,8 +3,13 @@
     <string name="home_hero_title">"내 취향에 맞는\n로컬 여행을 찾아보세요"</string>
     <string name="home_hero_description">여행 성향과 일정, 예산을 바탕으로 나에게 맞는 지역을 추천하고 받을 수 있는 정부·지자체 지원 혜택까지 연결해 드려요.</string>
     <string name="home_hero_cta_diagnosis">내 여행 성향 알아보기</string>
+    <string name="home_hero_cta_diagnosis_guest">로그인 없이 진단 시작하기</string>
     <string name="home_hero_cta_policies">지원 혜택 둘러보기</string>
     <string name="home_hero_pick_template">이번 달 추천 · %1$s</string>
+
+    <string name="home_guest_note_title">로그인 없이도 둘러볼 수 있어요</string>
+    <string name="home_guest_note_description">취향 진단과 지원 정책 확인은 자유롭게, 코스 저장은 로그인 후에 이용할 수 있어요.</string>
+    <string name="home_guest_note_cta">로그인</string>
 
     <string name="home_type_section_title">나는 어떤 여행자일까?</string>
     <string name="home_type_section_cta">진단 시작</string>
@@ -27,6 +32,7 @@
     <string name="home_policy_list_empty">신청 가능한 지원 정책이 없어요.</string>
 
     <string name="home_feed_section_title">내가 저장한 코스</string>
+    <string name="home_feed_section_subtitle_guest">로그인하면 저장한 코스와 취향 기반 추천을 함께 볼 수 있어요</string>
     <string name="home_feed_view_all">전체보기 &gt;</string>
     <string name="home_feed_flag_saved">저장</string>
     <string name="home_feed_flag_recommended">취향 기반 추천</string>

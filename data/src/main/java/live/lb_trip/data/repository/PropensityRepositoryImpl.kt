@@ -43,6 +43,7 @@ class PropensityRepositoryImpl @Inject constructor(
             ).toDomain()
         }.mapApiFailure {
             on(400, "INVALID_INPUT_VALUE") throws LbTripPropensityException.InvalidInputException()
+            on(401) throws LbTripPropensityException.UnauthenticatedException()
         }
 
     override suspend fun getPropensity(): Result<PropensityResult> =

@@ -105,7 +105,7 @@ fun HomeTabContent(
 
     HomeTabContentBody(
         state = state,
-        onDiagnosisClick = { if (state.isLoggedIn) onStartDiagnosisClick() else onNavigateToSignin() },
+        onDiagnosisClick = onStartDiagnosisClick,
         onNavigateToSignin = onNavigateToSignin,
         onSavedAllClick = onSavedAllClick,
         onPolicyAllClick = onPolicyAllClick,
@@ -148,9 +148,14 @@ private fun HomeTabContentBody(
         HomeHero(
             heroItems = state.heroItems,
             imageLoader = imageLoader,
+            isLoggedIn = state.isLoggedIn,
             onDiagnosisClick = onDiagnosisClick,
             onPolicyAllClick = onPolicyAllClick,
         )
+
+        if (!state.isLoggedIn) {
+            HomeGuestNote(onLoginClick = onNavigateToSignin)
+        }
 
         if (state.isDiagnosed && state.profileSummary != null) {
             HomeMyTypeSection(summary = state.profileSummary, imageLoader = imageLoader, onRetakeClick = onDiagnosisClick)
@@ -180,6 +185,7 @@ private fun HomeTabContentBody(
 private fun HomeHero(
     heroItems: ImmutableList<HeroItem>,
     imageLoader: ImageLoader,
+    isLoggedIn: Boolean,
     onDiagnosisClick: () -> Unit,
     onPolicyAllClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -248,7 +254,9 @@ private fun HomeHero(
                 modifier = Modifier.fillMaxWidth().height(50.dp),
             ) {
                 Text(
-                    text = stringResource(R.string.home_hero_cta_diagnosis),
+                    text = stringResource(
+                        if (isLoggedIn) R.string.home_hero_cta_diagnosis else R.string.home_hero_cta_diagnosis_guest,
+                    ),
                     color = LbColors.GreenForest,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,

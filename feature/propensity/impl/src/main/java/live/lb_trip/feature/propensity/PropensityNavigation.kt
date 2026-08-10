@@ -16,13 +16,14 @@ fun NavGraphBuilder.propensityScreen(
     navController: NavController,
     onBack: () -> Unit,
     onNavigateToRecommendation: () -> Unit,
+    onNavigateToSignin: () -> Unit,
 ) {
     navigation<PropensityRoute>(startDestination = PreferenceRoute) {
         composable<PreferenceRoute> { entry ->
             PreferenceStepDestination(navController = navController, entry = entry, onBack = onBack)
         }
         composable<ValueConsumptionRoute> { entry ->
-            ValueConsumptionStepDestination(navController = navController, entry = entry)
+            ValueConsumptionStepDestination(navController = navController, entry = entry, onNavigateToSignin = onNavigateToSignin)
         }
         composable<ResultRoute> { entry ->
             ResultStepDestination(
@@ -58,14 +59,22 @@ private fun PreferenceStepDestination(navController: NavController, entry: NavBa
 }
 
 @Composable
-private fun ValueConsumptionStepDestination(navController: NavController, entry: NavBackStackEntry) {
+private fun ValueConsumptionStepDestination(
+    navController: NavController,
+    entry: NavBackStackEntry,
+    onNavigateToSignin: () -> Unit,
+) {
     val viewModel = propensitySharedViewModel(navController, entry)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
-            if (sideEffect == PropensitySideEffect.NavigateToResult) {
-                navController.navigate(ResultRoute)
+            when (sideEffect) {
+                PropensitySideEffect.NavigateToResult -> navController.navigate(ResultRoute)
+                PropensitySideEffect.NavigateToSignin -> onNavigateToSignin()
+                PropensitySideEffect.NavigateToRecommendation,
+                PropensitySideEffect.RestartToPreference,
+                -> Unit
             }
         }
     }
@@ -95,7 +104,9 @@ private fun ResultStepDestination(
                         popUpTo<PropensityRoute>()
                     }
                 }
-                PropensitySideEffect.NavigateToResult -> Unit
+                PropensitySideEffect.NavigateToResult,
+                PropensitySideEffect.NavigateToSignin,
+                -> Unit
             }
         }
     }

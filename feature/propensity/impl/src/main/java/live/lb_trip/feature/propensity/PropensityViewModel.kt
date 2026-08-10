@@ -90,11 +90,16 @@ class PropensityViewModel @Inject constructor(
                 updateState { it.copy(resultType = result.type, resultDescription = result.description) }
                 postSideEffect(PropensitySideEffect.NavigateToResult)
             }.onFailure { throwable ->
-                val message = when (throwable) {
-                    is LbTripPropensityException.InvalidInputException -> "입력값을 다시 확인해 주세요."
-                    else -> "진단 결과를 가져오지 못했어요. 잠시 후 다시 시도해 주세요."
+                if (throwable is LbTripPropensityException.UnauthenticatedException) {
+                    updateState { it.copy(errorMessage = "로그인 후 진단 결과를 받아볼 수 있어요. 로그인하고 다시 제출해 주세요.") }
+                    postSideEffect(PropensitySideEffect.NavigateToSignin)
+                } else {
+                    val message = when (throwable) {
+                        is LbTripPropensityException.InvalidInputException -> "입력값을 다시 확인해 주세요."
+                        else -> "진단 결과를 가져오지 못했어요. 잠시 후 다시 시도해 주세요."
+                    }
+                    updateState { it.copy(errorMessage = message) }
                 }
-                updateState { it.copy(errorMessage = message) }
             }
             updateState { it.copy(isLoading = false) }
         }

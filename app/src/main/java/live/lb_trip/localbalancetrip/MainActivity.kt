@@ -163,6 +163,7 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
             navController = navController,
             onBack = navController::popBackStack,
             onNavigateToRecommendation = { navController.navigate(RecommendationRoute) },
+            onNavigateToSignin = { navController.navigate(SigninRoute) },
         )
         recommendationScreen(
             navController = navController,

@@ -61,6 +61,14 @@ internal fun HomeFeedSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         if (!state.isLoggedIn) {
+            HomeSectionHeader(title = stringResource(R.string.home_feed_section_title))
+            Text(
+                text = stringResource(R.string.home_feed_section_subtitle_guest),
+                color = LbColors.Ink3,
+                fontSize = 11.5.sp,
+                lineHeight = 16.sp,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 6.dp, bottom = 12.dp),
+            )
             HomeLoginPromptCard(onLoginClick = onNavigateToSignin)
             if (state.popularCourses.isNotEmpty()) {
                 Column(modifier = Modifier.padding(top = 26.dp)) {
@@ -213,17 +221,6 @@ private fun HomeFeedCard(item: HomeFeedItem, imageLoader: ImageLoader, onClick: 
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            val recommendedSubtitle = item.subtitle
-            if (isRecommended && recommendedSubtitle != null) {
-                Text(
-                    text = recommendedSubtitle,
-                    color = LbColors.Green,
-                    fontSize = 11.5.sp,
-                    lineHeight = 16.sp,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
         }
     }
 }

@@ -6,4 +6,6 @@ sealed class LbTripPropensityException : LbTripException() {
     class InvalidInputException : LbTripPropensityException()
 
     class PropensityNotFoundException : LbTripPropensityException()
+
+    class UnauthenticatedException : LbTripPropensityException()
 }
