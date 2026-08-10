@@ -50,7 +50,12 @@ class SavedCourseDetailViewModel @Inject constructor(
             SavedCourseDetailIntent.TourStartClicked ->
                 postSideEffect(SavedCourseDetailSideEffect.NavigateToTour(savedCourseId))
             SavedCourseDetailIntent.Retry -> viewModelScope.launch { load() }
-            SavedCourseDetailIntent.ReceiptRegistered -> viewModelScope.launch { reloadReceipts() }
+            SavedCourseDetailIntent.ReceiptRegistered -> viewModelScope.launch {
+                coroutineScope {
+                    launch { reloadReceipts() }
+                    launch { reloadReport() }
+                }
+            }
         }
     }
 
@@ -144,6 +149,11 @@ class SavedCourseDetailViewModel @Inject constructor(
     private suspend fun reloadReceipts() {
         updateState { it.copy(isReceiptsLoading = true) }
         applyReceiptsResult(getReceiptsUseCase(savedCourseId))
+    }
+
+    private suspend fun reloadReport() {
+        updateState { it.copy(isReportLoading = true) }
+        applyReportResult(fetchReportWithRetry())
     }
 
     private fun toggleStopExpanded(index: Int) {

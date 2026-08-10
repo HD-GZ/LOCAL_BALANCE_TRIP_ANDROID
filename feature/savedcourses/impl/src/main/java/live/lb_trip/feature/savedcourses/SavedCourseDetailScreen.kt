@@ -54,7 +54,8 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseReportTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
 import live.lb_trip.feature.savedcourses.components.ReceiptSourceSheet
 import live.lb_trip.feature.savedcourses.components.createReceiptImageUri
-import live.lb_trip.feature.savedcourses.components.rememberReportMovementLabels
+import live.lb_trip.feature.savedcourses.components.rememberReportDistanceValueLabel
+import live.lb_trip.feature.savedcourses.components.rememberReportMetaLabel
 
 @Composable
 internal fun SavedCourseDetailScreen(
@@ -163,12 +164,12 @@ private fun SavedCourseDetailScreenContent(
     )
     val shareSavedMessage = stringResource(R.string.savedcourses_detail_share_saved_toast)
     val shareFailedMessage = stringResource(R.string.savedcourses_detail_share_failed)
-    val shareCardStatusLabel = state.status.toLabel()
-    val shareCardPlacesLabel =
+    val reportMetaLabel = rememberReportMetaLabel(state.reportTourEndedAt)
+    val reportPlacesLabel =
         stringResource(R.string.savedcourses_detail_report_places_template, state.reportVisitedPlaceCount)
-    val shareCardAmountLabel =
+    val reportAmountLabel =
         stringResource(R.string.savedcourses_detail_receipt_amount_template, state.reportTotalSpentAmount)
-    val shareCardMovementLabels = rememberReportMovementLabels(state.reportDistanceWalkedMeters, state.reportStepCount)
+    val reportDistanceValueLabel = rememberReportDistanceValueLabel(state.reportDistanceWalkedMeters)
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -231,11 +232,10 @@ private fun SavedCourseDetailScreenContent(
                         SavedCourseDetailTab.REPORT -> SavedCourseReportTab(
                             state = state,
                             imageLoader = imageLoader,
-                            statusLabel = shareCardStatusLabel,
-                            placesLabel = shareCardPlacesLabel,
-                            amountLabel = shareCardAmountLabel,
-                            distanceLabel = shareCardMovementLabels.distance,
-                            stepsLabel = shareCardMovementLabels.steps,
+                            metaLabel = reportMetaLabel,
+                            placesLabel = reportPlacesLabel,
+                            amountLabel = reportAmountLabel,
+                            distanceValueLabel = reportDistanceValueLabel,
                         )
                     }
                 }
@@ -315,13 +315,6 @@ private fun SavedCourseDetailTab.toLabel(): String = when (this) {
     SavedCourseDetailTab.COURSE -> stringResource(R.string.savedcourses_detail_tab_course)
     SavedCourseDetailTab.RECEIPT -> stringResource(R.string.savedcourses_detail_tab_receipt)
     SavedCourseDetailTab.REPORT -> stringResource(R.string.savedcourses_detail_tab_report)
-}
-
-@Composable
-private fun TravelStatus.toLabel(): String = when (this) {
-    TravelStatus.BEFORE_TRIP -> stringResource(R.string.savedcourses_status_before_trip)
-    TravelStatus.TRAVELING -> stringResource(R.string.savedcourses_status_traveling)
-    TravelStatus.COMPLETED -> stringResource(R.string.savedcourses_status_completed)
 }
 
 @Preview(showBackground = true)
