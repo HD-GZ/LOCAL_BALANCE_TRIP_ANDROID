@@ -26,7 +26,7 @@
     <string name="savedcourses_detail_report_places_template">%1$d곳</string>
     <string name="savedcourses_detail_report_amount_label">지역 소비 금액</string>
     <string name="savedcourses_detail_report_distance_label">걸은 거리</string>
-    <string name="savedcourses_detail_report_distance_template">%1$.1fkm</string>
+    <string name="savedcourses_detail_report_distance_template">%1$,dm</string>
     <string name="savedcourses_detail_report_steps_label">걸음 수</string>
     <string name="savedcourses_detail_report_steps_template">%1$,d보</string>
     <string name="savedcourses_detail_report_share_button">공유하기</string>

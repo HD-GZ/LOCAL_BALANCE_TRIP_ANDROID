@@ -6,5 +6,8 @@ import javax.inject.Inject
 class EndTourUseCase @Inject constructor(
     private val savedCourseRepository: SavedCourseRepository,
 ) {
-    suspend operator fun invoke(savedCourseId: Long): Result<Unit> = savedCourseRepository.endTour(savedCourseId)
+    suspend operator fun invoke(
+        savedCourseId: Long,
+        distanceMeters: Float?,
+    ): Result<Unit> = savedCourseRepository.endTour(savedCourseId, distanceMeters)
 }

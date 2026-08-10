@@ -4,7 +4,11 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import live.lb_trip.data.di.qualifier.Auth
+import live.lb_trip.data.dto.request.TourEndRequestDto
 import live.lb_trip.data.dto.response.SavedCourseDetailResponseDto
 import live.lb_trip.data.dto.response.SavedCourseListResponseDto
 import live.lb_trip.data.dto.response.SavedCourseReportResponseDto
@@ -34,7 +38,10 @@ class SavedCourseRemoteDataSource @Inject constructor(
         authClient.post("/saved-courses/$savedCourseId/tour/places/$placeId/check-in").checkOrThrow()
     }
 
-    suspend fun endTour(savedCourseId: Long) {
-        authClient.post("/saved-courses/$savedCourseId/tour/end").checkOrThrow()
+    suspend fun endTour(savedCourseId: Long, walkedDistanceMeters: Int?) {
+        authClient.post("/saved-courses/$savedCourseId/tour/end") {
+            contentType(ContentType.Application.Json)
+            setBody(TourEndRequestDto(walkedDistanceMeters))
+        }.checkOrThrow()
     }
 }
