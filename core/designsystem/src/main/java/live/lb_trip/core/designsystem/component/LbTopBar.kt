@@ -2,6 +2,7 @@ package live.lb_trip.core.designsystem.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +45,7 @@ fun LbTopBar(
     titleTrailing: (@Composable () -> Unit)? = null,
     containerColor: Color = LbColors.Paper,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
         title = {
@@ -89,6 +91,7 @@ fun LbTopBar(
                 )
             }
         },
+        actions = actions,
         colors = TopAppBarDefaults.topAppBarColors(containerColor = containerColor),
         windowInsets = windowInsets,
         modifier = modifier,

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
@@ -35,7 +34,6 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -66,6 +63,7 @@ import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
 internal fun ReceiptDetailScreen(
@@ -138,10 +136,22 @@ private fun ReceiptDetailScreenContent(
     Scaffold(
         modifier = modifier,
         topBar = {
-            ReceiptDetailTopBar(
+            LbTopBar(
                 onBackClick = onBack,
-                showEdit = !state.isLoading && !state.isEditing,
-                onEditClick = { onIntent(ReceiptDetailIntent.EditClicked) },
+                backContentDescription = stringResource(R.string.savedcourses_receipt_back_content_description),
+                title = stringResource(R.string.savedcourses_receipt_detail_title),
+                actions = {
+                    if (!state.isLoading && !state.isEditing) {
+                        IconButton(onClick = { onIntent(ReceiptDetailIntent.EditClicked) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = stringResource(R.string.savedcourses_receipt_detail_edit_content_description),
+                                tint = LbColors.Ink2,
+                                modifier = Modifier.size(19.dp),
+                            )
+                        }
+                    }
+                },
             )
         },
         snackbarHost = snackbarHost,
@@ -338,49 +348,6 @@ private fun ReceiptDetailRow(label: String, value: String, modifier: Modifier = 
         Text(text = label, color = LbColors.Ink3, fontSize = 12.sp, modifier = Modifier.width(72.dp))
         Text(text = value, color = LbColors.Ink, fontSize = 13.sp, modifier = Modifier.weight(1f))
     }
-}
-
-@Composable
-private fun ReceiptDetailTopBar(
-    onBackClick: () -> Unit,
-    showEdit: Boolean,
-    onEditClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .windowInsetsPadding(TopAppBarDefaults.windowInsets)
-            .height(56.dp)
-            .background(LbColors.Paper),
-    ) {
-        IconButton(onClick = onBackClick) {
-            Icon(
-                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_back),
-                contentDescription = stringResource(R.string.savedcourses_receipt_back_content_description),
-                tint = Color.Unspecified,
-            )
-        }
-        Text(
-            text = stringResource(R.string.savedcourses_receipt_detail_title),
-            color = LbColors.Ink,
-            fontSize = 15.5.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.weight(1f),
-        )
-        if (showEdit) {
-            IconButton(onClick = onEditClick) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = stringResource(R.string.savedcourses_receipt_detail_edit_content_description),
-                    tint = LbColors.Ink2,
-                    modifier = Modifier.size(19.dp),
-                )
-            }
-        }
-    }
-    HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
