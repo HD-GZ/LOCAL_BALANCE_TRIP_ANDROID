@@ -14,7 +14,9 @@ data class PropensityUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val resultType: String? = null,
+    val resultCode: String? = null,
     val resultDescription: String? = null,
+    val resultImageUrl: String? = null,
 )
 
 sealed interface PropensitySideEffect {

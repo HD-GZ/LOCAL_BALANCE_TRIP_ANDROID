@@ -8,7 +8,9 @@ import live.lb_trip.domain.model.ValueConsumption
 fun PropensityResponseDto.toDomain(): PropensityResult =
     PropensityResult(
         type = propensityResult.type ?: "",
+        code = propensityResult.code ?: "",
         description = propensityResult.description ?: "",
+        imageUrl = propensityResult.imageUrl,
         preference = Preference(
             locality = preference.locality,
             frugality = preference.frugality,
