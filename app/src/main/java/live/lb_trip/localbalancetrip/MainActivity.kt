@@ -152,7 +152,13 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
         privacyScreen(onBack = navController::popBackStack)
         savedCoursesScreen(
             onBack = navController::popBackStack,
-            onCourseClick = { savedCourseId -> navController.navigate(SavedCourseDetailRoute(savedCourseId)) },
+            onNavigateToTour = { savedCourseId -> navController.navigate(TourRoute(savedCourseId)) },
+            onNavigateToReceiptCapture = { savedCourseId, imageUri ->
+                navController.navigate(ReceiptCaptureRoute(savedCourseId, imageUri.toString()))
+            },
+            onNavigateToReceiptDetail = { savedCourseId, receiptId ->
+                navController.navigate(ReceiptDetailRoute(savedCourseId, receiptId))
+            },
         )
         savedCourseDetailScreen(
             onBack = navController::popBackStack,

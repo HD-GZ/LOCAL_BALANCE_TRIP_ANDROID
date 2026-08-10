@@ -59,6 +59,7 @@ import live.lb_trip.feature.savedcourses.components.rememberReportMetaLabel
 
 @Composable
 internal fun SavedCourseDetailScreen(
+    savedCourseId: Long,
     onBack: () -> Unit,
     onNavigateToTour: (Long) -> Unit,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
@@ -68,7 +69,9 @@ internal fun SavedCourseDetailScreen(
     tourEnded: Boolean,
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SavedCourseDetailViewModel = hiltViewModel(),
+    viewModel: SavedCourseDetailViewModel = hiltViewModel(
+        key = "saved-course-detail-$savedCourseId",
+    ) { factory: SavedCourseDetailViewModel.Factory -> factory.create(savedCourseId) },
     onIntent: (SavedCourseDetailIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()

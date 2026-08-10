@@ -8,9 +8,33 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 
-fun NavGraphBuilder.savedCoursesScreen(onBack: () -> Unit, onCourseClick: (Long) -> Unit) {
-    composable<SavedCoursesRoute> {
-        SavedCoursesScreen(onBack = onBack, onCourseClick = onCourseClick)
+fun NavGraphBuilder.savedCoursesScreen(
+    onBack: () -> Unit,
+    onNavigateToTour: (Long) -> Unit,
+    onNavigateToReceiptCapture: (Long, Uri) -> Unit,
+    onNavigateToReceiptDetail: (Long, Long) -> Unit,
+) {
+    composable<SavedCoursesRoute> { backStackEntry ->
+        val receiptRegistered by backStackEntry.savedStateHandle
+            .getStateFlow(RECEIPT_REGISTERED_RESULT_KEY, false)
+            .collectAsStateWithLifecycle()
+        val tourEnded by backStackEntry.savedStateHandle
+            .getStateFlow(TOUR_ENDED_RESULT_KEY, false)
+            .collectAsStateWithLifecycle()
+        SavedCoursesPaneHost(
+            onBack = onBack,
+            onNavigateToTour = onNavigateToTour,
+            onNavigateToReceiptCapture = onNavigateToReceiptCapture,
+            onNavigateToReceiptDetail = onNavigateToReceiptDetail,
+            receiptRegistered = receiptRegistered,
+            onReceiptRegisteredConsumed = {
+                backStackEntry.savedStateHandle[RECEIPT_REGISTERED_RESULT_KEY] = false
+            },
+            tourEnded = tourEnded,
+            onTourEndedConsumed = {
+                backStackEntry.savedStateHandle[TOUR_ENDED_RESULT_KEY] = false
+            },
+        )
     }
 }
 
@@ -28,6 +52,7 @@ fun NavGraphBuilder.savedCourseDetailScreen(
             .getStateFlow(TOUR_ENDED_RESULT_KEY, false)
             .collectAsStateWithLifecycle()
         SavedCourseDetailScreen(
+            savedCourseId = backStackEntry.toRoute<SavedCourseDetailRoute>().savedCourseId,
             onBack = onBack,
             onNavigateToTour = onNavigateToTour,
             onNavigateToReceiptCapture = onNavigateToReceiptCapture,
