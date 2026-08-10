@@ -22,24 +22,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
+import kotlin.math.roundToInt
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.feature.savedcourses.R
 import live.lb_trip.feature.savedcourses.SavedCourseDetailUiState
 
-private const val METERS_PER_KILOMETER = 1000f
-
-internal data class ReportMovementLabels(val distance: String?, val steps: String?)
-
 @Composable
 internal fun rememberReportMovementLabels(distanceMeters: Float?, stepCount: Int?): ReportMovementLabels {
     val distanceLabel = distanceMeters?.let {
-        stringResource(R.string.savedcourses_detail_report_distance_template, it / METERS_PER_KILOMETER)
+        stringResource(R.string.savedcourses_detail_report_distance_template, it.roundToInt())
     }
     val stepsLabel = stepCount?.let {
         stringResource(R.string.savedcourses_detail_report_steps_template, it)
     }
     return ReportMovementLabels(distance = distanceLabel, steps = stepsLabel)
 }
+
+internal data class ReportMovementLabels(val distance: String?, val steps: String?)
 
 @Composable
 internal fun SavedCourseReportTab(
