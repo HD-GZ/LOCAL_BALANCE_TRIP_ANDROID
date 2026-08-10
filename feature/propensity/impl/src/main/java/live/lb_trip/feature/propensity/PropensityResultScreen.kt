@@ -81,8 +81,8 @@ private fun ResultStepContent(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(128.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .border(BorderStroke(1.dp, OutlineBorder), RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(36.dp))
+                    .border(BorderStroke(1.dp, OutlineBorder), RoundedCornerShape(36.dp)),
             )
             Spacer(modifier = Modifier.height(14.dp))
         }
