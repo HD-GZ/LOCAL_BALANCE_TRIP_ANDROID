@@ -1,6 +1,7 @@
 package live.lb_trip.feature.tour
 
 import javax.inject.Inject
+import live.lb_trip.domain.model.RecordedMovement
 import live.lb_trip.domain.usecase.FinishDistanceRecordingUseCase
 import live.lb_trip.domain.usecase.StartDistanceRecordingUseCase
 
@@ -23,9 +24,7 @@ class TourDistanceRecordingCoordinator @Inject constructor(
         startIfNeeded(savedCourseId)
     }
 
-    suspend fun finish(savedCourseId: Long) {
-        finishDistanceRecordingUseCase(savedCourseId)
-    }
+    suspend fun finish(savedCourseId: Long): RecordedMovement? = finishDistanceRecordingUseCase(savedCourseId)
 
     private suspend fun startIfNeeded(savedCourseId: Long) {
         if (hasStarted || !tourStarted || !hasPermission) return

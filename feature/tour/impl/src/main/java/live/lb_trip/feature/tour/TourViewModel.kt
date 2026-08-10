@@ -18,6 +18,7 @@ import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.CoursePlace
 import live.lb_trip.domain.model.LocationFix
+import live.lb_trip.domain.model.RecordedMovement
 import live.lb_trip.domain.model.TourPlaceVisit
 import live.lb_trip.domain.usecase.CheckInTourPlaceUseCase
 import live.lb_trip.domain.usecase.EndTourUseCase
@@ -43,6 +44,7 @@ class TourViewModel @Inject constructor(
     private var locationJob: Job? = null
     private val arrivalDetector = TourArrivalDetector()
     private var isEndingTour = false
+    private var pendingTourMovement: RecordedMovement? = null
 
     private var furthestStopIndex = 0
 
@@ -169,13 +171,19 @@ class TourViewModel @Inject constructor(
         if (isEndingTour) return
         isEndingTour = true
         viewModelScope.launch {
-            val endTourResult = withContext(NonCancellable) { endTourUseCase(savedCourseId) }
+            // finish() clears the distance-recording session, so it must only run once;
+            // cache the result so a retry after an endTour failure resends the same distance.
+            val movement = pendingTourMovement ?: withContext(NonCancellable) {
+                suspendRunCatching { distanceRecording.finish(savedCourseId) }.getOrNull()
+            }.also { pendingTourMovement = it }
+            val endTourResult = withContext(NonCancellable) {
+                endTourUseCase(savedCourseId, movement?.distanceMeters)
+            }
             if (endTourResult.isFailure) {
                 isEndingTour = false
                 postSideEffect(TourSideEffect.ShowEndTourError)
                 return@launch
             }
-            withContext(NonCancellable) { suspendRunCatching { distanceRecording.finish(savedCourseId) } }
             postSideEffect(TourSideEffect.NavigateBack)
         }
     }

@@ -13,6 +13,7 @@ import live.lb_trip.domain.repository.SavedCourseRepository
 import live.lb_trip.domain.util.mapApiFailure
 import live.lb_trip.domain.util.suspendRunCatching
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class SavedCourseRepositoryImpl @Inject constructor(
     private val savedCourseRemoteDataSource: SavedCourseRemoteDataSource,
@@ -60,9 +61,9 @@ class SavedCourseRepositoryImpl @Inject constructor(
             on(409, "TOUR_NOT_IN_PROGRESS") throws LbTripSavedCourseException.TourNotInProgressException()
         }
 
-    override suspend fun endTour(savedCourseId: Long): Result<Unit> =
+    override suspend fun endTour(savedCourseId: Long, distanceMeters: Float?): Result<Unit> =
         suspendRunCatching {
-            savedCourseRemoteDataSource.endTour(savedCourseId)
+            savedCourseRemoteDataSource.endTour(savedCourseId, distanceMeters?.roundToInt())
         }.mapApiFailure {
             on(404, "SAVED_COURSE_NOT_FOUND") throws LbTripSavedCourseException.SavedCourseNotFoundException()
             on(409, "TOUR_NOT_IN_PROGRESS") throws LbTripSavedCourseException.TourNotInProgressException()

@@ -20,7 +20,10 @@ interface SavedCourseRepository {
         placeId: Long,
     ): Result<Unit>
 
-    suspend fun endTour(savedCourseId: Long): Result<Unit>
+    suspend fun endTour(
+        savedCourseId: Long,
+        distanceMeters: Float?,
+    ): Result<Unit>
 
     suspend fun saveTourMovement(
         savedCourseId: Long,
