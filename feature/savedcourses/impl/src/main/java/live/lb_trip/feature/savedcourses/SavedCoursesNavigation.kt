@@ -1,9 +1,12 @@
 package live.lb_trip.feature.savedcourses
 
+import android.net.Uri
 import androidx.compose.runtime.getValue
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 
 fun NavGraphBuilder.savedCoursesScreen(onBack: () -> Unit, onCourseClick: (Long) -> Unit) {
     composable<SavedCoursesRoute> {
@@ -14,7 +17,7 @@ fun NavGraphBuilder.savedCoursesScreen(onBack: () -> Unit, onCourseClick: (Long)
 fun NavGraphBuilder.savedCourseDetailScreen(
     onBack: () -> Unit,
     onNavigateToTour: (Long) -> Unit,
-    onNavigateToReceiptCapture: (Long) -> Unit,
+    onNavigateToReceiptCapture: (Long, Uri) -> Unit,
 ) {
     composable<SavedCourseDetailRoute> { backStackEntry ->
         val receiptRegistered by backStackEntry.savedStateHandle
@@ -40,7 +43,8 @@ fun NavGraphBuilder.savedCourseDetailScreen(
 }
 
 fun NavGraphBuilder.receiptCaptureScreen(onBack: () -> Unit, onSubmitted: () -> Unit) {
-    composable<ReceiptCaptureRoute> {
-        ReceiptCaptureScreen(onBack = onBack, onSubmitted = onSubmitted)
+    composable<ReceiptCaptureRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<ReceiptCaptureRoute>()
+        ReceiptCaptureScreen(imageUri = route.imageUri.toUri(), onBack = onBack, onSubmitted = onSubmitted)
     }
 }

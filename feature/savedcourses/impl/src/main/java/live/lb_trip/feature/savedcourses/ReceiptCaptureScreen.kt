@@ -2,9 +2,6 @@ package live.lb_trip.feature.savedcourses
 
 import android.net.Uri
 import android.webkit.MimeTypeMap
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,7 +16,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,14 +24,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +39,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
@@ -55,11 +46,13 @@ import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
 internal fun ReceiptCaptureScreen(
+    imageUri: Uri,
     onBack: () -> Unit,
     onSubmitted: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ReceiptCaptureViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scanErrorMessage = stringResource(R.string.savedcourses_receipt_error_scan)
@@ -75,6 +68,20 @@ internal fun ReceiptCaptureScreen(
                 ReceiptCaptureSideEffect.NavigateBackWithSuccess -> onSubmitted()
             }
         }
+    }
+
+    LaunchedEffect(Unit) {
+        val bytes = withContext(Dispatchers.IO) {
+            context.contentResolver.openInputStream(imageUri)?.use { it.readBytes() }
+        }
+        if (bytes == null) {
+            onBack()
+            return@LaunchedEffect
+        }
+        val extension = context.contentResolver.getType(imageUri)
+            ?.let { MimeTypeMap.getSingleton().getExtensionFromMimeType(it) }
+            ?: "jpg"
+        viewModel.onIntent(ReceiptCaptureIntent.ImagePicked(bytes = bytes, fileName = "receipt.$extension"))
     }
 
     ReceiptCaptureScreenContent(
@@ -108,61 +115,10 @@ private fun ReceiptCaptureScreenContent(
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (state.step) {
-                ReceiptCaptureStep.PICK -> ReceiptPickStep(onIntent = onIntent)
                 ReceiptCaptureStep.SCANNING -> ReceiptLoadingStep(labelRes = R.string.savedcourses_receipt_scanning)
                 ReceiptCaptureStep.VERIFY, ReceiptCaptureStep.SUBMITTING ->
                     ReceiptVerifyStep(state = state, onIntent = onIntent)
             }
-        }
-    }
-}
-
-@Composable
-private fun ReceiptPickStep(onIntent: (ReceiptCaptureIntent) -> Unit, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-        if (uri == null) return@rememberLauncherForActivityResult
-        scope.launch {
-            val bytes = withContext(Dispatchers.IO) {
-                context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            }
-            if (bytes != null) {
-                val extension = context.contentResolver.getType(uri)
-                    ?.let { MimeTypeMap.getSingleton().getExtensionFromMimeType(it) }
-                    ?: "jpg"
-                onIntent(ReceiptCaptureIntent.ImagePicked(bytes = bytes, fileName = "receipt.$extension"))
-            }
-        }
-    }
-
-    Column(
-        modifier = modifier.fillMaxSize().padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_route),
-            contentDescription = null,
-            tint = LbColors.Green,
-            modifier = Modifier.padding(bottom = 20.dp),
-        )
-        Text(
-            text = stringResource(R.string.savedcourses_receipt_pick_guide),
-            color = LbColors.Ink2,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(bottom = 24.dp),
-        )
-        LbButton(
-            onClick = { pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) },
-            colors = LbButtonDefaults.greenColors(),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(
-                text = stringResource(R.string.savedcourses_receipt_pick_button),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
         }
     }
 }
@@ -253,7 +209,7 @@ private fun ReceiptVerifyStep(
 @Composable
 private fun ReceiptCaptureScreenPreview() {
     ReceiptCaptureScreenContent(
-        state = ReceiptCaptureUiState(step = ReceiptCaptureStep.PICK),
+        state = ReceiptCaptureUiState(step = ReceiptCaptureStep.VERIFY, merchantName = "담양앞집", amount = "12000", paidDate = "2026-08-10"),
         snackbarHost = {},
         onBack = {},
         onIntent = {},

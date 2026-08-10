@@ -13,6 +13,7 @@ enum class SavedCourseDetailTab {
 }
 
 data class SavedCourseDetailUiState(
+    val savedCourseId: Long = 0L,
     val isLoading: Boolean = true,
     val selectedTab: SavedCourseDetailTab = SavedCourseDetailTab.COURSE,
     val regionName: String = "",
@@ -62,7 +63,6 @@ sealed interface SavedCourseDetailSideEffect {
     data object ShowReportLoadError : SavedCourseDetailSideEffect
     data class OpenBenefitUrl(val url: String) : SavedCourseDetailSideEffect
     data class NavigateToTour(val savedCourseId: Long) : SavedCourseDetailSideEffect
-    data class NavigateToReceiptCapture(val savedCourseId: Long) : SavedCourseDetailSideEffect
 }
 
 enum class SavedCourseDetailLoadErrorReason {

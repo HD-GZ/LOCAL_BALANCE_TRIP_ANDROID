@@ -1,6 +1,10 @@
 package live.lb_trip.feature.savedcourses
 
+import android.net.Uri
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,13 +52,15 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseOrderTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseReportTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
+import live.lb_trip.feature.savedcourses.components.ReceiptSourceSheet
+import live.lb_trip.feature.savedcourses.components.createReceiptImageUri
 import live.lb_trip.feature.savedcourses.components.rememberReportMovementLabels
 
 @Composable
 internal fun SavedCourseDetailScreen(
     onBack: () -> Unit,
     onNavigateToTour: (Long) -> Unit,
-    onNavigateToReceiptCapture: (Long) -> Unit,
+    onNavigateToReceiptCapture: (Long, Uri) -> Unit,
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
     tourEnded: Boolean,
@@ -92,7 +98,6 @@ internal fun SavedCourseDetailScreen(
                 SavedCourseDetailSideEffect.ShowReportLoadError -> launch { snackbarHostState.showSnackbar(reportErrorMessage) }
                 is SavedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
                 is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
-                is SavedCourseDetailSideEffect.NavigateToReceiptCapture -> onNavigateToReceiptCapture(effect.savedCourseId)
             }
         }
     }
@@ -124,6 +129,7 @@ internal fun SavedCourseDetailScreen(
         onShowSnackbar = { message -> snackbarHostState.showSnackbar(message) },
         onBack = onBack,
         onIntent = onIntent,
+        onNavigateToReceiptCapture = onNavigateToReceiptCapture,
         modifier = modifier,
     )
 }
@@ -136,6 +142,7 @@ private fun SavedCourseDetailScreenContent(
     onShowSnackbar: suspend (String) -> Unit,
     onBack: () -> Unit,
     onIntent: (SavedCourseDetailIntent) -> Unit,
+    onNavigateToReceiptCapture: (Long, Uri) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
@@ -147,6 +154,10 @@ private fun SavedCourseDetailScreenContent(
     }
     val coroutineScope = rememberCoroutineScope()
     var showShareSheet by remember { mutableStateOf(false) }
+    val showReceiptSourceSheet = rememberReceiptSourcePicker(
+        savedCourseId = state.savedCourseId,
+        onNavigateToReceiptCapture = onNavigateToReceiptCapture,
+    )
     val shareSavedMessage = stringResource(R.string.savedcourses_detail_share_saved_toast)
     val shareFailedMessage = stringResource(R.string.savedcourses_detail_share_failed)
     val shareCardStatusLabel = state.status.toLabel()
@@ -179,7 +190,7 @@ private fun SavedCourseDetailScreenContent(
                 hasStops = state.stops.isNotEmpty(),
                 isReportAvailable = state.isReportAvailable,
                 onTourStartClick = { onIntent(SavedCourseDetailIntent.TourStartClicked) },
-                onRegisterReceiptClick = { onIntent(SavedCourseDetailIntent.RegisterReceiptClicked) },
+                onRegisterReceiptClick = showReceiptSourceSheet,
                 onShareClick = { showShareSheet = true },
             )
         },
@@ -257,6 +268,42 @@ private fun SavedCourseDetailScreenContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun rememberReceiptSourcePicker(
+    savedCourseId: Long,
+    onNavigateToReceiptCapture: (Long, Uri) -> Unit,
+): () -> Unit {
+    val context = LocalContext.current
+    var showSheet by remember { mutableStateOf(false) }
+    var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
+    val pickReceiptImage = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
+        if (uri != null) onNavigateToReceiptCapture(savedCourseId, uri)
+    }
+    val takeReceiptPicture = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        val uri = pendingCameraUri
+        if (success && uri != null) onNavigateToReceiptCapture(savedCourseId, uri)
+    }
+
+    if (showSheet) {
+        ReceiptSourceSheet(
+            onDismiss = { showSheet = false },
+            onGalleryClick = {
+                showSheet = false
+                pickReceiptImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            onCameraClick = {
+                showSheet = false
+                val uri = createReceiptImageUri(context)
+                pendingCameraUri = uri
+                takeReceiptPicture.launch(uri)
+            },
+        )
+    }
+
+    return { showSheet = true }
+}
+
 @Composable
 private fun SavedCourseDetailTab.toLabel(): String = when (this) {
     SavedCourseDetailTab.COURSE -> stringResource(R.string.savedcourses_detail_tab_course)
@@ -286,5 +333,6 @@ private fun SavedCourseDetailScreenPreview() {
         onShowSnackbar = {},
         onBack = {},
         onIntent = {},
+        onNavigateToReceiptCapture = { _, _ -> },
     )
 }
