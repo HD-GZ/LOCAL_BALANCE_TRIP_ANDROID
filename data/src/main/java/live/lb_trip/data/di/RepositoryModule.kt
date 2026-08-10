@@ -8,6 +8,7 @@ import live.lb_trip.data.datasource.local.TourRecordingSessionLocalDataSource
 import live.lb_trip.data.location.FusedLocationTracker
 import live.lb_trip.data.location.LocalFitnessDistanceRecorder
 import live.lb_trip.data.repository.AuthRepositoryImpl
+import live.lb_trip.data.repository.HomeRepositoryImpl
 import live.lb_trip.data.repository.PropensityRepositoryImpl
 import live.lb_trip.data.repository.RecommendationRepositoryImpl
 import live.lb_trip.data.repository.SavedCourseRepositoryImpl
@@ -16,6 +17,7 @@ import live.lb_trip.data.repository.UserRepositoryImpl
 import live.lb_trip.domain.repository.AuthRepository
 import live.lb_trip.domain.repository.DistanceRecorder
 import live.lb_trip.domain.repository.DistanceRecordingStore
+import live.lb_trip.domain.repository.HomeRepository
 import live.lb_trip.domain.repository.LocationTracker
 import live.lb_trip.domain.repository.PropensityRepository
 import live.lb_trip.domain.repository.RecommendationRepository
@@ -52,6 +54,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsTermsRepository(termsRepositoryImpl: TermsRepositoryImpl): TermsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
 
     @Binds
     @Singleton

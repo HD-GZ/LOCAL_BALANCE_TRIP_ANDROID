@@ -6,3 +6,7 @@ sealed interface SigninIntent {
     data object TogglePasswordVisibility : SigninIntent
     data object LoginClicked : SigninIntent
 }
+
+sealed interface SigninSideEffect {
+    data object LoginSucceeded : SigninSideEffect
+}

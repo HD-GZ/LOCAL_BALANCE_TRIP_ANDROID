@@ -23,10 +23,12 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
 import live.lb_trip.feature.home.HomeRoute
-import live.lb_trip.feature.onboarding.OnboardingRoute
+import live.lb_trip.feature.home.PolicyListRoute
+import live.lb_trip.feature.home.policyListScreen
 import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
 import live.lb_trip.feature.propensity.propensityScreen
+import live.lb_trip.feature.recommendation.CourseDetailRoute
 import live.lb_trip.feature.recommendation.RecommendationRoute
 import live.lb_trip.feature.recommendation.recommendationScreen
 import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
@@ -85,10 +87,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    when (uiState.isLoggedIn) {
-                        true -> MainNavGraph()
-                        false -> AuthNavGraph()
-                        null -> Unit
+                    val isLoggedIn = uiState.isLoggedIn
+                    if (isLoggedIn != null) {
+                        MainNavGraph(isLoggedIn = isLoggedIn)
                     }
                 }
             }
@@ -97,7 +98,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun MainNavGraph() {
+private fun MainNavGraph(isLoggedIn: Boolean) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = HomeRoute) {
         composable<HomeRoute> { backStackEntry ->
@@ -105,7 +106,9 @@ private fun MainNavGraph() {
                 .getStateFlow(PROFILE_UPDATED_RESULT_KEY, false)
                 .collectAsStateWithLifecycle()
             MainTabScreen(
+                isLoggedIn = isLoggedIn,
                 onStartDiagnosis = { navController.navigate(PropensityRoute()) },
+                onNavigateToSignin = { navController.navigate(SigninRoute) },
                 onNavigateToSavedCourseDetail = { savedCourseId ->
                     navController.navigate(SavedCourseDetailRoute(savedCourseId))
                 },
@@ -116,12 +119,15 @@ private fun MainNavGraph() {
                 onNavigateToLicenses = { navController.navigate(LicensesRoute) },
                 onNavigateToTerms = { navController.navigate(TermsRoute) },
                 onNavigateToPrivacy = { navController.navigate(PrivacyRoute) },
+                onNavigateToPolicyList = { navController.navigate(PolicyListRoute) },
+                onNavigateToCourseDetail = { courseId -> navController.navigate(CourseDetailRoute(courseId)) },
                 profileUpdated = profileUpdated,
                 onProfileUpdatedConsumed = {
                     backStackEntry.savedStateHandle[PROFILE_UPDATED_RESULT_KEY] = false
                 },
             )
         }
+        policyListScreen(onBack = navController::popBackStack)
         editProfileScreen(
             onBack = navController::popBackStack,
             onSaved = {
@@ -169,13 +175,6 @@ private fun MainNavGraph() {
                 navController.popBackStack()
             },
         )
-    }
-}
-
-@Composable
-private fun AuthNavGraph() {
-    val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = OnboardingRoute) {
         signinScreen(
             navController = navController,
             onBack = navController::popBackStack,

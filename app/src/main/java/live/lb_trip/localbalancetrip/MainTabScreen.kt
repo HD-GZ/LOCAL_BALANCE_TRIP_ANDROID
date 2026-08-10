@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +37,9 @@ private enum class MainTab {
 
 @Composable
 internal fun MainTabScreen(
+    isLoggedIn: Boolean,
     onStartDiagnosis: () -> Unit,
+    onNavigateToSignin: () -> Unit,
     onNavigateToSavedCourseDetail: (Long) -> Unit,
     onSavedAllClick: () -> Unit,
     onNavigateToSavedCourses: () -> Unit,
@@ -45,6 +48,8 @@ internal fun MainTabScreen(
     onNavigateToLicenses: () -> Unit,
     onNavigateToTerms: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
+    onNavigateToPolicyList: () -> Unit,
+    onNavigateToCourseDetail: (Long) -> Unit,
     profileUpdated: Boolean,
     onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -53,6 +58,10 @@ internal fun MainTabScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val view = LocalView.current
     val activity = LocalActivity.current
+
+    LaunchedEffect(isLoggedIn) {
+        if (!isLoggedIn) selectedTab = MainTab.HOME
+    }
 
     if (activity != null) {
         SideEffect {
@@ -90,7 +99,9 @@ internal fun MainTabScreen(
                         label = myInfoTabLabel,
                         icon = Icons.Outlined.Person,
                         selected = selectedTab == MainTab.MY_INFO,
-                        onClick = { selectedTab = MainTab.MY_INFO },
+                        onClick = {
+                            if (isLoggedIn) selectedTab = MainTab.MY_INFO else onNavigateToSignin()
+                        },
                     ),
                 ),
             )
@@ -101,8 +112,11 @@ internal fun MainTabScreen(
         when (selectedTab) {
             MainTab.HOME -> HomeTabContent(
                 onStartDiagnosisClick = onStartDiagnosis,
+                onNavigateToSignin = onNavigateToSignin,
                 onSavedAllClick = onSavedAllClick,
                 onCourseClick = onNavigateToSavedCourseDetail,
+                onPopularCourseClick = onNavigateToCourseDetail,
+                onPolicyAllClick = onNavigateToPolicyList,
                 snackbarHostState = snackbarHostState,
                 modifier = Modifier.padding(innerPadding),
             )
