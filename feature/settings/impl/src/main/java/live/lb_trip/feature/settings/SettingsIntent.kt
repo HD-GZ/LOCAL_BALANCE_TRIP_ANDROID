@@ -10,4 +10,7 @@ sealed interface SettingsIntent {
     data object RetakeDiagnosisClick : SettingsIntent
     data object ProfileUpdated : SettingsIntent
     data object LogoutClick : SettingsIntent
+    data object GuestLoginClick : SettingsIntent
+    data object DismissAuthPrompt : SettingsIntent
+    data object ConfirmAuthPrompt : SettingsIntent
 }

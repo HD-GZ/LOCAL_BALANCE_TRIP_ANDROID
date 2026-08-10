@@ -1,6 +1,5 @@
 package live.lb_trip.feature.settings
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,30 +8,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.feature.settings.components.SettingsAuthPromptDialog
+import live.lb_trip.feature.settings.components.SettingsGuestProfileHeader
 import live.lb_trip.feature.settings.components.SettingsLogoutGroup
 import live.lb_trip.feature.settings.components.SettingsMenuGroup
+import live.lb_trip.feature.settings.components.SettingsMenuItem
 import live.lb_trip.feature.settings.components.SettingsProfileHeader
 import live.lb_trip.feature.settings.components.SettingsSavedCoursesRow
 
@@ -44,6 +41,7 @@ fun MyInfoTabContent(
     onNavigateToLicenses: () -> Unit,
     onNavigateToTerms: () -> Unit,
     onNavigateToPrivacy: () -> Unit,
+    onNavigateToSignin: () -> Unit,
     profileUpdated: Boolean,
     onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
@@ -76,6 +74,7 @@ fun MyInfoTabContent(
                 SettingsSideEffect.NavigateToLicenses -> onNavigateToLicenses()
                 SettingsSideEffect.NavigateToTerms -> onNavigateToTerms()
                 SettingsSideEffect.NavigateToPrivacy -> onNavigateToPrivacy()
+                SettingsSideEffect.NavigateToSignin -> onNavigateToSignin()
                 SettingsSideEffect.ShowProfileUpdated -> launch { snackbarHostState.showSnackbar(profileUpdatedMessage) }
             }
         }
@@ -98,6 +97,13 @@ fun MyInfoTabContent(
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.BottomCenter),
+        )
+    }
+
+    if (state.showAuthPrompt) {
+        SettingsAuthPromptDialog(
+            onConfirm = { onIntent(SettingsIntent.ConfirmAuthPrompt) },
+            onDismiss = { onIntent(SettingsIntent.DismissAuthPrompt) },
         )
     }
 }
@@ -125,7 +131,8 @@ private fun MyInfoTabContentBody(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .padding(bottom = 22.dp),
     ) {
         if (state.isLoading) {
             Box(modifier = Modifier
@@ -134,48 +141,44 @@ private fun MyInfoTabContentBody(
                 CircularProgressIndicator(color = LbColors.Green)
             }
         } else {
-            SettingsProfileHeader(
-                name = state.name,
-                email = state.email,
-                onEditInfoClick = { onIntent(SettingsIntent.EditProfileClick) },
-                modifier = Modifier.background(Color.White),
-            )
-            HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-
-            SettingsSavedCoursesRow(
-                count = state.savedCoursesCount,
-                onClick = onNavigateToSavedCourses,
-                modifier = Modifier.padding(top = 16.dp),
-            )
+            if (state.isLoggedIn) {
+                SettingsProfileHeader(
+                    name = state.name,
+                    email = state.email,
+                    onEditInfoClick = { onIntent(SettingsIntent.EditProfileClick) },
+                    modifier = Modifier.padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 6.dp),
+                )
+                SettingsSavedCoursesRow(
+                    count = state.savedCoursesCount,
+                    onClick = onNavigateToSavedCourses,
+                )
+            } else {
+                SettingsGuestProfileHeader(
+                    onLoginClick = { onIntent(SettingsIntent.GuestLoginClick) },
+                    modifier = Modifier.padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 6.dp),
+                )
+            }
 
             SettingsMenuGroup(
                 label = stringResource(R.string.settings_group_label),
                 items = listOf(
-                    editInfoLabel to { onIntent(SettingsIntent.EditProfileClick) },
-                    retakeDiagnosisLabel to { onIntent(SettingsIntent.RetakeDiagnosisClick) },
-                    licensesLabel to { onIntent(SettingsIntent.LicensesClick) },
-                    termsLabel to { onIntent(SettingsIntent.TermsClick) },
-                    privacyLabel to { onIntent(SettingsIntent.PrivacyClick) },
-                    contactLabel to { onIntent(SettingsIntent.MenuItemClick(contactLabel)) },
+                    SettingsMenuItem(editInfoLabel) { onIntent(SettingsIntent.EditProfileClick) },
+                    SettingsMenuItem(retakeDiagnosisLabel) { onIntent(SettingsIntent.RetakeDiagnosisClick) },
+                    SettingsMenuItem(licensesLabel) { onIntent(SettingsIntent.LicensesClick) },
+                    SettingsMenuItem(termsLabel) { onIntent(SettingsIntent.TermsClick) },
+                    SettingsMenuItem(privacyLabel) { onIntent(SettingsIntent.PrivacyClick) },
+                    SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.MenuItemClick(contactLabel)) },
                 ),
                 versionName = versionName,
-                modifier = Modifier.padding(top = 22.dp),
+                modifier = Modifier.padding(top = 10.dp),
             )
 
-            SettingsLogoutGroup(
-                onLogoutClick = { onIntent(SettingsIntent.LogoutClick) },
-                modifier = Modifier.padding(top = 14.dp),
-            )
-
-            Text(
-                text = stringResource(R.string.settings_footer),
-                color = LbColors.Ink4,
-                fontSize = 11.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 22.dp),
-            )
+            if (state.isLoggedIn) {
+                SettingsLogoutGroup(
+                    onLogoutClick = { onIntent(SettingsIntent.LogoutClick) },
+                    modifier = Modifier.padding(top = 14.dp),
+                )
+            }
         }
     }
 }
@@ -184,7 +187,7 @@ private fun MyInfoTabContentBody(
 @Composable
 private fun SettingsScreenPreview() {
     MyInfoTabContentBody(
-        state = SettingsUiState(isLoading = false, name = "홍길동", email = "local@email.com", savedCoursesCount = 5),
+        state = SettingsUiState(isLoading = false, isLoggedIn = true, name = "홍길동", email = "local@email.com", savedCoursesCount = 5),
         onNavigateToSavedCourses = {},
         onIntent = {},
     )

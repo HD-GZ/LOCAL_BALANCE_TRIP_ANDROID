@@ -99,9 +99,7 @@ internal fun MainTabScreen(
                         label = myInfoTabLabel,
                         icon = Icons.Outlined.Person,
                         selected = selectedTab == MainTab.MY_INFO,
-                        onClick = {
-                            if (isLoggedIn) selectedTab = MainTab.MY_INFO else onNavigateToSignin()
-                        },
+                        onClick = { selectedTab = MainTab.MY_INFO },
                     ),
                 ),
             )
@@ -128,6 +126,7 @@ internal fun MainTabScreen(
                 onNavigateToLicenses = onNavigateToLicenses,
                 onNavigateToTerms = onNavigateToTerms,
                 onNavigateToPrivacy = onNavigateToPrivacy,
+                onNavigateToSignin = onNavigateToSignin,
                 profileUpdated = profileUpdated,
                 onProfileUpdatedConsumed = onProfileUpdatedConsumed,
                 modifier = Modifier.padding(innerPadding),

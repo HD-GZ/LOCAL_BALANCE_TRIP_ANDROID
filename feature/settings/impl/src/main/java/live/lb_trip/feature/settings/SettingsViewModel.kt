@@ -6,17 +6,21 @@ import javax.inject.Inject
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.usecase.ClearDistanceRecordingUseCase
 import live.lb_trip.domain.usecase.ClearSessionUseCase
 import live.lb_trip.domain.usecase.GetSavedCoursesUseCase
+import live.lb_trip.domain.usecase.GetTokensUseCase
 import live.lb_trip.domain.usecase.GetUserProfileUseCase
 import live.lb_trip.domain.usecase.LogoutUseCase
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
+    private val getTokensUseCase: GetTokensUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getSavedCoursesUseCase: GetSavedCoursesUseCase,
     private val logoutUseCase: LogoutUseCase,
@@ -25,28 +29,53 @@ class SettingsViewModel @Inject constructor(
 ) : BaseViewModel<SettingsUiState, SettingsIntent, SettingsSideEffect>(SettingsUiState()) {
 
     init {
-        viewModelScope.launch { load() }
+        viewModelScope.launch {
+            getTokensUseCase()
+                .map { it != null }
+                .distinctUntilChanged()
+                .collect { loggedIn -> load(loggedIn) }
+        }
     }
 
     override fun onIntent(intent: SettingsIntent) {
         when (intent) {
-            SettingsIntent.Retry -> viewModelScope.launch { load() }
+            SettingsIntent.Retry -> viewModelScope.launch { load(currentState.isLoggedIn) }
             is SettingsIntent.MenuItemClick -> postSideEffect(SettingsSideEffect.ShowUnavailableMessage(intent.label))
-            SettingsIntent.EditProfileClick -> postSideEffect(SettingsSideEffect.NavigateToEditProfile)
+            SettingsIntent.EditProfileClick -> handleAuthGatedClick(SettingsSideEffect.NavigateToEditProfile)
+            SettingsIntent.RetakeDiagnosisClick -> handleAuthGatedClick(SettingsSideEffect.NavigateToDiagnosis)
             SettingsIntent.LicensesClick -> postSideEffect(SettingsSideEffect.NavigateToLicenses)
             SettingsIntent.TermsClick -> postSideEffect(SettingsSideEffect.NavigateToTerms)
             SettingsIntent.PrivacyClick -> postSideEffect(SettingsSideEffect.NavigateToPrivacy)
-            SettingsIntent.RetakeDiagnosisClick -> postSideEffect(SettingsSideEffect.NavigateToDiagnosis)
             SettingsIntent.ProfileUpdated -> viewModelScope.launch {
-                load()
+                load(currentState.isLoggedIn)
                 postSideEffect(SettingsSideEffect.ShowProfileUpdated)
             }
             SettingsIntent.LogoutClick -> viewModelScope.launch { logout() }
+            SettingsIntent.GuestLoginClick -> postSideEffect(SettingsSideEffect.NavigateToSignin)
+            SettingsIntent.DismissAuthPrompt -> updateState { it.copy(showAuthPrompt = false) }
+            SettingsIntent.ConfirmAuthPrompt -> {
+                updateState { it.copy(showAuthPrompt = false) }
+                postSideEffect(SettingsSideEffect.NavigateToSignin)
+            }
         }
     }
 
-    private suspend fun load() {
-        updateState { it.copy(isLoading = true) }
+    private fun handleAuthGatedClick(sideEffect: SettingsSideEffect) {
+        if (currentState.isLoggedIn) {
+            postSideEffect(sideEffect)
+        } else {
+            updateState { it.copy(showAuthPrompt = true) }
+        }
+    }
+
+    private suspend fun load(loggedIn: Boolean) {
+        if (!loggedIn) {
+            updateState {
+                it.copy(isLoading = false, isLoggedIn = false, name = "", email = "", savedCoursesCount = 0)
+            }
+            return
+        }
+        updateState { it.copy(isLoading = true, isLoggedIn = true) }
         coroutineScope {
             val profileDeferred = async { getUserProfileUseCase() }
             val coursesDeferred = async { getSavedCoursesUseCase() }

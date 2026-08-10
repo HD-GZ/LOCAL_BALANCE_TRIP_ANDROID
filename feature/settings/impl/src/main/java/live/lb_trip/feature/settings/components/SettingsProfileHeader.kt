@@ -1,16 +1,20 @@
 package live.lb_trip.feature.settings.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,19 +43,23 @@ fun SettingsProfileHeader(
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 18.dp),
+            .clip(RoundedCornerShape(16.dp))
+            .background(LbColors.Paper)
+            .border(1.dp, LbColors.Line, RoundedCornerShape(16.dp))
+            .padding(horizontal = 14.dp, vertical = 13.dp),
     ) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .size(52.dp)
+                .size(46.dp)
                 .clip(CircleShape)
-                .background(LbColors.GreenTint),
+                .background(LbColors.GreenTint)
+                .border(1.dp, LbColors.GreenLine, CircleShape),
         ) {
             Text(
                 text = name.firstOrNull()?.toString().orEmpty(),
-                color = LbColors.GreenForest,
-                fontSize = 20.sp,
+                color = LbColors.Green,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
             )
         }
@@ -65,8 +73,8 @@ fun SettingsProfileHeader(
             Text(
                 text = email,
                 color = LbColors.Ink3,
-                fontSize = 12.5.sp,
-                modifier = Modifier.padding(top = 2.dp),
+                fontSize = 11.sp,
+                modifier = Modifier.padding(top = 3.dp),
             )
         }
         Row(
@@ -87,6 +95,66 @@ fun SettingsProfileHeader(
                 contentDescription = null,
                 tint = LbColors.Green,
                 modifier = Modifier.size(14.dp),
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsGuestProfileHeader(onLoginClick: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(LbColors.Paper)
+            .border(1.dp, LbColors.Line, RoundedCornerShape(16.dp))
+            .padding(horizontal = 14.dp, vertical = 13.dp),
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(46.dp)
+                .clip(CircleShape)
+                .background(LbColors.SurfaceSoft)
+                .border(1.dp, LbColors.Line, CircleShape),
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Person,
+                contentDescription = null,
+                tint = LbColors.Ink3,
+                modifier = Modifier.size(22.dp),
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(R.string.settings_guest_title),
+                color = LbColors.Ink,
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = stringResource(R.string.settings_guest_description),
+                color = LbColors.Ink3,
+                fontSize = 11.5.sp,
+                modifier = Modifier.padding(top = 1.dp),
+            )
+        }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .height(32.dp)
+                .clip(RoundedCornerShape(100.dp))
+                .background(LbColors.Green)
+                .clickable(onClick = onLoginClick)
+                .padding(horizontal = 13.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_guest_login_cta),
+                color = LbColors.Paper,
+                fontSize = 12.5.sp,
+                fontWeight = FontWeight.SemiBold,
             )
         }
     }

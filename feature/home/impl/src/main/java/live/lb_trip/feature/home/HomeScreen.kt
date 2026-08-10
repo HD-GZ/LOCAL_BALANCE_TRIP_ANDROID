@@ -105,7 +105,7 @@ fun HomeTabContent(
 
     HomeTabContentBody(
         state = state,
-        onDiagnosisClick = onStartDiagnosisClick,
+        onDiagnosisClick = { if (state.isLoggedIn) onStartDiagnosisClick() else onNavigateToSignin() },
         onNavigateToSignin = onNavigateToSignin,
         onSavedAllClick = onSavedAllClick,
         onPolicyAllClick = onPolicyAllClick,
@@ -160,7 +160,12 @@ private fun HomeTabContentBody(
         if (state.isDiagnosed && state.profileSummary != null) {
             HomeMyTypeSection(summary = state.profileSummary, imageLoader = imageLoader, onRetakeClick = onDiagnosisClick)
         } else if (!state.isTypeSectionLoading) {
-            HomeTypeStripSection(types = state.profileTypes, imageLoader = imageLoader, onStartClick = onDiagnosisClick)
+            HomeTypeStripSection(
+                types = state.profileTypes,
+                imageLoader = imageLoader,
+                isLoggedIn = state.isLoggedIn,
+                onStartClick = onDiagnosisClick,
+            )
         }
 
         HomeIncentiveSection(
@@ -347,6 +352,7 @@ internal fun HomeSectionHeader(
 private fun HomeTypeStripSection(
     types: ImmutableList<ProfileType>,
     imageLoader: ImageLoader,
+    isLoggedIn: Boolean,
     onStartClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -354,7 +360,9 @@ private fun HomeTypeStripSection(
     Column(modifier = modifier.fillMaxWidth()) {
         HomeSectionHeader(
             title = stringResource(R.string.home_type_section_title),
-            trailingLabel = stringResource(R.string.home_type_section_cta),
+            trailingLabel = stringResource(
+                if (isLoggedIn) R.string.home_type_section_cta else R.string.home_type_section_cta_guest,
+            ),
             onTrailingClick = onStartClick,
         )
         LazyRow(
