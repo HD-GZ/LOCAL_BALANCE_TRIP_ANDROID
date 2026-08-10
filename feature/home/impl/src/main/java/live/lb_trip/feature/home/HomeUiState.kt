@@ -54,5 +54,5 @@ fun List<RegionIncentives>.toIncentiveCards(): ImmutableList<HomeIncentiveCard> 
 sealed interface HomeSideEffect {
     data object ShowFeedLoadError : HomeSideEffect
     data class OpenUrl(val url: String) : HomeSideEffect
-    data object ShowRecommendedRegionUnavailable : HomeSideEffect
+    data class NavigateToRecommendedRegion(val regionId: Long, val regionName: String) : HomeSideEffect
 }

@@ -3,7 +3,9 @@ package live.lb_trip.data.repository
 import javax.inject.Inject
 import live.lb_trip.data.datasource.remote.HomeRemoteDataSource
 import live.lb_trip.data.mapper.toDomain
+import live.lb_trip.domain.exception.home.LbTripHomeException
 import live.lb_trip.domain.exception.propensity.LbTripPropensityException
+import live.lb_trip.domain.model.CourseDetail
 import live.lb_trip.domain.model.HeroItem
 import live.lb_trip.domain.model.HomeFeedItem
 import live.lb_trip.domain.model.PopularCourse
@@ -36,6 +38,13 @@ class HomeRepositoryImpl @Inject constructor(
 
     override suspend fun getPopularCourses(): Result<List<PopularCourse>> =
         suspendRunCatching { homeRemoteDataSource.getPopularCourses().toDomain() }
+
+    override suspend fun getPopularCourseDetail(courseId: Long): Result<CourseDetail> =
+        suspendRunCatching {
+            homeRemoteDataSource.getPopularCourseDetail(courseId).toDomain()
+        }.mapApiFailure {
+            on(404, "COURSE_NOT_FOUND") throws LbTripHomeException.CourseNotFoundException()
+        }
 
     override suspend fun getHomeFeed(): Result<List<HomeFeedItem>> =
         suspendRunCatching { homeRemoteDataSource.getHomeFeed().toDomain() }

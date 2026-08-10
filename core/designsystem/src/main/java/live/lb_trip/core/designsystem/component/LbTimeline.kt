@@ -43,6 +43,7 @@ fun LbTimeline(
     modifier: Modifier = Modifier,
     detailHeader: @Composable (Int) -> Unit = {},
     audioContent: (@Composable (Int) -> Unit)? = null,
+    detailExtraContent: (@Composable (Int) -> Unit)? = null,
     detailBottomPadding: Dp = 12.dp,
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
@@ -69,6 +70,7 @@ fun LbTimeline(
                     onToggle = { onToggle(index) },
                     detailHeader = { detailHeader(index) },
                     audioContent = audioContent?.let { content -> { content(index) } },
+                    detailExtraContent = detailExtraContent?.let { content -> { content(index) } },
                     detailBottomPadding = detailBottomPadding,
                 )
             }
@@ -86,6 +88,7 @@ private fun LbTimelineStopBlock(
     onToggle: () -> Unit,
     detailHeader: @Composable () -> Unit,
     audioContent: (@Composable () -> Unit)?,
+    detailExtraContent: (@Composable () -> Unit)?,
     detailBottomPadding: Dp,
 ) {
     Column(
@@ -139,6 +142,7 @@ private fun LbTimelineStopBlock(
                             stop.description?.let { description ->
                                 Text(text = description, color = LbColors.Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
                             }
+                            detailExtraContent?.invoke()
                             if (stop.hasAudioGuide) {
                                 Spacer(modifier = Modifier.padding(top = 9.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {

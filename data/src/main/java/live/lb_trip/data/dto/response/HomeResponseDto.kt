@@ -92,3 +92,12 @@ data class HomeFeedItemResponseDto(
     val imageUrl: String? = null,
     val subtitle: String? = null,
 )
+
+@Serializable
+data class PopularCourseDetailResponseDto(
+    val courseId: Long,
+    val regionName: String,
+    val title: String,
+    val places: List<PlaceResponseDto>,
+    val benefits: List<BenefitResponseDto> = emptyList(),
+)

@@ -1,4 +1,4 @@
-package live.lb_trip.feature.recommendation.components
+package live.lb_trip.core.designsystem.component
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -29,34 +29,31 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import kotlin.math.PI
 import kotlin.math.sin
-import live.lb_trip.feature.recommendation.R
+import live.lb_trip.core.designsystem.LbColors
 
 private val WaveformInactive = Color(0xFFA9CDB8)
 
 @Composable
-internal fun AudioMiniPlayer(
+fun LbAudioPlayer(
     isPlaying: Boolean,
     onPlayPauseClick: () -> Unit,
+    playContentDescription: String,
+    pauseContentDescription: String,
+    positionLabel: String,
     modifier: Modifier = Modifier,
-    positionLabel: String? = null,
 ) {
-    val playContentDescription = stringResource(R.string.recommendation_content_description_play)
-    val pauseContentDescription = stringResource(R.string.recommendation_content_description_pause)
-    val timePlaceholder = stringResource(R.string.recommendation_audio_time_placeholder)
-
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clip(CircleShape)
-            .background(GreenTint)
-            .border(1.dp, GreenLine, CircleShape)
+            .background(LbColors.GreenTint)
+            .border(1.dp, LbColors.GreenLine, CircleShape)
             .padding(start = 7.dp, end = 13.dp, top = 7.dp, bottom = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(11.dp),
@@ -65,7 +62,7 @@ internal fun AudioMiniPlayer(
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape)
-                .background(if (isPlaying) GreenDk else Green)
+                .background(if (isPlaying) LbColors.GreenDk else LbColors.Green)
                 .clickable(
                     onClickLabel = if (isPlaying) pauseContentDescription else playContentDescription,
                     role = Role.Button,
@@ -93,19 +90,15 @@ internal fun AudioMiniPlayer(
                 }
             }
         }
-        AudioWaveform(isPlaying = isPlaying, modifier = Modifier.weight(1f).height(24.dp))
-        Text(
-            text = positionLabel ?: timePlaceholder,
-            color = Green,
-            fontSize = 10.sp,
-        )
+        LbAudioWaveform(isPlaying = isPlaying, modifier = Modifier.weight(1f).height(24.dp))
+        Text(text = positionLabel, color = LbColors.Green, fontSize = 10.sp)
     }
 }
 
 private val WaveformHeights = listOf(42, 68, 54, 88, 60, 34, 80, 50, 64, 44, 84, 56, 30, 72, 60, 92, 48, 40, 74, 55)
 
 @Composable
-private fun AudioWaveform(isPlaying: Boolean, modifier: Modifier = Modifier) {
+private fun LbAudioWaveform(isPlaying: Boolean, modifier: Modifier = Modifier) {
     val phase = if (isPlaying) {
         val infiniteTransition = rememberInfiniteTransition(label = "waveform")
         val animatedPhase by infiniteTransition.animateFloat(
@@ -131,7 +124,7 @@ private fun AudioWaveform(isPlaying: Boolean, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight(fraction = (height / 100f) * pulse)
-                    .background(if (isPlaying || isOn) Green else WaveformInactive, RoundedCornerShape(2.dp)),
+                    .background(if (isPlaying || isOn) LbColors.Green else WaveformInactive, RoundedCornerShape(2.dp)),
             )
         }
     }
