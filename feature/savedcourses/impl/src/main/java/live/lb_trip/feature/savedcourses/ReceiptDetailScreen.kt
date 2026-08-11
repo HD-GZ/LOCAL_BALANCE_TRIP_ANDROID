@@ -1,31 +1,24 @@
 package live.lb_trip.feature.savedcourses
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
@@ -34,6 +27,13 @@ import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.navigation.NavigableSupportingPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,28 +41,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
-import coil3.compose.AsyncImage
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
-import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
@@ -123,7 +115,7 @@ internal fun ReceiptDetailScreen(
 
 private fun receiptImageFileName(): String = "lbt_receipt_${System.currentTimeMillis()}.png"
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun ReceiptDetailScreenContent(
     state: ReceiptDetailUiState,
@@ -133,6 +125,9 @@ private fun ReceiptDetailScreenContent(
     onIntent: (ReceiptDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    val isTwoPane = directive.maxHorizontalPartitions > 1
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -164,167 +159,21 @@ private fun ReceiptDetailScreenContent(
             return@Scaffold
         }
 
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(bottom = 14.dp)
-                    .clip(RoundedCornerShape(100.dp))
-                    .background(LbColors.GreenTint)
-                    .border(1.dp, LbColors.GreenLine, RoundedCornerShape(100.dp))
-                    .padding(horizontal = 12.dp, vertical = 6.dp),
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = null,
-                    tint = LbColors.Green,
-                    modifier = Modifier.size(15.dp),
-                )
-                Text(
-                    text = stringResource(R.string.savedcourses_receipt_detail_state_registered),
-                    color = LbColors.GreenDk,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 6.dp),
-                )
-            }
-
-            AsyncImage(
-                model = state.imageUrl,
-                contentDescription = null,
+        if (isTwoPane) {
+            ReceiptDetailTwoPaneBody(
+                state = state,
                 imageLoader = imageLoader,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 260.dp, max = 420.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(LbColors.SurfaceSoft)
-                    .border(1.dp, LbColors.Line, RoundedCornerShape(14.dp)),
+                directive = directive,
+                onIntent = onIntent,
+                modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
             )
-
-            if (state.isEditing) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(14.dp),
-                    modifier = Modifier.padding(top = 18.dp),
-                ) {
-                    LbInputField(
-                        value = state.editMerchantName,
-                        onValueChange = { onIntent(ReceiptDetailIntent.MerchantNameChanged(it)) },
-                        label = stringResource(R.string.savedcourses_receipt_detail_field_merchant),
-                        placeholder = stringResource(R.string.savedcourses_receipt_detail_field_merchant),
-                        required = true,
-                    )
-                    LbInputField(
-                        value = state.editAmount,
-                        onValueChange = { onIntent(ReceiptDetailIntent.AmountChanged(it)) },
-                        label = stringResource(R.string.savedcourses_receipt_detail_field_amount),
-                        placeholder = "0",
-                        required = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    )
-                    LbInputField(
-                        value = state.editPaidDate,
-                        onValueChange = { onIntent(ReceiptDetailIntent.PaidDateChanged(it)) },
-                        label = stringResource(R.string.savedcourses_receipt_detail_field_date),
-                        placeholder = "YYYY-MM-DD",
-                        required = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.savedcourses_receipt_detail_edit_hint),
-                    color = LbColors.Ink2,
-                    fontSize = 11.5.sp,
-                    modifier = Modifier.padding(top = 10.dp, bottom = 18.dp),
-                )
-                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    LbButton(
-                        onClick = { onIntent(ReceiptDetailIntent.SaveClicked) },
-                        enabled = !state.isSaving,
-                        colors = LbButtonDefaults.greenColors(),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.savedcourses_receipt_detail_save),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
-                    LbButton(
-                        onClick = { onIntent(ReceiptDetailIntent.EditCancelled) },
-                        enabled = !state.isSaving,
-                        colors = LbButtonDefaults.whiteColors(),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.savedcourses_receipt_detail_cancel),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
-                }
-            } else {
-                Column(
-                    modifier = Modifier
-                        .padding(top = 18.dp, bottom = 18.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(14.dp))
-                        .background(LbColors.Paper)
-                        .border(1.dp, LbColors.Line, RoundedCornerShape(14.dp)),
-                ) {
-                    ReceiptDetailRow(
-                        label = stringResource(R.string.savedcourses_receipt_detail_field_merchant),
-                        value = state.merchantName,
-                    )
-                    HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-                    ReceiptDetailRow(
-                        label = stringResource(R.string.savedcourses_receipt_detail_field_amount),
-                        value = stringResource(R.string.savedcourses_detail_receipt_amount_template, state.amount.toIntOrNull() ?: 0),
-                    )
-                    HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-                    ReceiptDetailRow(
-                        label = stringResource(R.string.savedcourses_receipt_detail_field_date),
-                        value = state.paidDate,
-                    )
-                }
-                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                    LbButton(
-                        onClick = { onIntent(ReceiptDetailIntent.DownloadClicked) },
-                        colors = LbButtonDefaults.whiteColors(),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_download),
-                            contentDescription = null,
-                            tint = LbColors.Ink,
-                            modifier = Modifier.size(17.dp),
-                        )
-                        Text(
-                            text = stringResource(R.string.savedcourses_receipt_detail_download),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
-                    LbButton(
-                        onClick = { onIntent(ReceiptDetailIntent.DeleteClicked) },
-                        colors = receiptDetailDangerColors(),
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = stringResource(R.string.savedcourses_receipt_detail_delete),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                        )
-                    }
-                }
-            }
+        } else {
+            ReceiptDetailCompactBody(
+                state = state,
+                imageLoader = imageLoader,
+                onIntent = onIntent,
+                modifier = Modifier.padding(innerPadding),
+            )
         }
     }
 
@@ -337,17 +186,69 @@ private fun ReceiptDetailScreenContent(
 }
 
 @Composable
-private fun receiptDetailDangerColors() = ButtonDefaults.buttonColors(
-    containerColor = LbColors.DangerStrong.copy(alpha = 0.08f),
-    contentColor = LbColors.DangerStrong,
-)
-
-@Composable
-private fun ReceiptDetailRow(label: String, value: String, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 13.dp)) {
-        Text(text = label, color = LbColors.Ink3, fontSize = 12.sp, modifier = Modifier.width(72.dp))
-        Text(text = value, color = LbColors.Ink, fontSize = 13.sp, modifier = Modifier.weight(1f))
+private fun ReceiptDetailCompactBody(
+    state: ReceiptDetailUiState,
+    imageLoader: ImageLoader,
+    onIntent: (ReceiptDetailIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+    ) {
+        ReceiptStatusBadge()
+        ReceiptImage(
+            imageUrl = state.imageUrl,
+            imageLoader = imageLoader,
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 260.dp, max = 420.dp),
+        )
+        ReceiptInfoContent(state = state, onIntent = onIntent)
     }
+}
+
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun ReceiptDetailTwoPaneBody(
+    state: ReceiptDetailUiState,
+    imageLoader: ImageLoader,
+    directive: PaneScaffoldDirective,
+    onIntent: (ReceiptDetailIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = directive)
+
+    NavigableSupportingPaneScaffold(
+        navigator = navigator,
+        modifier = modifier,
+        mainPane = {
+            AnimatedPane {
+                Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+                    ReceiptStatusBadge()
+                    ReceiptImage(
+                        imageUrl = state.imageUrl,
+                        imageLoader = imageLoader,
+                        modifier = Modifier.fillMaxWidth().weight(1f),
+                    )
+                }
+            }
+        },
+        supportingPane = {
+            AnimatedPane {
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                ) {
+                    ReceiptInfoContent(state = state, onIntent = onIntent)
+                }
+            }
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
