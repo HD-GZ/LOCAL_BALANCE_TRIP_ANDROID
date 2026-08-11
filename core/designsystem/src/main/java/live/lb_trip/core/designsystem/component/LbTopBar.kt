@@ -45,8 +45,10 @@ private val TightLineHeightTextStyle = TextStyle(
 private val CompactBarHeight = 44.dp
 
 /**
- * Shrinks to [CompactBarHeight] automatically on compact-height windows (e.g. phone landscape),
- * where a full-height Material [TopAppBar] would eat a disproportionate share of the screen.
+ * Shrinks to [CompactBarHeight] automatically on compact-height windows (e.g. phone landscape) and
+ * on medium-or-wider windows (tablet/unfolded, where a nav rail replaces the bottom bar) — in both
+ * cases a full-height Material [TopAppBar] would eat a disproportionate share of the screen. Only
+ * plain phone-portrait windows keep the standard taller bar.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,8 +64,10 @@ fun LbTopBar(
     actions: @Composable RowScope.() -> Unit = {},
     showBackButton: Boolean = true,
 ) {
-    val isCompactHeight = !currentWindowAdaptiveInfo().windowSizeClass
-        .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
+    val isHeightCompact = !windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+    val isWidthMediumOrWider = windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val useCompactBar = isHeightCompact || isWidthMediumOrWider
 
     val titleContent: @Composable () -> Unit = {
         if (title != null) {
@@ -100,7 +104,7 @@ fun LbTopBar(
         }
     }
 
-    if (isCompactHeight) {
+    if (useCompactBar) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
