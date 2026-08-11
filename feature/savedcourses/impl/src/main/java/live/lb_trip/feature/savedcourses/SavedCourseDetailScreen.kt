@@ -48,12 +48,11 @@ import java.util.Date
 import java.util.Locale
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
-import live.lb_trip.core.contract.InstagramStoryContract
-import live.lb_trip.core.contract.InstagramStoryData
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.util.ImageCompressLevel
 import live.lb_trip.core.util.drawInstagramSticker
 import live.lb_trip.core.util.getBitmapFromUrl
+import live.lb_trip.core.util.instagramStoryShare
 import live.lb_trip.core.util.kakaoShare
 import live.lb_trip.core.util.kakaoShareReportFeed
 import live.lb_trip.core.util.save
@@ -198,8 +197,6 @@ private fun SavedCourseDetailScreenContent(
         formatter.format(Date())
     }
     val textMeasurer = rememberTextMeasurer()
-    val storyShareLauncher = rememberLauncherForActivityResult(InstagramStoryContract()) { }
-
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -326,7 +323,7 @@ private fun SavedCourseDetailScreenContent(
                         textMeasurer
                     ).asAndroidBitmap().toContentUri(context, ImageCompressLevel.MEDIUM)
 
-                    storyShareLauncher.launch(InstagramStoryData(uri, sticker))
+                    instagramStoryShare(context, uri, sticker)
                     setLoading(false)
                 }
             }
