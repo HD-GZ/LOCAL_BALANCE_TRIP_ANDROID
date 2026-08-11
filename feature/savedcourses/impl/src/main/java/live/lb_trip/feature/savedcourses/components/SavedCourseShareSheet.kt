@@ -40,6 +40,7 @@ internal fun SavedCourseShareSheet(
     onSaveImageClick: () -> Unit,
     onShareClick: () -> Unit,
     onKakaoShareClick: () -> Unit,
+    onInstagramStoryClick: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
@@ -71,6 +72,12 @@ internal fun SavedCourseShareSheet(
                     icon = ImageVector.vectorResource(DesignSystemR.drawable.ic_kakaotalk),
                     label = stringResource(R.string.savedcourses_detail_share_kakaotalk),
                     onClick = onKakaoShareClick,
+                )
+                ShareChannelItem(
+                    modifier = Modifier.weight(1f),
+                    icon = ImageVector.vectorResource(DesignSystemR.drawable.ic_story),
+                    label = stringResource(R.string.savedcourses_detail_share_story),
+                    onClick = onInstagramStoryClick,
                 )
                 ShareChannelItem(
                     modifier = Modifier.weight(1f),

@@ -30,10 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -41,10 +43,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
+import live.lb_trip.core.contract.InstagramStoryContract
+import live.lb_trip.core.contract.InstagramStoryData
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.util.ImageCompressLevel
+import live.lb_trip.core.util.drawInstagramSticker
 import live.lb_trip.core.util.getBitmapFromUrl
 import live.lb_trip.core.util.kakaoShare
 import live.lb_trip.core.util.kakaoShareReportFeed
@@ -185,6 +193,13 @@ private fun SavedCourseDetailScreenContent(
     val reportAmountLabel =
         stringResource(R.string.savedcourses_detail_receipt_amount_template, state.reportTotalSpentAmount)
     val reportDistanceValueLabel = rememberReportDistanceValueLabel(state.reportDistanceWalkedMeters)
+    val currentDate = remember {
+        val formatter = SimpleDateFormat("yyyy. MM. dd", Locale.getDefault())
+        formatter.format(Date())
+    }
+    val textMeasurer = rememberTextMeasurer()
+    val storyShareLauncher = rememberLauncherForActivityResult(InstagramStoryContract()) { }
+
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -265,6 +280,10 @@ private fun SavedCourseDetailScreenContent(
         }
     }
 
+    val distanceLabel = stringResource(R.string.savedcources_detail_story_distance_label)
+    val dateLabel = stringResource(R.string.savedcources_detail_story_date_label)
+    val appName = stringResource(R.string.savedcources_detail_story_app_name)
+
     if (showShareSheet) {
         SavedCourseShareSheet(
             onDismiss = { showShareSheet = false },
@@ -290,6 +309,26 @@ private fun SavedCourseDetailScreenContent(
                 showShareSheet = false
                 val feed = kakaoShareReportFeed(state.title, state.username, state.reportImageUrl)
                 kakaoShare(context, feed)
+            },
+            onInstagramStoryClick = {
+                showShareSheet = false
+                setLoading(true)
+                coroutineScope.launch {
+                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)
+                        ?.toContentUri(context, ImageCompressLevel.HIGH)
+                    val sticker = drawInstagramSticker(
+                        state.title,
+                        "${state.reportDistanceWalkedMeters}",
+                        distanceLabel,
+                        currentDate,
+                        dateLabel,
+                        appName,
+                        textMeasurer
+                    ).asAndroidBitmap().toContentUri(context, ImageCompressLevel.MEDIUM)
+
+                    storyShareLauncher.launch(InstagramStoryData(uri, sticker))
+                    setLoading(false)
+                }
             }
         )
     }

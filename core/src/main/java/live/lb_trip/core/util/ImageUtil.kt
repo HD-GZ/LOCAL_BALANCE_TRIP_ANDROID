@@ -67,8 +67,8 @@ suspend fun Bitmap.toContentUri(context: Context, compressLevel: ImageCompressLe
             FileOutputStream(imageFile).use {
                 when (compressLevel) {
                     ImageCompressLevel.LOW -> compress(Bitmap.CompressFormat.JPEG, 10, it)
+                    ImageCompressLevel.MEDIUM -> compress(Bitmap.CompressFormat.PNG, 10, it)
                     ImageCompressLevel.HIGH -> compress(Bitmap.CompressFormat.PNG, 100, it)
-
                 }
             }
         } catch (e: IOException) {
@@ -81,5 +81,6 @@ suspend fun Bitmap.toContentUri(context: Context, compressLevel: ImageCompressLe
 
 enum class ImageCompressLevel {
     LOW,
+    MEDIUM,
     HIGH
 }
