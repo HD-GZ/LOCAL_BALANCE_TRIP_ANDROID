@@ -7,7 +7,9 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationItemColors
 import androidx.compose.material3.Text
+import androidx.compose.material3.WideNavigationRailDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaults
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
@@ -43,6 +45,11 @@ fun LbNavigationSuiteScaffold(
         modifier = modifier,
         navigationSuiteType = navigationSuiteType,
         containerColor = Color.White,
+        navigationSuiteColors = NavigationSuiteDefaults.colors(
+            shortNavigationBarContainerColor = LbColors.Paper,
+            navigationBarContainerColor = LbColors.Paper,
+            wideNavigationRailColors = WideNavigationRailDefaults.colors(containerColor = LbColors.Paper),
+        ),
         navigationItemVerticalArrangement = Arrangement.Center,
         content = content,
     )
