@@ -47,6 +47,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.util.ImageCompressLevel
@@ -312,19 +313,24 @@ private fun SavedCourseDetailScreenContent(
                 showShareSheet = false
                 setLoading(true)
                 coroutineScope.launch {
-                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)
-                        ?.toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}")
-                    val sticker = drawInstagramSticker(
-                        state.title,
-                        "${state.reportDistanceWalkedMeters}",
-                        distanceLabel,
-                        currentDate,
-                        dateLabel,
-                        appName,
-                        textMeasurer
-                    ).asAndroidBitmap().toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}_sticker")
+                    val uri = async {
+                        state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)
+                            ?.toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}")
+                    }
+                    val sticker = async {
+                        drawInstagramSticker(
+                            state.title,
+                            "${state.reportDistanceWalkedMeters ?: 0}",
+                            distanceLabel,
+                            currentDate,
+                            dateLabel,
+                            appName,
+                            textMeasurer
+                        ).asAndroidBitmap()
+                            .toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}_sticker")
+                    }
 
-                    instagramStoryShare(context, uri, sticker)
+                    instagramStoryShare(context, uri.await(), sticker.await())
                     setLoading(false)
                 }
             }
