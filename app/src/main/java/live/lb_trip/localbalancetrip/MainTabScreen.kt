@@ -1,20 +1,26 @@
 package live.lb_trip.localbalancetrip
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -24,6 +30,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.core.view.WindowCompat
+import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBottomTabItem
 import live.lb_trip.core.designsystem.component.LbBrandTopBar
@@ -54,6 +61,8 @@ internal fun MainTabScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val view = LocalView.current
     val activity = LocalActivity.current
+    val navSuiteState = rememberNavigationSuiteScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(isLoggedIn) {
         if (!isLoggedIn) selectedTab = MainTab.HOME
@@ -73,6 +82,7 @@ internal fun MainTabScreen(
 
     LbNavigationSuiteScaffold(
         modifier = modifier,
+        state = navSuiteState,
         items = listOf(
             LbBottomTabItem(
                 label = mainTabLabel,
@@ -102,6 +112,18 @@ internal fun MainTabScreen(
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             containerColor = LbColors.ScreenBg,
+            // The outer LbNavigationSuiteScaffold already lays out its bar as a dedicated region
+            // (content never sits under it), so this Scaffold never needs to reserve navigationBars
+            // itself. It only relied on the nav suite's ambient-inset bookkeeping for that, which
+            // does not reliably re-zero after the bar animates through hide()/show() — reserving it
+            // here too then double-pads content with a stale, already-handled gap.
+            // My Info additionally has no outer top bar of its own, so its status bar inset is left
+            // untouched too, letting LbTopBar/each detail screen's own Scaffold paint behind it directly.
+            contentWindowInsets = if (selectedTab == MainTab.MY_INFO) {
+                WindowInsets(0, 0, 0, 0)
+            } else {
+                ScaffoldDefaults.contentWindowInsets.exclude(WindowInsets.navigationBars)
+            },
         ) { innerPadding ->
             when (selectedTab) {
                 MainTab.HOME -> HomeTabContent(
@@ -126,6 +148,11 @@ internal fun MainTabScreen(
                     modifier = Modifier
                         .padding(innerPadding)
                         .consumeWindowInsets(innerPadding),
+                    onDetailPaneVisibleChange = { isDetailShown ->
+                        coroutineScope.launch {
+                            if (isDetailShown) navSuiteState.hide() else navSuiteState.show()
+                        }
+                    },
                 )
             }
         }

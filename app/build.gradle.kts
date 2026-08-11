@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.naver.map.compose)
     implementation(libs.kakao.common)
