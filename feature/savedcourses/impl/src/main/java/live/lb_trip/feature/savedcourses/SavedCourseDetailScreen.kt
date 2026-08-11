@@ -298,7 +298,7 @@ private fun SavedCourseDetailScreenContent(
                 showShareSheet = false
                 setLoading(true)
                 coroutineScope.launch {
-                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)?.toContentUri(context, ImageCompressLevel.LOW)
+                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)?.toContentUri(context, ImageCompressLevel.JPEG_LOW, "lbt_${state.savedCourseId}")
                     setLoading(false)
                     shareReport(context, shareDescription, uri)
                 }
@@ -313,7 +313,7 @@ private fun SavedCourseDetailScreenContent(
                 setLoading(true)
                 coroutineScope.launch {
                     val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)
-                        ?.toContentUri(context, ImageCompressLevel.HIGH)
+                        ?.toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}")
                     val sticker = drawInstagramSticker(
                         state.title,
                         "${state.reportDistanceWalkedMeters}",
@@ -322,7 +322,7 @@ private fun SavedCourseDetailScreenContent(
                         dateLabel,
                         appName,
                         textMeasurer
-                    ).asAndroidBitmap().toContentUri(context, ImageCompressLevel.MEDIUM)
+                    ).asAndroidBitmap().toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}_sticker")
 
                     instagramStoryShare(context, uri, sticker)
                     setLoading(false)

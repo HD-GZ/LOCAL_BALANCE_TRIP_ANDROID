@@ -54,33 +54,49 @@ suspend fun Bitmap.save(context: Context): Uri? = withContext(Dispatchers.IO) {
     return@withContext uri
 }
 
-suspend fun Bitmap.toContentUri(context: Context, compressLevel: ImageCompressLevel): Uri? =
+private fun String.fileNameFormatter(compressLevel: ImageCompressLevel): String {
+    return when (compressLevel) {
+        ImageCompressLevel.JPEG_LOW -> "${this}_${compressLevel}.jpeg"
+        ImageCompressLevel.PNG -> "${this}_${compressLevel}.png"
+        ImageCompressLevel.HIGH_QUALITY -> "${this}_${compressLevel}.png"
+    }
+}
+
+suspend fun Bitmap.toContentUri(
+    context: Context,
+    compressLevel: ImageCompressLevel,
+    fileName: String = "cache_image_${System.currentTimeMillis()}"
+): Uri? =
     withContext(Dispatchers.IO) {
         val cachePath = File(context.cacheDir, "cache_image")
         if (!cachePath.exists()) {
             cachePath.mkdirs()
         }
 
-        val imageFile = File(cachePath, "cache_image_${System.currentTimeMillis()}.jpg")
+        val imageFile = File(cachePath, fileName.fileNameFormatter(compressLevel))
+        val authority = "${context.packageName}.fileprovider"
+
+        if (imageFile.exists()) {
+            return@withContext FileProvider.getUriForFile(context, authority, imageFile)
+        }
 
         try {
             FileOutputStream(imageFile).use {
                 when (compressLevel) {
-                    ImageCompressLevel.LOW -> compress(Bitmap.CompressFormat.JPEG, 10, it)
-                    ImageCompressLevel.MEDIUM -> compress(Bitmap.CompressFormat.PNG, 10, it)
-                    ImageCompressLevel.HIGH -> compress(Bitmap.CompressFormat.PNG, 100, it)
+                    ImageCompressLevel.JPEG_LOW -> compress(Bitmap.CompressFormat.JPEG, 10, it)
+                    ImageCompressLevel.PNG -> compress(Bitmap.CompressFormat.PNG, 10, it)
+                    ImageCompressLevel.HIGH_QUALITY -> compress(Bitmap.CompressFormat.PNG, 100, it)
                 }
             }
         } catch (e: IOException) {
             Log.e("Bitmap", "Failed to convert Bitmap to Uri: $e")
         }
 
-        val authority = "${context.packageName}.fileprovider"
         return@withContext FileProvider.getUriForFile(context, authority, imageFile)
     }
 
 enum class ImageCompressLevel {
-    LOW,
-    MEDIUM,
-    HIGH
+    JPEG_LOW,
+    PNG,
+    HIGH_QUALITY
 }
