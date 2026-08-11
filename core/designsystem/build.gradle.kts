@@ -6,3 +6,10 @@ plugins {
 android {
     namespace = "live.lb_trip.core.designsystem"
 }
+
+dependencies {
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.compose.material3.adaptive)
+    api(libs.androidx.compose.material3.adaptive.layout)
+    api(libs.androidx.compose.material3.adaptive.navigation)
+}

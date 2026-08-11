@@ -31,6 +31,7 @@ fun EditProfileScreen(
     onBack: () -> Unit,
     onSaved: () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
     viewModel: EditProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,6 +55,7 @@ fun EditProfileScreen(
         onIntent = viewModel::onIntent,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier,
+        showBackButton = showBackButton,
     )
 }
 
@@ -64,6 +66,7 @@ private fun EditProfileScreenContent(
     onIntent: (EditProfileIntent) -> Unit,
     snackbarHost: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
 ) {
     var showWithdrawDialog by remember { mutableStateOf(false) }
 
@@ -75,6 +78,7 @@ private fun EditProfileScreenContent(
                     backContentDescription = stringResource(R.string.edit_profile_back_cd),
                     title = stringResource(R.string.edit_profile_title),
                     containerColor = LbColors.Paper,
+                    showBackButton = showBackButton,
                 )
             },
             bottomBar = {

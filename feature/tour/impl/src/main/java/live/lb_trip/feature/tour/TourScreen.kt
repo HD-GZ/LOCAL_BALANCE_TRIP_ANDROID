@@ -1,16 +1,30 @@
 package live.lb_trip.feature.tour
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.AnimatedPane
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
+import androidx.compose.material3.adaptive.navigation.NavigableSupportingPaneScaffold
+import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +41,7 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
@@ -37,7 +52,7 @@ import live.lb_trip.feature.tour.components.TourProgressChip
 import live.lb_trip.feature.tour.location.rememberActivityRecognitionPermissionGranted
 import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 internal fun TourScreen(
     onBack: () -> Unit,
@@ -49,6 +64,8 @@ internal fun TourScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scaffoldState = rememberBottomSheetScaffoldState()
+    val directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
+    val isTwoPane = directive.maxHorizontalPartitions > 1
     val retryActionLabel = stringResource(R.string.tour_action_retry)
     val courseNotFoundMessage = stringResource(R.string.tour_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.tour_error_empty_places)
@@ -58,30 +75,22 @@ internal fun TourScreen(
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
-            when (effect) {
-                is TourSideEffect.ShowLoadError -> launch {
-                    val message = when (effect.reason) {
-                        TourLoadErrorReason.CourseNotFound -> courseNotFoundMessage
-                        TourLoadErrorReason.EmptyPlaces -> emptyPlacesMessage
-                        TourLoadErrorReason.TourStartFailed -> tourStartFailedMessage
-                        TourLoadErrorReason.Unknown -> genericLoadErrorMessage
-                    }
-                    val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) {
-                        onIntent(TourIntent.Retry)
-                    }
-                }
-
-                TourSideEffect.ShowEndTourError -> launch {
-                    val result = snackbarHostState.showSnackbar(message = endTourErrorMessage, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) {
-                        onIntent(TourIntent.EndTourClicked)
-                    }
-                }
-
-                TourSideEffect.NavigateBack -> onTourFinished()
-                TourSideEffect.CollapseSheet -> launch { scaffoldState.bottomSheetState.partialExpand() }
-            }
+            handleTourSideEffect(
+                effect = effect,
+                isTwoPane = isTwoPane,
+                snackbarHostState = snackbarHostState,
+                scaffoldState = scaffoldState,
+                messages = TourSideEffectMessages(
+                    retryActionLabel = retryActionLabel,
+                    courseNotFound = courseNotFoundMessage,
+                    emptyPlaces = emptyPlacesMessage,
+                    tourStartFailed = tourStartFailedMessage,
+                    unknown = genericLoadErrorMessage,
+                    endTourError = endTourErrorMessage,
+                ),
+                onIntent = onIntent,
+                onTourFinished = onTourFinished,
+            )
         }
     }
 
@@ -114,15 +123,100 @@ internal fun TourScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         scaffoldState = scaffoldState,
+        directive = directive,
+        isTwoPane = isTwoPane,
         onBack = onBack,
         onIntent = onIntent,
         modifier = modifier,
     )
 }
 
+private data class TourSideEffectMessages(
+    val retryActionLabel: String,
+    val courseNotFound: String,
+    val emptyPlaces: String,
+    val tourStartFailed: String,
+    val unknown: String,
+    val endTourError: String,
+)
+
 @OptIn(ExperimentalMaterial3Api::class)
+private suspend fun CoroutineScope.handleTourSideEffect(
+    effect: TourSideEffect,
+    isTwoPane: Boolean,
+    snackbarHostState: SnackbarHostState,
+    scaffoldState: BottomSheetScaffoldState,
+    messages: TourSideEffectMessages,
+    onIntent: (TourIntent) -> Unit,
+    onTourFinished: () -> Unit,
+) {
+    when (effect) {
+        is TourSideEffect.ShowLoadError -> launch {
+            val message = when (effect.reason) {
+                TourLoadErrorReason.CourseNotFound -> messages.courseNotFound
+                TourLoadErrorReason.EmptyPlaces -> messages.emptyPlaces
+                TourLoadErrorReason.TourStartFailed -> messages.tourStartFailed
+                TourLoadErrorReason.Unknown -> messages.unknown
+            }
+            val result = snackbarHostState.showSnackbar(message = message, actionLabel = messages.retryActionLabel)
+            if (result == SnackbarResult.ActionPerformed) {
+                onIntent(TourIntent.Retry)
+            }
+        }
+
+        TourSideEffect.ShowEndTourError -> launch {
+            val result = snackbarHostState.showSnackbar(
+                message = messages.endTourError,
+                actionLabel = messages.retryActionLabel,
+            )
+            if (result == SnackbarResult.ActionPerformed) {
+                onIntent(TourIntent.EndTourClicked)
+            }
+        }
+
+        TourSideEffect.NavigateBack -> onTourFinished()
+        TourSideEffect.CollapseSheet -> if (!isTwoPane) {
+            launch { scaffoldState.bottomSheetState.partialExpand() }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 private fun TourScreenContent(
+    state: TourUiState,
+    snackbarHostState: SnackbarHostState,
+    scaffoldState: BottomSheetScaffoldState,
+    directive: PaneScaffoldDirective,
+    isTwoPane: Boolean,
+    onBack: () -> Unit,
+    onIntent: (TourIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (isTwoPane) {
+        TourTwoPaneContent(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            directive = directive,
+            onBack = onBack,
+            onIntent = onIntent,
+            modifier = modifier,
+        )
+    } else {
+        TourCompactContent(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            scaffoldState = scaffoldState,
+            onBack = onBack,
+            onIntent = onIntent,
+            modifier = modifier,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TourCompactContent(
     state: TourUiState,
     snackbarHostState: SnackbarHostState,
     scaffoldState: BottomSheetScaffoldState,
@@ -137,44 +231,105 @@ private fun TourScreenContent(
         topBar = { TourHeader(regionName = state.regionName, title = state.title, onBackClick = onBack) },
         sheetPeekHeight = SheetPeekHeight,
         sheetContainerColor = LbColors.Paper,
-        sheetContent = {
-            TourBottomSheetContent(
-                stops = state.stops,
-                currentStopIndex = state.currentStopIndex,
-                progressStopIndex = state.furthestStopIndex,
-                onEndTourClick = { onIntent(TourIntent.EndTourClicked) },
-                onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
-            )
-        },
+        sheetContent = { TourStopsContent(state = state, onIntent = onIntent) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = LbColors.Paper,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            TourMap(
-                stops = state.stops,
-                currentStopIndex = state.currentStopIndex,
-                onIntent = onIntent,
-                mapContentPadding = PaddingValues(bottom = SheetPeekHeight),
-            )
+        TourMapContent(
+            state = state,
+            onIntent = onIntent,
+            mapContentPadding = PaddingValues(bottom = SheetPeekHeight),
+        )
+    }
+}
 
-            TourProgressChip(
-                completedCount = state.furthestStopIndex + 1,
-                totalCount = state.stops.size,
-                modifier = Modifier
-                    .align(Alignment.TopStart)
-                    .padding(16.dp),
-            )
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Composable
+private fun TourTwoPaneContent(
+    state: TourUiState,
+    snackbarHostState: SnackbarHostState,
+    directive: PaneScaffoldDirective,
+    onBack: () -> Unit,
+    onIntent: (TourIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val navigator = rememberSupportingPaneScaffoldNavigator(scaffoldDirective = directive)
 
-            if (state.isLoading) {
-                LbLoadingOverlay()
-            }
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = { TourHeader(regionName = state.regionName, title = state.title, onBackClick = onBack) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        containerColor = LbColors.Paper,
+    ) { innerPadding ->
+        NavigableSupportingPaneScaffold(
+            navigator = navigator,
+            modifier = Modifier
+                .padding(innerPadding)
+                .consumeWindowInsets(innerPadding),
+            mainPane = {
+                AnimatedPane {
+                    TourMapContent(state = state, onIntent = onIntent, mapContentPadding = PaddingValues())
+                }
+            },
+            supportingPane = {
+                AnimatedPane {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .background(LbColors.Paper)
+                            .verticalScroll(rememberScrollState()),
+                    ) {
+                        TourStopsContent(state = state, onIntent = onIntent)
+                    }
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun TourMapContent(
+    state: TourUiState,
+    onIntent: (TourIntent) -> Unit,
+    mapContentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        TourMap(
+            stops = state.stops,
+            currentStopIndex = state.currentStopIndex,
+            onIntent = onIntent,
+            mapContentPadding = mapContentPadding,
+        )
+
+        TourProgressChip(
+            completedCount = state.furthestStopIndex + 1,
+            totalCount = state.stops.size,
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(16.dp),
+        )
+
+        if (state.isLoading) {
+            LbLoadingOverlay()
         }
     }
 }
 
+@Composable
+private fun TourStopsContent(state: TourUiState, onIntent: (TourIntent) -> Unit) {
+    TourBottomSheetContent(
+        stops = state.stops,
+        currentStopIndex = state.currentStopIndex,
+        progressStopIndex = state.furthestStopIndex,
+        onEndTourClick = { onIntent(TourIntent.EndTourClicked) },
+        onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
+    )
+}
+
 private val SheetPeekHeight = 210.dp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Preview(showBackground = true)
 @Composable
 private fun TourScreenPreview() {
@@ -182,6 +337,23 @@ private fun TourScreenPreview() {
         state = TourUiState(),
         snackbarHostState = remember { SnackbarHostState() },
         scaffoldState = rememberBottomSheetScaffoldState(),
+        directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo()),
+        isTwoPane = false,
+        onBack = {},
+        onIntent = {},
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
+@Preview(showBackground = true, widthDp = 900, heightDp = 500)
+@Composable
+private fun TourScreenTwoPanePreview() {
+    TourScreenContent(
+        state = TourUiState(),
+        snackbarHostState = remember { SnackbarHostState() },
+        scaffoldState = rememberBottomSheetScaffoldState(),
+        directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo()),
+        isTwoPane = true,
         onBack = {},
         onIntent = {},
     )

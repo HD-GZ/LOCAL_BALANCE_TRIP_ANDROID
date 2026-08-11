@@ -1,10 +1,10 @@
 package live.lb_trip.feature.savedcourses
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.minus
 import kotlinx.collections.immutable.plus
@@ -24,9 +24,9 @@ import live.lb_trip.domain.usecase.GetReceiptsUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseReportUseCase
 
-@HiltViewModel
-class SavedCourseDetailViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = SavedCourseDetailViewModel.Factory::class)
+class SavedCourseDetailViewModel @AssistedInject constructor(
+    @Assisted private val savedCourseId: Long,
     private val getSavedCourseDetailUseCase: GetSavedCourseDetailUseCase,
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val getSavedCourseReportUseCase: GetSavedCourseReportUseCase,
@@ -34,7 +34,10 @@ class SavedCourseDetailViewModel @Inject constructor(
     SavedCourseDetailUiState(),
 ) {
 
-    private val savedCourseId: Long = savedStateHandle.toRoute<SavedCourseDetailRoute>().savedCourseId
+    @AssistedFactory
+    interface Factory {
+        fun create(savedCourseId: Long): SavedCourseDetailViewModel
+    }
 
     init {
         updateState { it.copy(savedCourseId = savedCourseId) }

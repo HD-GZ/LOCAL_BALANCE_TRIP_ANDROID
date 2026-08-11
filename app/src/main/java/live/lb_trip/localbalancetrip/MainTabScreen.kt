@@ -1,6 +1,7 @@
 package live.lb_trip.localbalancetrip
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -26,9 +27,9 @@ import androidx.core.view.WindowCompat
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBottomTabItem
 import live.lb_trip.core.designsystem.component.LbBrandTopBar
-import live.lb_trip.core.designsystem.component.LbMainBottomBar
+import live.lb_trip.core.designsystem.component.LbNavigationSuiteScaffold
 import live.lb_trip.feature.home.HomeTabContent
-import live.lb_trip.feature.settings.MyInfoTabContent
+import live.lb_trip.feature.settings.MyInfoPaneHost
 
 private enum class MainTab {
     HOME,
@@ -44,15 +45,9 @@ internal fun MainTabScreen(
     onSavedAllClick: () -> Unit,
     onNavigateToSavedCourses: () -> Unit,
     onRetakeDiagnosis: () -> Unit,
-    onNavigateToEditProfile: () -> Unit,
-    onNavigateToLicenses: () -> Unit,
-    onNavigateToTerms: () -> Unit,
-    onNavigateToPrivacy: () -> Unit,
     onNavigateToPolicyList: () -> Unit,
     onNavigateToPopularCourseDetail: (Long) -> Unit,
     onNavigateToRecommendedRegion: (Long, String) -> Unit,
-    profileUpdated: Boolean,
-    onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(MainTab.HOME) }
@@ -76,63 +71,63 @@ internal fun MainTabScreen(
     val brandHighlight = stringResource(R.string.main_brand_highlight)
     val brandSuffix = stringResource(R.string.main_brand_suffix)
 
-    Scaffold(
+    LbNavigationSuiteScaffold(
         modifier = modifier,
-        topBar = {
-            LbBrandTopBar(
-                title = buildAnnotatedString {
-                    append(brandPrefix)
-                    withStyle(SpanStyle(color = LbColors.Green)) { append(brandHighlight) }
-                    append(brandSuffix)
-                },
-            )
-        },
-        bottomBar = {
-            LbMainBottomBar(
-                items = listOf(
-                    LbBottomTabItem(
-                        label = mainTabLabel,
-                        icon = Icons.Filled.Home,
-                        selected = selectedTab == MainTab.HOME,
-                        onClick = { selectedTab = MainTab.HOME },
-                    ),
-                    LbBottomTabItem(
-                        label = myInfoTabLabel,
-                        icon = Icons.Outlined.Person,
-                        selected = selectedTab == MainTab.MY_INFO,
-                        onClick = { selectedTab = MainTab.MY_INFO },
-                    ),
-                ),
-            )
-        },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = LbColors.ScreenBg,
-    ) { innerPadding ->
-        when (selectedTab) {
-            MainTab.HOME -> HomeTabContent(
-                onStartDiagnosisClick = onStartDiagnosis,
-                onNavigateToSignin = onNavigateToSignin,
-                onSavedAllClick = onSavedAllClick,
-                onCourseClick = onNavigateToSavedCourseDetail,
-                onPopularCourseClick = onNavigateToPopularCourseDetail,
-                onPolicyAllClick = onNavigateToPolicyList,
-                onNavigateToRecommendedRegion = onNavigateToRecommendedRegion,
-                snackbarHostState = snackbarHostState,
-                modifier = Modifier.padding(innerPadding),
-            )
+        items = listOf(
+            LbBottomTabItem(
+                label = mainTabLabel,
+                icon = Icons.Filled.Home,
+                selected = selectedTab == MainTab.HOME,
+                onClick = { selectedTab = MainTab.HOME },
+            ),
+            LbBottomTabItem(
+                label = myInfoTabLabel,
+                icon = Icons.Outlined.Person,
+                selected = selectedTab == MainTab.MY_INFO,
+                onClick = { selectedTab = MainTab.MY_INFO },
+            ),
+        ),
+    ) {
+        Scaffold(
+            topBar = {
+                if (selectedTab == MainTab.HOME) {
+                    LbBrandTopBar(
+                        title = buildAnnotatedString {
+                            append(brandPrefix)
+                            withStyle(SpanStyle(color = LbColors.Green)) { append(brandHighlight) }
+                            append(brandSuffix)
+                        },
+                    )
+                }
+            },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            containerColor = LbColors.ScreenBg,
+        ) { innerPadding ->
+            when (selectedTab) {
+                MainTab.HOME -> HomeTabContent(
+                    onStartDiagnosisClick = onStartDiagnosis,
+                    onNavigateToSignin = onNavigateToSignin,
+                    onSavedAllClick = onSavedAllClick,
+                    onCourseClick = onNavigateToSavedCourseDetail,
+                    onPopularCourseClick = onNavigateToPopularCourseDetail,
+                    onPolicyAllClick = onNavigateToPolicyList,
+                    onNavigateToRecommendedRegion = onNavigateToRecommendedRegion,
+                    snackbarHostState = snackbarHostState,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding),
+                )
 
-            MainTab.MY_INFO -> MyInfoTabContent(
-                onNavigateToSavedCourses = onNavigateToSavedCourses,
-                onNavigateToDiagnosis = onRetakeDiagnosis,
-                onNavigateToEditProfile = onNavigateToEditProfile,
-                onNavigateToLicenses = onNavigateToLicenses,
-                onNavigateToTerms = onNavigateToTerms,
-                onNavigateToPrivacy = onNavigateToPrivacy,
-                onNavigateToSignin = onNavigateToSignin,
-                profileUpdated = profileUpdated,
-                onProfileUpdatedConsumed = onProfileUpdatedConsumed,
-                modifier = Modifier.padding(innerPadding),
-            )
+                MainTab.MY_INFO -> MyInfoPaneHost(
+                    onNavigateToSavedCourses = onNavigateToSavedCourses,
+                    onNavigateToDiagnosis = onRetakeDiagnosis,
+                    onNavigateToSignin = onNavigateToSignin,
+                    librariesRawResId = R.raw.aboutlibraries,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding),
+                )
+            }
         }
     }
 }

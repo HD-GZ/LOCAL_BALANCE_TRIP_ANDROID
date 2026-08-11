@@ -39,6 +39,7 @@ internal fun TermsScreen(
     fallbackTitle: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
     viewModel: TermsViewModel = hiltViewModel(),
     onIntent: (TermsIntent) -> Unit = viewModel::onIntent,
 ) {
@@ -70,6 +71,7 @@ internal fun TermsScreen(
         onBack = onBack,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         modifier = modifier,
+        showBackButton = showBackButton,
     )
 }
 
@@ -80,6 +82,7 @@ private fun TermsScreenContent(
     onBack: () -> Unit,
     snackbarHost: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
 ) {
     Scaffold(
         modifier = modifier,
@@ -89,6 +92,7 @@ private fun TermsScreenContent(
                 backContentDescription = stringResource(R.string.terms_back_cd),
                 title = state.title.ifEmpty { fallbackTitle },
                 containerColor = LbColors.Paper,
+                showBackButton = showBackButton,
             )
         },
         snackbarHost = snackbarHost,

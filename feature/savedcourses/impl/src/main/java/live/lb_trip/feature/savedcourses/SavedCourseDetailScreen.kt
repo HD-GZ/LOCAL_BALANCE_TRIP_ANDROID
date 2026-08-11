@@ -59,6 +59,7 @@ import live.lb_trip.feature.savedcourses.components.rememberReportMetaLabel
 
 @Composable
 internal fun SavedCourseDetailScreen(
+    savedCourseId: Long,
     onBack: () -> Unit,
     onNavigateToTour: (Long) -> Unit,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
@@ -68,7 +69,10 @@ internal fun SavedCourseDetailScreen(
     tourEnded: Boolean,
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SavedCourseDetailViewModel = hiltViewModel(),
+    showBackButton: Boolean = true,
+    viewModel: SavedCourseDetailViewModel = hiltViewModel(
+        key = "saved-course-detail-$savedCourseId",
+    ) { factory: SavedCourseDetailViewModel.Factory -> factory.create(savedCourseId) },
     onIntent: (SavedCourseDetailIntent) -> Unit = viewModel::onIntent,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -134,6 +138,7 @@ internal fun SavedCourseDetailScreen(
         onNavigateToReceiptCapture = onNavigateToReceiptCapture,
         onNavigateToReceiptDetail = onNavigateToReceiptDetail,
         modifier = modifier,
+        showBackButton = showBackButton,
     )
 }
 
@@ -148,6 +153,7 @@ private fun SavedCourseDetailScreenContent(
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
     onNavigateToReceiptDetail: (Long, Long) -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
 ) {
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
     val context = LocalContext.current
@@ -186,7 +192,14 @@ private fun SavedCourseDetailScreenContent(
 
     Scaffold(
         modifier = modifier,
-        topBar = { SavedCourseDetailAppBar(regionName = state.regionName, title = state.title, onBackClick = onBack) },
+        topBar = {
+            SavedCourseDetailAppBar(
+                regionName = state.regionName,
+                title = state.title,
+                onBackClick = onBack,
+                showBackButton = showBackButton,
+            )
+        },
         bottomBar = {
             SavedCourseDetailCtaBar(
                 tab = state.selectedTab,
