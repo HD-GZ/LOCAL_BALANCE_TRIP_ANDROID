@@ -73,6 +73,10 @@ class ReceiptDetailViewModel @Inject constructor(
             }
     }
 
+    fun setLoading(isLoading: Boolean) {
+        updateState { it.copy(isLoading = isLoading) }
+    }
+
     private suspend fun save() {
         val state = currentState
         val amount = state.editAmount.toIntOrNull()
