@@ -16,6 +16,7 @@ val localProperties =
         }
     }
 val naverMapClientId: String = localProperties.getProperty("NCP_KEY_ID", "REPLACE_WITH_NCP_KEY_ID")
+val kakaoKey: String = localProperties.getProperty("KAKAO_KEY", "REPLACE_WITH_KAKAO_KEY")
 
 android {
     namespace = "live.lb_trip.localbalancetrip"
@@ -35,6 +36,8 @@ android {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://api.stage.lb-trip.live\"")
             buildConfigField("String", "NCP_KEY_ID", "\"$naverMapClientId\"")
+            buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
+            manifestPlaceholders["KAKAO_KEY"] = kakaoKey
         }
         release {
             isMinifyEnabled = true
@@ -45,6 +48,8 @@ android {
             )
             buildConfigField("String", "BASE_URL", "\"https://api.lb-trip.live\"")
             buildConfigField("String", "NCP_KEY_ID", "\"$naverMapClientId\"")
+            buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
+            manifestPlaceholders["KAKAO_KEY"] = kakaoKey
         }
     }
 }
@@ -81,6 +86,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.naver.map.compose)
+    implementation(libs.kakao.common)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
