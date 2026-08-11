@@ -9,6 +9,8 @@ import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +40,7 @@ fun MyInfoPaneHost(
     onNavigateToSignin: () -> Unit,
     @RawRes librariesRawResId: Int,
     modifier: Modifier = Modifier,
+    onDetailPaneVisibleChange: (Boolean) -> Unit = {},
 ) {
     val directive = calculateLbListDetailDirective()
     val isTwoPane = directive.maxHorizontalPartitions > 1
@@ -46,6 +49,14 @@ fun MyInfoPaneHost(
     var profileUpdated by remember { mutableStateOf(false) }
 
     LbSinglePaneBackHandler(navigator = navigator, isTwoPane = isTwoPane)
+
+    val isDetailOnlyShown = !isTwoPane && navigator.currentDestination?.contentKey != null
+    LaunchedEffect(isDetailOnlyShown) {
+        onDetailPaneVisibleChange(isDetailOnlyShown)
+    }
+    DisposableEffect(Unit) {
+        onDispose { onDetailPaneVisibleChange(false) }
+    }
 
     ListDetailPaneScaffold(
         directive = navigator.scaffoldDirective,
