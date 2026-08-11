@@ -36,7 +36,8 @@ class SavedCourseRepositoryImpl @Inject constructor(
         suspendRunCatching {
             val report = savedCourseRemoteDataSource.getReport(savedCourseId).toDomain()
             report.copy(
-                distanceWalkedMeters = savedCourseDistanceLocalDataSource.get(savedCourseId),
+                distanceWalkedMeters = report.distanceWalkedMeters
+                    ?: savedCourseDistanceLocalDataSource.get(savedCourseId),
                 stepCount = savedCourseDistanceLocalDataSource.getSteps(savedCourseId),
             )
         }.mapApiFailure {

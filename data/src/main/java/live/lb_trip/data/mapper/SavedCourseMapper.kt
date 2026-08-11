@@ -76,7 +76,7 @@ fun SavedCourseReportResponseDto.toDomain(): SavedCourseReport =
         durationMinutes = durationMinutes,
         totalSpentAmount = totalSpentAmount,
         tourEndedAt = tourEndedAt,
-        distanceWalkedMeters = null,
+        distanceWalkedMeters = walkedDistanceKm?.toFloat(),
         stepCount = null,
     )
 

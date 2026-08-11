@@ -79,6 +79,7 @@ data class SavedCourseReportResponseDto(
     val durationMinutes: Long,
     val totalSpentAmount: Int,
     val tourEndedAt: String,
+    val walkedDistanceKm: Double? = null,
 )
 
 @Serializable
