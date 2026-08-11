@@ -27,6 +27,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +81,8 @@ fun LbTopBar(
                     fontWeight = FontWeight.SemiBold,
                     lineHeight = 18.sp,
                     style = tightStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             if (subtitle != null) {
@@ -90,12 +93,16 @@ fun LbTopBar(
                         fontSize = 11.sp,
                         lineHeight = 13.sp,
                         style = tightStyle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                     titleText()
                 }
             } else if (titleTrailing != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    titleText()
+                    Row(modifier = Modifier.weight(1f, fill = false)) {
+                        titleText()
+                    }
                     titleTrailing()
                 }
             } else {
@@ -125,8 +132,9 @@ fun LbTopBar(
             } else {
                 Row(modifier = Modifier.padding(start = 12.dp)) {}
             }
-            titleContent()
-            Row(modifier = Modifier.weight(1f)) {}
+            Row(modifier = Modifier.weight(1f)) {
+                titleContent()
+            }
             actions()
         }
     } else {
