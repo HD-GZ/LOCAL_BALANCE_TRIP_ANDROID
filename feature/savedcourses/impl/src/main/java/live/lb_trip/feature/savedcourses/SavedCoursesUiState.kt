@@ -13,6 +13,7 @@ data class SavedCourseSummary(
     val savedCourseId: Long,
     val courseName: String,
     val status: TravelStatus,
+    val imageUrl: String?,
 )
 
 sealed interface SavedCoursesSideEffect {

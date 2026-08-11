@@ -27,11 +27,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
 import live.lb_trip.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -41,6 +44,8 @@ internal fun RCard(
     isBest: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    imageUrl: String? = null,
+    imageLoader: ImageLoader? = null,
 ) {
     Row(
         modifier = modifier
@@ -55,7 +60,18 @@ internal fun RCard(
             )
             .clickable(onClick = onClick),
     ) {
-        RCardImagePlaceholder(modifier = Modifier.fillMaxHeight().defaultMinSize(minHeight = 118.dp))
+        val imageModifier = Modifier.fillMaxHeight().defaultMinSize(minHeight = 118.dp)
+        if (imageUrl != null && imageLoader != null) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                imageLoader = imageLoader,
+                contentScale = ContentScale.Crop,
+                modifier = imageModifier.width(100.dp),
+            )
+        } else {
+            RCardImagePlaceholder(modifier = imageModifier)
+        }
         Column(
             modifier = Modifier
                 .weight(1f)

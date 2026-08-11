@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +38,8 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.ImageLoader
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.domain.model.RecommendedCourse
@@ -114,6 +117,11 @@ private fun CourseScreenContent(
         }
     }
 
+    val context = LocalContext.current
+    val imageLoader = remember(context) {
+        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
+    }
+
     Box(modifier = modifier.fillMaxSize().background(Paper)) {
         Column(modifier = Modifier.fillMaxSize()) {
             RecommendationBrandBar(
@@ -158,6 +166,8 @@ private fun CourseScreenContent(
                                 title = course.title,
                                 reason = course.reason,
                                 isBest = index == 0,
+                                imageUrl = course.imageUrl,
+                                imageLoader = imageLoader,
                                 onClick = { onCourseSelected(course.id) },
                             )
                         }
@@ -182,7 +192,12 @@ private fun CourseScreenPreview() {
         state = CourseUiState(
             isLoading = false,
             courses = persistentListOf(
-                RecommendedCourse(id = 1, title = "남도 골목 미식 슬로우 트립", reason = "실속 소비 + 로컬 미식 성향을 반영했어요."),
+                RecommendedCourse(
+                    id = 1,
+                    title = "남도 골목 미식 슬로우 트립",
+                    reason = "실속 소비 + 로컬 미식 성향을 반영했어요.",
+                    imageUrl = null,
+                ),
             ),
         ),
         snackbarHost = {},
