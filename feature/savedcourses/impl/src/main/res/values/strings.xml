@@ -39,6 +39,7 @@
     <string name="savedcourses_detail_share_story">스토리로\n공유하기</string>
     <string name="savedcourses_detail_share_saved_toast">갤러리에 저장했어요</string>
     <string name="savedcourses_detail_share_failed">이미지를 저장하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_detail_share_description">%1$s님의 여행 기록을 지금 확인해보세요!</string>
 
     <string name="savedcources_detail_story_distance_label">걷기 거리</string>
     <string name="savedcources_detail_story_date_label">여행한 날짜</string>

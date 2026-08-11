@@ -8,7 +8,7 @@ import live.lb_trip.core.BuildConfig
 
 fun shareReport(
     context: Context,
-    username: String,
+    description: String,
     imageUrl: Uri?,
     shareUrl: String? = BuildConfig.WEB_URL
 ) {
@@ -16,7 +16,7 @@ fun shareReport(
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, shareUrl)
 
-        putExtra(Intent.EXTRA_TITLE, "${username}님의 여행 기록을 지금 확인해보세요!")
+        putExtra(Intent.EXTRA_TITLE, description)
         imageUrl?.let {
             data = it
             clipData = ClipData.newUri(context.contentResolver, "report_image", it)

@@ -16,14 +16,14 @@ private const val TAG = "Kakao Share"
 
 fun kakaoShareReportFeed(
     title: String,
-    username: String,
+    description: String,
     imageUrl: String?,
     shareUrl: String? = BuildConfig.WEB_URL
 ): FeedTemplate {
     return FeedTemplate(
         content = Content(
             title = title,
-            description = "${username}님의 여행 기록을 지금 확인해보세요!",
+            description = description,
             imageUrl = imageUrl ?: BuildConfig.WEB_URL,
             link = Link(
                 webUrl = shareUrl,

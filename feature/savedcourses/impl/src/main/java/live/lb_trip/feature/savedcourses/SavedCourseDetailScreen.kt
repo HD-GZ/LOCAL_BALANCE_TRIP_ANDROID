@@ -280,6 +280,7 @@ private fun SavedCourseDetailScreenContent(
     val distanceLabel = stringResource(R.string.savedcources_detail_story_distance_label)
     val dateLabel = stringResource(R.string.savedcources_detail_story_date_label)
     val appName = stringResource(R.string.savedcources_detail_story_app_name)
+    val shareDescription = stringResource(R.string.savedcourses_detail_share_description, state.username)
 
     if (showShareSheet) {
         SavedCourseShareSheet(
@@ -299,12 +300,12 @@ private fun SavedCourseDetailScreenContent(
                 coroutineScope.launch {
                     val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)?.toContentUri(context, ImageCompressLevel.LOW)
                     setLoading(false)
-                    shareReport(context, state.username, uri)
+                    shareReport(context, shareDescription, uri)
                 }
             },
             onKakaoShareClick = {
                 showShareSheet = false
-                val feed = kakaoShareReportFeed(state.title, state.username, state.reportImageUrl)
+                val feed = kakaoShareReportFeed(state.title, shareDescription, state.reportImageUrl)
                 kakaoShare(context, feed)
             },
             onInstagramStoryClick = {
