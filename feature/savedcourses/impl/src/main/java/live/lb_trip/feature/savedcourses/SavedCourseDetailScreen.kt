@@ -30,10 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
@@ -41,10 +43,23 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.util.ImageCompressLevel
+import live.lb_trip.core.util.drawInstagramSticker
+import live.lb_trip.core.util.getBitmapFromUrl
+import live.lb_trip.core.util.instagramStoryShare
+import live.lb_trip.core.util.kakaoShare
+import live.lb_trip.core.util.kakaoShareReportFeed
+import live.lb_trip.core.util.save
+import live.lb_trip.core.util.shareReport
+import live.lb_trip.core.util.toContentUri
 import live.lb_trip.domain.model.TravelStatus
+import live.lb_trip.feature.savedcourses.components.ReceiptSourceSheet
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailAppBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailCtaBar
 import live.lb_trip.feature.savedcourses.components.SavedCourseDetailTabBar
@@ -52,7 +67,6 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseOrderTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseReportTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
-import live.lb_trip.feature.savedcourses.components.ReceiptSourceSheet
 import live.lb_trip.feature.savedcourses.components.createReceiptImageUri
 import live.lb_trip.feature.savedcourses.components.rememberReportDistanceValueLabel
 import live.lb_trip.feature.savedcourses.components.rememberReportMetaLabel
@@ -137,6 +151,7 @@ internal fun SavedCourseDetailScreen(
         onIntent = onIntent,
         onNavigateToReceiptCapture = onNavigateToReceiptCapture,
         onNavigateToReceiptDetail = onNavigateToReceiptDetail,
+        setLoading = viewModel::setLoading,
         modifier = modifier,
         showBackButton = showBackButton,
     )
@@ -152,6 +167,7 @@ private fun SavedCourseDetailScreenContent(
     onIntent: (SavedCourseDetailIntent) -> Unit,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
     onNavigateToReceiptDetail: (Long, Long) -> Unit,
+    setLoading: (isLoading: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
 ) {
@@ -176,6 +192,11 @@ private fun SavedCourseDetailScreenContent(
     val reportAmountLabel =
         stringResource(R.string.savedcourses_detail_receipt_amount_template, state.reportTotalSpentAmount)
     val reportDistanceValueLabel = rememberReportDistanceValueLabel(state.reportDistanceWalkedMeters)
+    val currentDate = remember {
+        val formatter = SimpleDateFormat("yyyy. MM. dd", Locale.getDefault())
+        formatter.format(Date())
+    }
+    val textMeasurer = rememberTextMeasurer()
 
     LaunchedEffect(state.selectedTab) {
         val targetPage = state.selectedTab.ordinal
@@ -218,7 +239,6 @@ private fun SavedCourseDetailScreenContent(
             Box(modifier = Modifier.padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = LbColors.Green)
             }
-            return@Scaffold
         }
 
         Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
@@ -242,6 +262,7 @@ private fun SavedCourseDetailScreenContent(
                             state = state,
                             onReceiptClick = { receiptId -> onNavigateToReceiptDetail(state.savedCourseId, receiptId) },
                         )
+
                         SavedCourseDetailTab.REPORT -> SavedCourseReportTab(
                             state = state,
                             imageLoader = imageLoader,
@@ -256,33 +277,57 @@ private fun SavedCourseDetailScreenContent(
         }
     }
 
+    val distanceLabel = stringResource(R.string.savedcources_detail_story_distance_label)
+    val dateLabel = stringResource(R.string.savedcources_detail_story_date_label)
+    val appName = stringResource(R.string.savedcources_detail_story_app_name)
+    val shareDescription = stringResource(R.string.savedcourses_detail_share_description, state.username)
+
     if (showShareSheet) {
         SavedCourseShareSheet(
             onDismiss = { showShareSheet = false },
             onSaveImageClick = {
                 showShareSheet = false
-                val imageUrl = state.reportImageUrl
+                setLoading(true)
                 coroutineScope.launch {
-                    val saved = imageUrl != null && runCatching {
-                        val bitmap = downloadReportImageBitmap(imageLoader, context, imageUrl)
-                            ?: return@runCatching false
-                        saveBitmapToGallery(context, bitmap, shareImageFileName())
-                    }.getOrDefault(false)
-                    onShowSnackbar(if (saved) shareSavedMessage else shareFailedMessage)
+                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)?.save(context)
+                    setLoading(false)
+                    onShowSnackbar(if (uri != null) shareSavedMessage else shareFailedMessage)
                 }
             },
             onShareClick = {
                 showShareSheet = false
-                val imageUrl = state.reportImageUrl
+                setLoading(true)
                 coroutineScope.launch {
-                    val shared = imageUrl != null && runCatching {
-                        val bitmap = downloadReportImageBitmap(imageLoader, context, imageUrl)
-                            ?: return@runCatching false
-                        shareBitmapImage(context, bitmap, shareImageFileName())
-                    }.getOrDefault(false)
-                    if (!shared) onShowSnackbar(shareFailedMessage)
+                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)?.toContentUri(context, ImageCompressLevel.LOW)
+                    setLoading(false)
+                    shareReport(context, shareDescription, uri)
                 }
             },
+            onKakaoShareClick = {
+                showShareSheet = false
+                val feed = kakaoShareReportFeed(state.title, shareDescription, state.reportImageUrl)
+                kakaoShare(context, feed)
+            },
+            onInstagramStoryClick = {
+                showShareSheet = false
+                setLoading(true)
+                coroutineScope.launch {
+                    val uri = state.reportImageUrl?.getBitmapFromUrl(context, imageLoader)
+                        ?.toContentUri(context, ImageCompressLevel.HIGH)
+                    val sticker = drawInstagramSticker(
+                        state.title,
+                        "${state.reportDistanceWalkedMeters}",
+                        distanceLabel,
+                        currentDate,
+                        dateLabel,
+                        appName,
+                        textMeasurer
+                    ).asAndroidBitmap().toContentUri(context, ImageCompressLevel.MEDIUM)
+
+                    instagramStoryShare(context, uri, sticker)
+                    setLoading(false)
+                }
+            }
         )
     }
 }
@@ -347,5 +392,6 @@ private fun SavedCourseDetailScreenPreview() {
         onIntent = {},
         onNavigateToReceiptCapture = { _, _ -> },
         onNavigateToReceiptDetail = { _, _ -> },
+        setLoading = {}
     )
 }

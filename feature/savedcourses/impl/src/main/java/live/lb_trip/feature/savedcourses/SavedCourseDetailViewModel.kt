@@ -1,5 +1,6 @@
 package live.lb_trip.feature.savedcourses
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -23,6 +24,7 @@ import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.usecase.GetReceiptsUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseReportUseCase
+import live.lb_trip.domain.usecase.GetUserProfileUseCase
 
 @HiltViewModel(assistedFactory = SavedCourseDetailViewModel.Factory::class)
 class SavedCourseDetailViewModel @AssistedInject constructor(
@@ -30,7 +32,8 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
     private val getSavedCourseDetailUseCase: GetSavedCourseDetailUseCase,
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val getSavedCourseReportUseCase: GetSavedCourseReportUseCase,
-) : BaseViewModel<SavedCourseDetailUiState, SavedCourseDetailIntent, SavedCourseDetailSideEffect>(
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    ) : BaseViewModel<SavedCourseDetailUiState, SavedCourseDetailIntent, SavedCourseDetailSideEffect>(
     SavedCourseDetailUiState(),
 ) {
 
@@ -42,6 +45,11 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
     init {
         updateState { it.copy(savedCourseId = savedCourseId) }
         viewModelScope.launch { load() }
+        viewModelScope.launch {
+            getUserProfileUseCase().onSuccess { profile ->
+                updateState { it.copy(username = profile.name) }
+            }
+        }
     }
 
     override fun onIntent(intent: SavedCourseDetailIntent) {
@@ -94,6 +102,10 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
                 updateState { it.copy(isLoading = false) }
                 postSideEffect(SavedCourseDetailSideEffect.ShowLoadError(loadErrorReasonFor(throwable)))
             }
+    }
+
+    fun setLoading(isLoading: Boolean) {
+        updateState { it.copy(isLoading = isLoading) }
     }
 
     private fun applyReceiptsResult(result: Result<ReceiptSummary>) {

@@ -39,6 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
@@ -56,6 +58,8 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbTopBar
+import live.lb_trip.core.util.getBitmapFromUrl
+import live.lb_trip.core.util.save
 
 @Composable
 internal fun ReceiptDetailScreen(
@@ -81,6 +85,8 @@ internal fun ReceiptDetailScreen(
     val downloadSavedMessage = stringResource(R.string.savedcourses_receipt_detail_download_saved)
     val downloadFailedMessage = stringResource(R.string.savedcourses_receipt_detail_download_failed)
 
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
@@ -93,9 +99,12 @@ internal fun ReceiptDetailScreen(
                 }
                 ReceiptDetailSideEffect.ShowDeleteError -> launch { snackbarHostState.showSnackbar(deleteErrorMessage) }
                 is ReceiptDetailSideEffect.DownloadUrlReady -> launch {
-                    val bitmap = downloadReportImageBitmap(imageLoader, context, effect.url)
-                    val saved = bitmap != null && saveBitmapToGallery(context, bitmap, receiptImageFileName())
-                    snackbarHostState.showSnackbar(if (saved) downloadSavedMessage else downloadFailedMessage)
+                    viewModel.setLoading(true)
+                    coroutineScope.launch {
+                        val uri = effect.url.getBitmapFromUrl(context, imageLoader)?.save(context)
+                        viewModel.setLoading(false)
+                        snackbarHostState.showSnackbar(if (uri != null) downloadSavedMessage else downloadFailedMessage)
+                    }
                 }
                 ReceiptDetailSideEffect.ShowDownloadError -> launch { snackbarHostState.showSnackbar(downloadFailedMessage) }
                 ReceiptDetailSideEffect.NavigateBackWithDeleted -> onDeleted()
@@ -153,10 +162,9 @@ private fun ReceiptDetailScreenContent(
         containerColor = LbColors.Paper,
     ) { innerPadding ->
         if (state.isLoading) {
-            Box(modifier = Modifier.padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(modifier = Modifier.zIndex(2f).padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(color = LbColors.Green)
             }
-            return@Scaffold
         }
 
         if (isTwoPane) {
