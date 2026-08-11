@@ -4,13 +4,9 @@ import androidx.annotation.RawRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
-import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth
-import androidx.compose.material3.adaptive.navigation.BackNavigationBehavior
-import androidx.compose.material3.adaptive.navigation.ThreePaneScaffoldPredictiveBackHandler
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,10 +16,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import live.lb_trip.core.designsystem.component.LbEmptyDetailPane
+import live.lb_trip.core.designsystem.component.LbSinglePaneBackHandler
 import live.lb_trip.core.designsystem.component.LbTopBar
+import live.lb_trip.core.designsystem.component.calculateLbListDetailDirective
 import live.lb_trip.domain.model.TermsType
 
 private enum class SettingsDetailTarget {
@@ -42,22 +39,13 @@ fun MyInfoPaneHost(
     @RawRes librariesRawResId: Int,
     modifier: Modifier = Modifier,
 ) {
-    val directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
-        .let { it.copy(horizontalPartitionSpacerSize = 0.dp) }
+    val directive = calculateLbListDetailDirective()
     val isTwoPane = directive.maxHorizontalPartitions > 1
     val navigator = rememberListDetailPaneScaffoldNavigator<SettingsDetailTarget>(scaffoldDirective = directive)
     val scope = rememberCoroutineScope()
     var profileUpdated by remember { mutableStateOf(false) }
 
-    // In two-pane mode both panes are already visible, so a single back press should leave the
-    // feature immediately instead of first collapsing the detail pane. Only the compact/single-pane
-    // layout gets predictive back handling for step-by-step list<->detail navigation.
-    if (!isTwoPane) {
-        ThreePaneScaffoldPredictiveBackHandler(
-            navigator = navigator,
-            backBehavior = BackNavigationBehavior.PopUntilScaffoldValueChange,
-        )
-    }
+    LbSinglePaneBackHandler(navigator = navigator, isTwoPane = isTwoPane)
 
     ListDetailPaneScaffold(
         directive = navigator.scaffoldDirective,
