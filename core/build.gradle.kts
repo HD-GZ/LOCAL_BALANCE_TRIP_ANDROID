@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.convention.android.library)
+    alias(libs.plugins.convention.android.hilt)
 }
 
 android {
@@ -19,10 +20,12 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.activity)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kakao.share)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.javax.inject)
 }

@@ -17,6 +17,7 @@ val localProperties =
     }
 val naverMapClientId: String = localProperties.getProperty("NCP_KEY_ID", "REPLACE_WITH_NCP_KEY_ID")
 val kakaoKey: String = localProperties.getProperty("KAKAO_KEY", "REPLACE_WITH_KAKAO_KEY")
+val facebookAppId: String = localProperties.getProperty("FACEBOOK_APP_ID", "REPLACE_WITH_FACEBOOK_APP_ID")
 
 android {
     namespace = "live.lb_trip.localbalancetrip"
@@ -37,6 +38,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://api.stage.lb-trip.live\"")
             buildConfigField("String", "NCP_KEY_ID", "\"$naverMapClientId\"")
             buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
+            buildConfigField("String", "FACEBOOK_APP_ID", "\"$facebookAppId\"")
             manifestPlaceholders["KAKAO_KEY"] = kakaoKey
         }
         release {
@@ -49,6 +51,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"https://api.lb-trip.live\"")
             buildConfigField("String", "NCP_KEY_ID", "\"$naverMapClientId\"")
             buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
+            buildConfigField("String", "FACEBOOK_APP_ID", "\"$facebookAppId\"")
             manifestPlaceholders["KAKAO_KEY"] = kakaoKey
         }
     }
