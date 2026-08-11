@@ -46,7 +46,7 @@ suspend fun Bitmap.save(context: Context): Uri? = withContext(Dispatchers.IO) {
             resolver.openOutputStream(it).use { stream ->
                 compress(Bitmap.CompressFormat.PNG, 100, stream!!)
             }
-        } catch (e: Exception) {
+        } catch (_: IOException) {
             resolver.delete(it, null, null)
         }
     }

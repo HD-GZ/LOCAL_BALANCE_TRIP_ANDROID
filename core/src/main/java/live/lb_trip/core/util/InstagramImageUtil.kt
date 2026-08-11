@@ -28,8 +28,8 @@ fun drawInstagramSticker(
     dateLabel: String,
     appName: String,
     textMeasurer: TextMeasurer,
-    width: Int = STICKER_WIDTH,
 ): ImageBitmap {
+    val width = STICKER_WIDTH
     val topPadding = width * 0.06f
     val titleToStat = width * 0.05f
     val statToLabel = width * 0.015f

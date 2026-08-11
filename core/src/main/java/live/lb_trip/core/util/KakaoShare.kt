@@ -69,11 +69,11 @@ fun kakaoShare(
         try {
             KakaoCustomTabsClient.openWithDefault(context, sharerUrl)
             return true
-        } catch (e: UnsupportedOperationException) {
+        } catch (_: UnsupportedOperationException) {
             try {
                 KakaoCustomTabsClient.open(context, sharerUrl)
                 return true
-            } catch (e: ActivityNotFoundException) {
+            } catch (_: ActivityNotFoundException) {
                 return false
             }
         }

@@ -2,6 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>TooManyFunctions:SignupViewModel.kt$SignupViewModel : BaseViewModel</ID>
+    <ID>MatchingDeclarationName:InjectQualifier.kt$FacebookAppId</ID>
   </CurrentIssues>
 </SmellBaseline>
