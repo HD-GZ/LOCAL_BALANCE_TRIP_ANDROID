@@ -1,6 +1,7 @@
 package live.lb_trip.localbalancetrip
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -28,7 +29,7 @@ import live.lb_trip.core.designsystem.component.LbBottomTabItem
 import live.lb_trip.core.designsystem.component.LbBrandTopBar
 import live.lb_trip.core.designsystem.component.LbNavigationSuiteScaffold
 import live.lb_trip.feature.home.HomeTabContent
-import live.lb_trip.feature.settings.MyInfoTabContent
+import live.lb_trip.feature.settings.MyInfoPaneHost
 
 private enum class MainTab {
     HOME,
@@ -44,15 +45,9 @@ internal fun MainTabScreen(
     onSavedAllClick: () -> Unit,
     onNavigateToSavedCourses: () -> Unit,
     onRetakeDiagnosis: () -> Unit,
-    onNavigateToEditProfile: () -> Unit,
-    onNavigateToLicenses: () -> Unit,
-    onNavigateToTerms: () -> Unit,
-    onNavigateToPrivacy: () -> Unit,
     onNavigateToPolicyList: () -> Unit,
     onNavigateToPopularCourseDetail: (Long) -> Unit,
     onNavigateToRecommendedRegion: (Long, String) -> Unit,
-    profileUpdated: Boolean,
-    onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(MainTab.HOME) }
@@ -95,13 +90,15 @@ internal fun MainTabScreen(
     ) {
         Scaffold(
             topBar = {
-                LbBrandTopBar(
-                    title = buildAnnotatedString {
-                        append(brandPrefix)
-                        withStyle(SpanStyle(color = LbColors.Green)) { append(brandHighlight) }
-                        append(brandSuffix)
-                    },
-                )
+                if (selectedTab == MainTab.HOME) {
+                    LbBrandTopBar(
+                        title = buildAnnotatedString {
+                            append(brandPrefix)
+                            withStyle(SpanStyle(color = LbColors.Green)) { append(brandHighlight) }
+                            append(brandSuffix)
+                        },
+                    )
+                }
             },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             containerColor = LbColors.ScreenBg,
@@ -116,20 +113,19 @@ internal fun MainTabScreen(
                     onPolicyAllClick = onNavigateToPolicyList,
                     onNavigateToRecommendedRegion = onNavigateToRecommendedRegion,
                     snackbarHostState = snackbarHostState,
-                    modifier = Modifier.padding(innerPadding),
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding),
                 )
 
-                MainTab.MY_INFO -> MyInfoTabContent(
+                MainTab.MY_INFO -> MyInfoPaneHost(
                     onNavigateToSavedCourses = onNavigateToSavedCourses,
                     onNavigateToDiagnosis = onRetakeDiagnosis,
-                    onNavigateToEditProfile = onNavigateToEditProfile,
-                    onNavigateToLicenses = onNavigateToLicenses,
-                    onNavigateToTerms = onNavigateToTerms,
-                    onNavigateToPrivacy = onNavigateToPrivacy,
                     onNavigateToSignin = onNavigateToSignin,
-                    profileUpdated = profileUpdated,
-                    onProfileUpdatedConsumed = onProfileUpdatedConsumed,
-                    modifier = Modifier.padding(innerPadding),
+                    librariesRawResId = R.raw.aboutlibraries,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .consumeWindowInsets(innerPadding),
                 )
             }
         }

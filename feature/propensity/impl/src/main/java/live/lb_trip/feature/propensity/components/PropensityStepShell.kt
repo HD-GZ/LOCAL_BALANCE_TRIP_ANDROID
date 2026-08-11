@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,35 +76,42 @@ internal fun PropensityStepShell(
                 backContentDescription = stringResource(R.string.propensity_back_content_description),
             )
 
-            Column(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(BodyBackground)
-                    .verticalScroll(scrollState)
-                    .padding(horizontal = 22.dp, vertical = 20.dp),
+                    .verticalScroll(scrollState),
+                contentAlignment = Alignment.TopCenter,
             ) {
-                LbStepIndicator(
-                    currentStep = stepNumber,
-                    totalSteps = 3,
+                Column(
                     modifier = Modifier
+                        .widthIn(max = 640.dp)
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                PropensityHeader(title = headerTitle, subtitle = headerSubtitle)
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.White, RoundedCornerShape(16.dp))
-                        .border(width = 1.dp, color = Border, shape = RoundedCornerShape(16.dp))
-                        .padding(16.dp),
+                        .padding(horizontal = 22.dp, vertical = 20.dp),
                 ) {
-                    content()
+                    LbStepIndicator(
+                        currentStep = stepNumber,
+                        totalSteps = 3,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    PropensityHeader(title = headerTitle, subtitle = headerSubtitle)
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(Color.White, RoundedCornerShape(16.dp))
+                            .border(width = 1.dp, color = Border, shape = RoundedCornerShape(16.dp))
+                            .padding(16.dp),
+                    ) {
+                        content()
+                    }
                 }
             }
         }

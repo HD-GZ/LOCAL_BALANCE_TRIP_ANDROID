@@ -1,5 +1,7 @@
 <resources>
     <string name="settings_edit_info">정보 변경</string>
+    <string name="settings_pane_title">나의 정보</string>
+    <string name="settings_select_prompt">왼쪽 목록에서 항목을 선택해 주세요.</string>
 
     <string name="settings_stat_saved_courses">저장한 코스</string>
     <string name="settings_stat_count_template">%1$d개</string>

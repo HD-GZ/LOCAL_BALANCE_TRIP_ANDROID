@@ -69,6 +69,7 @@ internal fun SavedCourseDetailScreen(
     tourEnded: Boolean,
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
     viewModel: SavedCourseDetailViewModel = hiltViewModel(
         key = "saved-course-detail-$savedCourseId",
     ) { factory: SavedCourseDetailViewModel.Factory -> factory.create(savedCourseId) },
@@ -137,6 +138,7 @@ internal fun SavedCourseDetailScreen(
         onNavigateToReceiptCapture = onNavigateToReceiptCapture,
         onNavigateToReceiptDetail = onNavigateToReceiptDetail,
         modifier = modifier,
+        showBackButton = showBackButton,
     )
 }
 
@@ -151,6 +153,7 @@ private fun SavedCourseDetailScreenContent(
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
     onNavigateToReceiptDetail: (Long, Long) -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
 ) {
     val pagerState = rememberPagerState(pageCount = { SavedCourseDetailTab.entries.size })
     val context = LocalContext.current
@@ -189,7 +192,14 @@ private fun SavedCourseDetailScreenContent(
 
     Scaffold(
         modifier = modifier,
-        topBar = { SavedCourseDetailAppBar(regionName = state.regionName, title = state.title, onBackClick = onBack) },
+        topBar = {
+            SavedCourseDetailAppBar(
+                regionName = state.regionName,
+                title = state.title,
+                onBackClick = onBack,
+                showBackButton = showBackButton,
+            )
+        },
         bottomBar = {
             SavedCourseDetailCtaBar(
                 tab = state.selectedTab,

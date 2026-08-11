@@ -16,7 +16,12 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
-fun LicensesScreen(@RawRes librariesRawResId: Int, onBack: () -> Unit, modifier: Modifier = Modifier) {
+fun LicensesScreen(
+    @RawRes librariesRawResId: Int,
+    onBack: () -> Unit,
+    modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
+) {
     val libraries by produceLibraries(librariesRawResId)
 
     Scaffold(
@@ -27,6 +32,7 @@ fun LicensesScreen(@RawRes librariesRawResId: Int, onBack: () -> Unit, modifier:
                 backContentDescription = stringResource(R.string.licenses_back_cd),
                 title = stringResource(R.string.licenses_title),
                 containerColor = LbColors.Paper,
+                showBackButton = showBackButton,
             )
         },
         containerColor = LbColors.Paper,

@@ -30,6 +30,7 @@ internal fun SavedCourseDetailAppBar(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    showBackButton: Boolean = true,
 ) {
     LbTopBar(
         title = title,
@@ -37,6 +38,7 @@ internal fun SavedCourseDetailAppBar(
         onBackClick = onBackClick,
         backContentDescription = stringResource(R.string.savedcourses_detail_back_content_description),
         modifier = modifier,
+        showBackButton = showBackButton,
     )
 }
 

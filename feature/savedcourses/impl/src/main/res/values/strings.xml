@@ -3,6 +3,7 @@
     <string name="savedcourses_count_template">%1$d</string>
     <string name="savedcourses_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="savedcourses_empty">저장한 코스가 없어요.</string>
+    <string name="savedcourses_select_prompt">왼쪽 목록에서 코스를 선택해 주세요.</string>
     <string name="savedcourses_action_retry">재시도</string>
     <string name="savedcourses_back_content_description">뒤로</string>
     <string name="savedcourses_status_before_trip">여행 전</string>
