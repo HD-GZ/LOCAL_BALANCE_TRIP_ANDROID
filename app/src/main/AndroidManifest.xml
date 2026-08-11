@@ -52,5 +52,6 @@
 
     <queries>
         <package android:name="com.kakao.talk" />
+        <package android:name="com.instagram.android" />
     </queries>
 </manifest>
