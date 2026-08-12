@@ -134,7 +134,7 @@ internal fun TourBottomSheetContent(
                 onBenefitClick = onBenefitClick,
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -241,16 +241,8 @@ private fun TourSheetDetailBody(
 
         stop.description?.let { description ->
             Text(text = description, color = LbColors.Ink2, fontSize = 12.5.sp, lineHeight = 18.sp)
-            Spacer(modifier = Modifier.height(11.dp))
+            Spacer(modifier = Modifier.height(14.dp))
         }
-
-        Text(
-            text = stringResource(R.string.tour_coordinate_template, stop.latitude, stop.longitude),
-            color = LbColors.Ink,
-            fontSize = 10.5.sp,
-        )
-
-        Spacer(modifier = Modifier.height(14.dp))
 
         val audioUrl = stop.audioUrl
         if (stop.hasAudioGuide && audioUrl != null) {

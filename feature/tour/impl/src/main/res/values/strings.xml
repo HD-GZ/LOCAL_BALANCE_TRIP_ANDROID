@@ -28,7 +28,6 @@
     <string name="tour_audio_guide_empty">이 지점은 오디오 가이드가 없어요.</string>
     <string name="tour_audio_play_content_description">재생</string>
     <string name="tour_audio_pause_content_description">일시정지</string>
-    <string name="tour_coordinate_template">좌표 %1$.4f, %2$.4f</string>
 
     <string name="tour_action_view_detail">상세로</string>
     <string name="tour_action_view_report">리포트 보기</string>
