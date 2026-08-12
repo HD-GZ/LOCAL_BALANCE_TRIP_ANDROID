@@ -46,23 +46,27 @@ internal fun SavedCourseOrderTab(
         )
 
         if (state.benefits.isNotEmpty()) {
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp, modifier = Modifier.padding(vertical = 18.dp))
-                Text(
-                    text = stringResource(R.string.savedcourses_detail_benefits_title),
-                    color = LbColors.Ink,
-                    fontSize = 13.5.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Column {
-                    state.benefits.fastForEachIndexed { index, benefit ->
-                        if (index > 0) HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-                        LbBenefitRow(
-                            title = benefit.title,
-                            description = benefit.description,
-                            onClick = { onIntent(SavedCourseDetailIntent.BenefitClicked(benefit.url)) },
-                        )
-                    }
+            HorizontalDivider(
+                color = LbColors.LineSoft,
+                thickness = 1.dp,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+            )
+            Text(
+                text = stringResource(R.string.savedcourses_detail_benefits_title),
+                color = LbColors.Ink,
+                fontSize = 13.5.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Column {
+                state.benefits.fastForEachIndexed { index, benefit ->
+                    if (index > 0) HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
+                    LbBenefitRow(
+                        title = benefit.title,
+                        description = benefit.description,
+                        onClick = { onIntent(SavedCourseDetailIntent.BenefitClicked(benefit.url)) },
+                        horizontalPadding = 16.dp,
+                    )
                 }
             }
         }
