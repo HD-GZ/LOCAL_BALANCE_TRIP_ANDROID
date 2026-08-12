@@ -68,7 +68,6 @@ class TourViewModel @Inject constructor(
         when (intent) {
             TourIntent.NextStopArrived -> advanceToNextStop()
             is TourIntent.StopSelected -> selectStop(intent.index)
-            TourIntent.DetailExpandToggled -> updateState { it.copy(isDetailExpanded = !it.isDetailExpanded) }
             TourIntent.PlaybackToggled -> toggleAudioPlayback()
             is TourIntent.BenefitClicked -> postSideEffect(TourSideEffect.OpenBenefitUrl(intent.url))
             TourIntent.FinishAcknowledged -> postSideEffect(TourSideEffect.NavigateBack)
@@ -187,7 +186,6 @@ class TourViewModel @Inject constructor(
             it.copy(
                 currentStopIndex = furthestStopIndex,
                 furthestStopIndex = furthestStopIndex,
-                isDetailExpanded = false,
             )
         }
         arrivalDetector.reset()

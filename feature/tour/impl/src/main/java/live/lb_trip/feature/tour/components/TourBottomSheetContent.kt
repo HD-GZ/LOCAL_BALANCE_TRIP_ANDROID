@@ -1,7 +1,6 @@
 package live.lb_trip.feature.tour.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,11 +50,9 @@ internal fun TourBottomSheetContent(
     currentStopIndex: Int,
     furthestStopIndex: Int,
     isFinished: Boolean,
-    isDetailExpanded: Boolean,
     isAudioPlaying: Boolean,
     audioPositionMs: Int,
     audioDurationMs: Int,
-    onHeaderClick: () -> Unit,
     onStopClick: (Int) -> Unit,
     onPlaybackToggle: () -> Unit,
     onBenefitClick: (String) -> Unit,
@@ -76,8 +73,6 @@ internal fun TourBottomSheetContent(
             .background(LbColors.Paper)
             .windowInsetsPadding(WindowInsets.navigationBars),
     ) {
-        TourSheetGrabHandle(onClick = onHeaderClick)
-
         Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
             TourSheetHeaderRow(
                 stop = stop,
@@ -85,25 +80,7 @@ internal fun TourBottomSheetContent(
                 isNextTarget = isNextTarget,
                 displayOrder = stop.order,
                 totalCount = stops.size,
-                onClick = onHeaderClick,
             )
-
-            if (isDetailExpanded) {
-                TourSheetDetailBody(
-                    stop = stop,
-                    stops = stops,
-                    benefits = benefits,
-                    currentStopIndex = currentStopIndex,
-                    furthestStopIndex = furthestStopIndex,
-                    isFinished = isFinished,
-                    isAudioPlaying = isAudioPlaying,
-                    audioPositionMs = audioPositionMs,
-                    audioDurationMs = audioDurationMs,
-                    onStopClick = onStopClick,
-                    onPlaybackToggle = onPlaybackToggle,
-                    onBenefitClick = onBenefitClick,
-                )
-            }
 
             Spacer(modifier = Modifier.height(14.dp))
 
@@ -142,27 +119,23 @@ internal fun TourBottomSheetContent(
                 }
             }
 
+            TourSheetDetailBody(
+                stop = stop,
+                stops = stops,
+                benefits = benefits,
+                currentStopIndex = currentStopIndex,
+                furthestStopIndex = furthestStopIndex,
+                isFinished = isFinished,
+                isAudioPlaying = isAudioPlaying,
+                audioPositionMs = audioPositionMs,
+                audioDurationMs = audioDurationMs,
+                onStopClick = onStopClick,
+                onPlaybackToggle = onPlaybackToggle,
+                onBenefitClick = onBenefitClick,
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
         }
-    }
-}
-
-@Composable
-private fun TourSheetGrabHandle(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .height(22.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .width(38.dp)
-                .height(4.dp)
-                .clip(RoundedCornerShape(100.dp))
-                .background(LbColors.Line),
-        )
     }
 }
 
@@ -174,14 +147,12 @@ private fun TourSheetHeaderRow(
     isNextTarget: Boolean,
     displayOrder: Int,
     totalCount: Int,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
             .padding(vertical = 2.dp),
     ) {
         Box(

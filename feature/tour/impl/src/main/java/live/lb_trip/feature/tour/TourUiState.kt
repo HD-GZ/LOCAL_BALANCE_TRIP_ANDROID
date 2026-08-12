@@ -11,7 +11,6 @@ data class TourUiState(
     val benefits: ImmutableList<TourBenefit> = persistentListOf(),
     val currentStopIndex: Int = 0,
     val furthestStopIndex: Int = 0,
-    val isDetailExpanded: Boolean = false,
     val tourStartedAt: String? = null,
     val elapsedMinutes: Int = 0,
     val isFinished: Boolean = false,
