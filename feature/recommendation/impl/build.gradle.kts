@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.recommendation.api)
+    implementation(projects.feature.savedcourses.api)
     implementation(projects.core.designsystem)
     implementation(projects.core)
     implementation(projects.domain)

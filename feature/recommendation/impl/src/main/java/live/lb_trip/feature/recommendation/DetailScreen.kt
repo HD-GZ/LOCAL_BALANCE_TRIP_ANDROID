@@ -56,6 +56,7 @@ import live.lb_trip.feature.recommendation.components.ScreenBg
 @Composable
 internal fun DetailScreen(
     onBack: () -> Unit,
+    onNavigateToSavedCourses: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
     onIntent: (RecommendationDetailIntent) -> Unit = viewModel::onIntent,
@@ -67,6 +68,7 @@ internal fun DetailScreen(
     val saveConfirmationMessage = stringResource(R.string.recommendation_snackbar_save_confirmation)
     val saveErrorMessage = stringResource(R.string.recommendation_snackbar_save_error)
     val retryActionLabel = stringResource(R.string.recommendation_action_retry)
+    val viewSavedCoursesActionLabel = stringResource(R.string.recommendation_action_view_saved_courses)
     val courseNotFoundMessage = stringResource(R.string.recommendation_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.recommendation_error_empty_places)
     val genericLoadErrorMessage = stringResource(R.string.recommendation_error_generic_detail)
@@ -88,7 +90,15 @@ internal fun DetailScreen(
                         onIntent(RecommendationDetailIntent.Retry)
                     }
                 }
-                RecommendationDetailSideEffect.ShowSaveConfirmation -> snackbarHostState.showSnackbar(saveConfirmationMessage)
+                RecommendationDetailSideEffect.ShowSaveConfirmation -> {
+                    val result = snackbarHostState.showSnackbar(
+                        message = saveConfirmationMessage,
+                        actionLabel = viewSavedCoursesActionLabel,
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        onNavigateToSavedCourses()
+                    }
+                }
                 RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
                 is RecommendationDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
             }

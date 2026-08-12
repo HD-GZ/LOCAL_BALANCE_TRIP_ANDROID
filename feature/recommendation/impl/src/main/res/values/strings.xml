@@ -22,13 +22,14 @@
     <string name="recommendation_cta_save">저장</string>
     <string name="recommendation_cta_saved">저장됨</string>
 
-    <string name="recommendation_snackbar_save_confirmation">코스를 SAVE했습니다 · 마이 &gt; SAVE에서 다시 볼 수 있어요.</string>
+    <string name="recommendation_snackbar_save_confirmation">코스를 저장했어요. 나의 정보 &gt; 저장한 코스에서 다시 볼 수 있어요.</string>
     <string name="recommendation_snackbar_save_error">코스 저장에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
 
     <string name="recommendation_content_description_play">재생</string>
     <string name="recommendation_content_description_pause">일시정지</string>
 
     <string name="recommendation_action_retry">재시도</string>
+    <string name="recommendation_action_view_saved_courses">저장한 코스 보기</string>
 
     <string name="recommendation_error_propensity_not_found">취향 진단 결과가 없어요. 성향 진단을 먼저 완료해 주세요.</string>
     <string name="recommendation_error_tour_api_unavailable">관광 정보를 가져오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
