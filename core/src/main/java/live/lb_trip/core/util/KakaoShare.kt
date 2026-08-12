@@ -18,8 +18,10 @@ fun kakaoShareReportFeed(
     title: String,
     description: String,
     imageUrl: String?,
-    shareUrl: String? = BuildConfig.WEB_URL
+    shareUrl: String? = BuildConfig.WEB_URL,
+    shareToken: String? = null,
 ): FeedTemplate {
+    val executionParams = shareToken?.let { mapOf("token" to it) }
     return FeedTemplate(
         content = Content(
             title = title,
@@ -34,8 +36,7 @@ fun kakaoShareReportFeed(
             Button(
                 "여행 일지 보기",
                 link = Link(
-                    webUrl = shareUrl,
-                    mobileWebUrl = shareUrl
+                    androidExecutionParams = executionParams
                 )
             )
         )

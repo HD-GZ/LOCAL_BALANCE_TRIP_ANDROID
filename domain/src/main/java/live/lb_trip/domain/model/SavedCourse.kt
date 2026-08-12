@@ -27,6 +27,22 @@ data class SavedCourseDetail(
     val benefits: List<CourseBenefit>,
 )
 
+data class ShareToken(
+    val token: String,
+    val expiresAt: String,
+)
+
+data class SharedCourseDetail(
+    val savedCourseId: Long,
+    val sharedByName: String,
+    val imageUrl: String?,
+    val regionName: String,
+    val title: String,
+    val status: TravelStatus,
+    val places: List<CoursePlace>,
+    val benefits: List<CourseBenefit>,
+)
+
 data class CourseBenefit(
     val title: String,
     val description: String?,

@@ -1,7 +1,9 @@
 package live.lb_trip.localbalancetrip
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +15,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -38,10 +41,12 @@ import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.ReceiptCaptureRoute
 import live.lb_trip.feature.savedcourses.ReceiptDetailRoute
 import live.lb_trip.feature.savedcourses.SavedCoursesRoute
+import live.lb_trip.feature.savedcourses.SharedCourseRoute
 import live.lb_trip.feature.savedcourses.TOUR_ENDED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.receiptDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
+import live.lb_trip.feature.savedcourses.sharedCourseDetailScreen
 import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
@@ -53,6 +58,7 @@ import live.lb_trip.feature.tour.tourScreen
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+    private val pendingShareToken = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -60,6 +66,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.isLoggedIn == null }
+        pendingShareToken.value = intent.extractShareToken()
 
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -83,17 +90,45 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val isLoggedIn = uiState.isLoggedIn
                     if (isLoggedIn != null) {
-                        MainNavGraph(isLoggedIn = isLoggedIn)
+                        MainNavGraph(
+                            isLoggedIn = isLoggedIn,
+                            pendingShareToken = pendingShareToken.value,
+                            onShareTokenConsumed = { pendingShareToken.value = null },
+                        )
                     }
                 }
             }
         }
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        pendingShareToken.value = intent.extractShareToken()
+    }
+}
+
+private fun Intent.extractShareToken(): String? {
+    val uri = data ?: return null
+    Log.d("MainActivity", "Received deep link: $uri")
+    return uri.getQueryParameter("token")
 }
 
 @Composable
-private fun MainNavGraph(isLoggedIn: Boolean) {
+private fun MainNavGraph(
+    isLoggedIn: Boolean,
+    pendingShareToken: String? = null,
+    onShareTokenConsumed: () -> Unit = {},
+) {
     val navController = rememberNavController()
+
+    LaunchedEffect(pendingShareToken) {
+        if (pendingShareToken != null) {
+            navController.navigate(SharedCourseRoute(pendingShareToken))
+            onShareTokenConsumed()
+        }
+    }
+
     NavHost(navController = navController, startDestination = HomeRoute) {
         composable<HomeRoute> {
             MainTabScreen(
@@ -142,6 +177,7 @@ private fun MainNavGraph(isLoggedIn: Boolean) {
                 navController.popBackStack()
             },
         )
+        sharedCourseDetailScreen(onBack = navController::popBackStack)
         propensityScreen(
             navController = navController,
             onBack = navController::popBackStack,

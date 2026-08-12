@@ -6,6 +6,28 @@
     <string name="savedcourses_select_prompt">왼쪽 목록에서 코스를 선택해 주세요.</string>
     <string name="savedcourses_action_retry">재시도</string>
     <string name="savedcourses_back_content_description">뒤로</string>
+    <string name="sharedcourse_error_token_not_found">공유 링크를 찾을 수 없어요.</string>
+    <string name="sharedcourse_error_token_expired">만료된 공유 링크예요.</string>
+    <string name="sharedcourse_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="sharedcourse_title">공유받은 코스</string>
+    <string name="sharedcourse_back_content_description">뒤로</string>
+    <string name="sharedcourse_from_template">%1$s님이 공유한 코스예요</string>
+    <string name="sharedcourse_meta_places_label">방문 장소</string>
+    <string name="sharedcourse_meta_walk_label">총 도보</string>
+    <string name="sharedcourse_meta_audio_label">오디오 가이드</string>
+    <string name="sharedcourse_meta_places_value">%1$d곳</string>
+    <string name="sharedcourse_meta_walk_value">%1$d분</string>
+    <string name="sharedcourse_meta_audio_value">%1$d개</string>
+    <string name="sharedcourse_section_course_order">코스 순서</string>
+    <string name="sharedcourse_section_benefits">이 코스 적용 가능 혜택</string>
+    <string name="sharedcourse_audio_guide_label">오디오 가이드</string>
+    <string name="sharedcourse_walk_time_template">다음 장소까지 도보 %1$s</string>
+    <string name="sharedcourse_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="sharedcourse_content_description_play">재생</string>
+    <string name="sharedcourse_content_description_pause">일시정지</string>
+    <string name="sharedcourse_navigate_cta">길찾기</string>
+    <string name="sharedcourse_map_app_unavailable">지도 앱을 열 수 없어요.</string>
+    <string name="sharedcourse_readonly_note">공유받은 코스는 읽기 전용이에요.</string>
     <string name="savedcourses_status_before_trip">여행 전</string>
     <string name="savedcourses_status_traveling">여행 중</string>
     <string name="savedcourses_status_completed">완주</string>
@@ -39,6 +61,7 @@
     <string name="savedcourses_detail_share_story">스토리로\n공유하기</string>
     <string name="savedcourses_detail_share_saved_toast">갤러리에 저장했어요</string>
     <string name="savedcourses_detail_share_failed">이미지를 저장하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_detail_kakao_share_failed">카카오톡 공유에 실패했어요. 다시 시도해 주세요.</string>
     <string name="savedcourses_detail_share_description">%1$s님의 여행 기록을 지금 확인해보세요!</string>
 
     <string name="savedcources_detail_story_distance_label">걷기 거리</string>
