@@ -17,14 +17,18 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -32,6 +36,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -53,6 +58,13 @@ internal fun SignupAccountInfoScreen(
     onIntent: (SignupIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isAccountInfoValid = state.email.isNotEmpty() &&
+        state.password.isNotEmpty() &&
+        state.passwordConfirm.isNotEmpty() &&
+        state.password == state.passwordConfirm
+    val passwordFocusRequester = remember { FocusRequester() }
+    val passwordConfirmFocusRequester = remember { FocusRequester() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -98,7 +110,8 @@ internal fun SignupAccountInfoScreen(
                     onValueChange = { onIntent(SignupIntent.EmailChanged(it)) },
                     label = stringResource(R.string.signup_email),
                     placeholder = stringResource(R.string.signup_email_placeholder),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { passwordFocusRequester.requestFocus() }),
                 )
                 LbInputField(
                     required = true,
@@ -108,7 +121,9 @@ internal fun SignupAccountInfoScreen(
                     placeholder = stringResource(R.string.signup_password_placeholder),
                     hintText = stringResource(R.string.signup_password_hint),
                     visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { passwordConfirmFocusRequester.requestFocus() }),
+                    textFieldModifier = Modifier.focusRequester(passwordFocusRequester),
                     trailingIcon = {
                         IconButton(
                             onClick = { onIntent(SignupIntent.TogglePasswordVisibility) },
@@ -129,7 +144,13 @@ internal fun SignupAccountInfoScreen(
                     label = stringResource(R.string.signup_password_confirm),
                     placeholder = stringResource(R.string.signup_reenter),
                     visualTransformation = if (state.isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (isAccountInfoValid && !state.isLoading) onIntent(SignupIntent.AccountInfoNextStepClicked)
+                        },
+                    ),
+                    textFieldModifier = Modifier.focusRequester(passwordConfirmFocusRequester),
                     trailingIcon = {
                         IconButton(
                             onClick = { onIntent(SignupIntent.ToggleConfirmPasswordVisibility) },
@@ -145,11 +166,6 @@ internal fun SignupAccountInfoScreen(
                 )
             }
         }
-
-        val isAccountInfoValid = state.email.isNotEmpty() &&
-            state.password.isNotEmpty() &&
-            state.passwordConfirm.isNotEmpty() &&
-            state.password == state.passwordConfirm
 
         LbBottomActionBar(
             windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime),
