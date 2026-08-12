@@ -39,7 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbChip
 import live.lb_trip.core.designsystem.component.LbChipDefaults
@@ -157,12 +158,8 @@ private fun ActionSection(
     onSigninClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(horizontal = 26.dp, vertical = 22.dp),
+    LbBottomActionBar(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(11.dp),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -171,35 +168,18 @@ private fun ActionSection(
             LbChip(label = stringResource(R.string.onboarding_chip_tourism_resident))
         }
         Spacer(modifier = Modifier.height(7.dp))
-        LbButton(
+        LbBottomActionButton(
+            text = stringResource(R.string.onboarding_signup),
             onClick = onSignupClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-            colors = LbButtonDefaults.greenColors(),
-        ) {
-            Text(
-                text = stringResource(R.string.onboarding_signup),
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.155).sp,
-            )
-        }
-        LbButton(
+            modifier = Modifier.fillMaxWidth(),
+        )
+        LbBottomActionButton(
+            text = stringResource(R.string.onboarding_signin),
             onClick = onSigninClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
             colors = LbButtonDefaults.whiteColors(),
             border = BorderStroke(width = 1.dp, color = LbColors.Line2),
-        ) {
-            Text(
-                text = stringResource(R.string.onboarding_signin),
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.155).sp,
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
