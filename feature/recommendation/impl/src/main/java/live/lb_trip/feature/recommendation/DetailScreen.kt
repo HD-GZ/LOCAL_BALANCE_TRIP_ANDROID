@@ -208,26 +208,30 @@ private fun DetailScreenContent(
                 )
 
                 if (state.benefits.isNotEmpty()) {
-                    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                        HorizontalDivider(color = LineSoft, thickness = 1.dp, modifier = Modifier.padding(vertical = 18.dp))
+                    HorizontalDivider(
+                        color = LineSoft,
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+                    )
 
-                        Text(
-                            text = stringResource(R.string.recommendation_section_incentives),
-                            color = Ink,
-                            fontSize = 13.5.sp,
-                            fontWeight = FontWeight.Bold,
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = stringResource(R.string.recommendation_section_incentives),
+                        color = Ink,
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
 
-                        Column {
-                            state.benefits.fastForEachIndexed { index, benefit ->
-                                if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
-                                LbBenefitRow(
-                                    title = benefit.title,
-                                    description = benefit.description,
-                                    onClick = { onIntent(RecommendationDetailIntent.BenefitClicked(benefit.url)) },
-                                )
-                            }
+                    Column {
+                        state.benefits.fastForEachIndexed { index, benefit ->
+                            if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
+                            LbBenefitRow(
+                                title = benefit.title,
+                                description = benefit.description,
+                                onClick = { onIntent(RecommendationDetailIntent.BenefitClicked(benefit.url)) },
+                                horizontalPadding = 16.dp,
+                            )
                         }
                     }
                 }

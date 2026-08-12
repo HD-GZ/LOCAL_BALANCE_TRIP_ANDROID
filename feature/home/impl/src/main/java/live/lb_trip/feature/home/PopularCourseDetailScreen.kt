@@ -149,13 +149,17 @@ private fun PopularCourseDetailScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(vertical = 16.dp),
             ) {
-                PopularCourseDetailHero(imageUrl = state.stops.firstOrNull()?.imageUrl, imageLoader = imageLoader)
+                PopularCourseDetailHero(
+                    imageUrl = state.stops.firstOrNull()?.imageUrl,
+                    imageLoader = imageLoader,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 2.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp)) {
                     Icon(
                         imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_pin),
                         contentDescription = null,
@@ -172,20 +176,24 @@ private fun PopularCourseDetailScreenContent(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     lineHeight = 26.sp,
-                    modifier = Modifier.padding(horizontal = 2.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp),
                 )
                 Spacer(modifier = Modifier.height(14.dp))
 
-                PopularCourseDetailMetas(state = state)
+                PopularCourseDetailMetas(state = state, modifier = Modifier.padding(horizontal = 16.dp))
 
-                HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp, modifier = Modifier.padding(vertical = 18.dp))
+                HorizontalDivider(
+                    color = LbColors.LineSoft,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+                )
 
                 Text(
                     text = stringResource(R.string.home_course_detail_section_course_order),
                     color = LbColors.Ink,
                     fontSize = 13.5.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 2.dp).padding(bottom = 14.dp),
+                    modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 14.dp),
                 )
 
                 LbTimeline(
@@ -236,13 +244,17 @@ private fun PopularCourseDetailScreenContent(
                 )
 
                 if (state.benefits.isNotEmpty()) {
-                    HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp, modifier = Modifier.padding(vertical = 18.dp))
+                    HorizontalDivider(
+                        color = LbColors.LineSoft,
+                        thickness = 1.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+                    )
                     Text(
                         text = stringResource(R.string.home_course_detail_section_benefits),
                         color = LbColors.Ink,
                         fontSize = 13.5.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 2.dp),
+                        modifier = Modifier.padding(horizontal = 16.dp),
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Column {
@@ -252,6 +264,7 @@ private fun PopularCourseDetailScreenContent(
                                 title = benefit.title,
                                 description = benefit.description,
                                 onClick = { onIntent(PopularCourseDetailIntent.BenefitClicked(benefit.url)) },
+                                horizontalPadding = 16.dp,
                             )
                         }
                     }
@@ -288,7 +301,7 @@ private fun PopularCourseDetailHero(imageUrl: String?, imageLoader: ImageLoader,
 
 @Composable
 private fun PopularCourseDetailMetas(state: PopularCourseDetailUiState, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.fillMaxWidth().padding(horizontal = 2.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         PopularCourseDetailMeta(
             value = stringResource(R.string.home_course_detail_meta_places_value, state.stops.size),
             label = stringResource(R.string.home_course_detail_meta_places_label),
