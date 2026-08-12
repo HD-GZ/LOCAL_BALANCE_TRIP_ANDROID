@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LocalBalanceTrip</string>
+    <string name="app_name">로컬 밸런스 트립</string>
     <string name="main_session_expired">로그인이 만료됐어요. 다시 로그인해 주세요.</string>
 
     <string name="main_brand_prefix">로컬</string>
