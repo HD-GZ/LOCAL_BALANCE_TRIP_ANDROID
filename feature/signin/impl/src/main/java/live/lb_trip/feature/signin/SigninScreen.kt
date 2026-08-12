@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -36,14 +37,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -149,6 +154,7 @@ private fun SigninScreenContent(
                     onEmailChange = { onIntent(SigninIntent.EmailChanged(it)) },
                     onPasswordChange = { onIntent(SigninIntent.PasswordChanged(it)) },
                     onTogglePasswordVisibility = { onIntent(SigninIntent.TogglePasswordVisibility) },
+                    onLoginClick = { onIntent(SigninIntent.LoginClicked) },
                 )
             }
 
@@ -226,8 +232,12 @@ private fun SigninForm(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val passwordFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -237,7 +247,8 @@ private fun SigninForm(
             onValueChange = onEmailChange,
             label = stringResource(R.string.signin_email),
             placeholder = stringResource(R.string.signin_email_placeholder),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { passwordFocusRequester.requestFocus() }),
         )
         LbInputField(
             value = password,
@@ -245,7 +256,14 @@ private fun SigninForm(
             label = stringResource(R.string.signin_password),
             placeholder = stringResource(R.string.signin_password_placeholder),
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    onLoginClick()
+                },
+            ),
+            textFieldModifier = Modifier.focusRequester(passwordFocusRequester),
             trailingIcon = {
                 IconButton(
                     onClick = onTogglePasswordVisibility,

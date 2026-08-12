@@ -37,8 +37,8 @@ import live.lb_trip.core.designsystem.component.LbBottomActionBar
 import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbOtpField
 import live.lb_trip.core.designsystem.component.LbTopBar
-import live.lb_trip.feature.signup.components.OtpInputField
 
 @Composable
 internal fun SignupEmailVerifyScreen(
@@ -94,9 +94,12 @@ internal fun SignupEmailVerifyScreen(
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(61.dp))
-            OtpInputField(
+            LbOtpField(
                 code = state.code,
                 onCodeChange = { onIntent(SignupIntent.CodeChanged(it)) },
+                onDone = {
+                    if (state.code.length == 6 && !state.isLoading) onIntent(SignupIntent.ConfirmCodeClicked)
+                },
             )
             Spacer(modifier = Modifier.height(20.dp))
             Text(

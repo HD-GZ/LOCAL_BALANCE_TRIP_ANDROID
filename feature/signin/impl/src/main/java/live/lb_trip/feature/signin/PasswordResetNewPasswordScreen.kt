@@ -13,17 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -44,6 +49,11 @@ internal fun PasswordResetNewPasswordScreen(
     onIntent: (PasswordResetIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isNewPasswordValid = state.newPassword.isNotEmpty() &&
+        state.newPasswordConfirm.isNotEmpty() &&
+        state.newPassword == state.newPasswordConfirm
+    val confirmFocusRequester = remember { FocusRequester() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -93,7 +103,8 @@ internal fun PasswordResetNewPasswordScreen(
                     } else {
                         PasswordVisualTransformation()
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { confirmFocusRequester.requestFocus() }),
                     trailingIcon = {
                         IconButton(
                             onClick = { onIntent(PasswordResetIntent.ToggleNewPasswordVisibility) },
@@ -118,7 +129,13 @@ internal fun PasswordResetNewPasswordScreen(
                     } else {
                         PasswordVisualTransformation()
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (isNewPasswordValid && !state.isLoading) onIntent(PasswordResetIntent.ResetPasswordClicked)
+                        },
+                    ),
+                    textFieldModifier = Modifier.focusRequester(confirmFocusRequester),
                     trailingIcon = {
                         IconButton(
                             onClick = { onIntent(PasswordResetIntent.ToggleNewPasswordConfirmVisibility) },
@@ -134,10 +151,6 @@ internal fun PasswordResetNewPasswordScreen(
                 )
             }
         }
-
-        val isNewPasswordValid = state.newPassword.isNotEmpty() &&
-            state.newPasswordConfirm.isNotEmpty() &&
-            state.newPassword == state.newPasswordConfirm
 
         LbBottomActionBar {
             LbBottomActionButton(

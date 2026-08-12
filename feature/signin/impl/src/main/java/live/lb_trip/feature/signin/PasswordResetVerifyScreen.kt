@@ -33,6 +33,7 @@ import live.lb_trip.core.designsystem.component.LbBottomActionBar
 import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbOtpField
 import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 
@@ -90,9 +91,12 @@ internal fun PasswordResetVerifyScreen(
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(40.dp))
-            PasswordResetOtpField(
+            LbOtpField(
                 code = state.code,
                 onCodeChange = { onIntent(PasswordResetIntent.CodeChanged(it)) },
+                onDone = {
+                    if (state.code.length == 6 && !state.isLoading) onIntent(PasswordResetIntent.ConfirmCodeClicked)
+                },
             )
             Spacer(modifier = Modifier.height(20.dp))
             if (state.remainingSeconds > 0) {
