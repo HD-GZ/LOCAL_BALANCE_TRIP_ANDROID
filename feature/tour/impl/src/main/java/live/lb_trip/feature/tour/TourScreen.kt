@@ -402,7 +402,7 @@ private fun TourStopsContent(state: TourUiState, onIntent: (TourIntent) -> Unit)
     )
 }
 
-private val SheetPeekHeight = 150.dp
+private val SheetPeekHeight = 112.dp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Preview(showBackground = true)
