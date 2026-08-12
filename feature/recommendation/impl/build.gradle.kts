@@ -13,4 +13,6 @@ dependencies {
     implementation(projects.core)
     implementation(projects.domain)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }

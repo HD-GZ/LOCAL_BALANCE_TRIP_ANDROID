@@ -28,7 +28,12 @@ class SavedCoursesViewModel @Inject constructor(
         getSavedCoursesUseCase()
             .onSuccess { result ->
                 val summaries = result.courses.map {
-                    SavedCourseSummary(savedCourseId = it.savedCourseId, courseName = it.courseName, status = it.status)
+                    SavedCourseSummary(
+                        savedCourseId = it.savedCourseId,
+                        courseName = it.courseName,
+                        status = it.status,
+                        imageUrl = it.imageUrl,
+                    )
                 }
                 updateState { it.copy(isLoading = false, courses = summaries.toPersistentList()) }
             }

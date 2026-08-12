@@ -34,7 +34,7 @@
 
     <string name="home_feed_section_title">내가 저장한 코스</string>
     <string name="home_feed_section_subtitle_guest">로그인하면 저장한 코스와 취향 기반 추천을 함께 볼 수 있어요</string>
-    <string name="home_feed_view_all">전체보기 &gt;</string>
+    <string name="home_feed_view_all">전체 보기</string>
     <string name="home_feed_flag_saved">저장</string>
     <string name="home_feed_flag_recommended">취향 기반 추천</string>
     <string name="home_status_before_trip">여행 전</string>

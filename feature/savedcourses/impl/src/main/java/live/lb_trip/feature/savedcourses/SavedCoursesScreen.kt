@@ -34,6 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -45,6 +47,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.ImageLoader
+import coil3.compose.AsyncImage
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.LbColors
@@ -87,11 +92,17 @@ internal fun SavedCoursesScreen(
         }
     }
 
+    val context = LocalContext.current
+    val imageLoader = remember(context) {
+        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
+    }
+
     SavedCoursesScreenContent(
         state = state,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         onBack = onBack,
         onCourseClick = onCourseClick,
+        imageLoader = imageLoader,
         modifier = modifier,
     )
 }
@@ -102,6 +113,7 @@ private fun SavedCoursesScreenContent(
     snackbarHost: @Composable () -> Unit,
     onBack: () -> Unit,
     onCourseClick: (Long) -> Unit,
+    imageLoader: ImageLoader,
     modifier: Modifier = Modifier,
 ) {
     Scaffold(
@@ -123,7 +135,7 @@ private fun SavedCoursesScreenContent(
             )
         },
         snackbarHost = snackbarHost,
-        containerColor = Color.White,
+        containerColor = LbColors.ScreenBg,
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -145,7 +157,7 @@ private fun SavedCoursesScreenContent(
                         .padding(horizontal = 32.dp),
                 )
 
-                else -> SavedCoursesList(courses = state.courses, onCourseClick = onCourseClick)
+                else -> SavedCoursesList(courses = state.courses, imageLoader = imageLoader, onCourseClick = onCourseClick)
             }
         }
     }
@@ -154,6 +166,7 @@ private fun SavedCoursesScreenContent(
 @Composable
 private fun SavedCoursesList(
     courses: ImmutableList<SavedCourseSummary>,
+    imageLoader: ImageLoader,
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -163,13 +176,18 @@ private fun SavedCoursesList(
         modifier = modifier.fillMaxSize(),
     ) {
         items(courses, key = { it.savedCourseId }) { course ->
-            SavedCoursesRow(course = course, onClick = { onCourseClick(course.savedCourseId) })
+            SavedCoursesRow(course = course, imageLoader = imageLoader, onClick = { onCourseClick(course.savedCourseId) })
         }
     }
 }
 
 @Composable
-private fun SavedCoursesRow(course: SavedCourseSummary, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun SavedCoursesRow(
+    course: SavedCourseSummary,
+    imageLoader: ImageLoader,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         verticalAlignment = Alignment.Top,
         horizontalArrangement = Arrangement.spacedBy(13.dp),
@@ -188,12 +206,22 @@ private fun SavedCoursesRow(course: SavedCourseSummary, onClick: () -> Unit, mod
                 .background(Brush.linearGradient(listOf(LbColors.GreenTint2, LbColors.GreenBlock))),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_route),
-                contentDescription = null,
-                tint = LbColors.Green,
-                modifier = Modifier.size(28.dp),
-            )
+            if (course.imageUrl != null) {
+                AsyncImage(
+                    model = course.imageUrl,
+                    contentDescription = null,
+                    imageLoader = imageLoader,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize(),
+                )
+            } else {
+                Icon(
+                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_route),
+                    contentDescription = null,
+                    tint = LbColors.Green,
+                    modifier = Modifier.size(28.dp),
+                )
+            }
         }
         Column {
             SavedCourseStatusBadge(status = course.status)
@@ -237,5 +265,6 @@ private fun SavedCoursesScreenPreview() {
         snackbarHost = {},
         onBack = {},
         onCourseClick = {},
+        imageLoader = ImageLoader.Builder(LocalContext.current).build(),
     )
 }

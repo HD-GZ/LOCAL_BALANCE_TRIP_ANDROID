@@ -13,7 +13,7 @@ fun RegionResponseDto.toDomain(): RecommendedRegion =
     RecommendedRegion(id = regionId, name = regionName, reason = reason)
 
 fun CourseResponseDto.toDomain(): RecommendedCourse =
-    RecommendedCourse(id = courseId, title = title, reason = reason)
+    RecommendedCourse(id = courseId, title = title, reason = reason, imageUrl = imageUrl)
 
 fun CourseDetailResponseDto.toDomain(): CourseDetail =
     CourseDetail(

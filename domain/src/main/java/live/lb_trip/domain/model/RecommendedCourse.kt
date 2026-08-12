@@ -4,4 +4,5 @@ data class RecommendedCourse(
     val id: Long,
     val title: String,
     val reason: String,
+    val imageUrl: String?,
 )

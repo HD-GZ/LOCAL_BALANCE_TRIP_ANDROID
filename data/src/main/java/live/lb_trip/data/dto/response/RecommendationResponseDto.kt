@@ -14,6 +14,7 @@ data class CourseResponseDto(
     val courseId: Long,
     val title: String,
     val reason: String,
+    val imageUrl: String? = null,
 )
 
 @Serializable
