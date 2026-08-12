@@ -40,9 +40,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.feature.signup.components.SignupStepBar
@@ -152,30 +151,17 @@ internal fun SignupAccountInfoScreen(
             state.passwordConfirm.isNotEmpty() &&
             state.password == state.passwordConfirm
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
-                .padding(horizontal = 24.dp, vertical = 14.dp),
+        LbBottomActionBar(
+            windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime),
             verticalArrangement = Arrangement.spacedBy(11.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            LbButton(
+            LbBottomActionButton(
+                text = stringResource(R.string.signup_next),
                 onClick = { onIntent(SignupIntent.AccountInfoNextStepClicked) },
                 enabled = isAccountInfoValid && !state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
-                    text = stringResource(R.string.signup_next),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+            )
             Text(
                 text = buildAnnotatedString {
                     append(stringResource(R.string.signup_existing_account))

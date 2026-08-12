@@ -1,25 +1,15 @@
 package live.lb_trip.feature.settings.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.union
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.feature.settings.EditProfileIntent
 import live.lb_trip.feature.settings.EditProfileUiState
 import live.lb_trip.feature.settings.R
@@ -37,26 +27,15 @@ internal fun EditProfileSubmitBar(
     onIntent: (EditProfileIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(LbBrush.BottomFadeGradient)
-            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
-            .padding(horizontal = 24.dp, vertical = 14.dp),
+    LbBottomActionBar(
+        modifier = modifier,
+        windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime),
     ) {
-        LbButton(
+        LbBottomActionButton(
+            text = stringResource(R.string.edit_profile_submit),
             onClick = { onIntent(EditProfileIntent.SaveClicked) },
             enabled = isEditProfileFormValid(state) && !state.isSaving,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-            colors = LbButtonDefaults.greenColors(),
-        ) {
-            Text(
-                text = stringResource(R.string.edit_profile_submit),
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }

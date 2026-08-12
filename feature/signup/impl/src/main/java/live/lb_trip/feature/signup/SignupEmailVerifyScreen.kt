@@ -33,8 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.feature.signup.components.OtpInputField
@@ -112,43 +113,21 @@ internal fun SignupEmailVerifyScreen(
         }
 
         val isCodeComplete = state.code.length == 6
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            LbButton(
-                onClick = { onIntent(SignupIntent.ResendCodeClicked) },
-                enabled = !state.isLoading,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(54.dp),
-                colors = LbButtonDefaults.whiteColors(),
-                border = BorderStroke(1.dp, LbColors.Line2),
-            ) {
-                Text(
+        LbBottomActionBar(windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime)) {
+            LbBottomActionButtonRow {
+                LbBottomActionButton(
                     text = stringResource(R.string.signup_resend_code),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
+                    onClick = { onIntent(SignupIntent.ResendCodeClicked) },
+                    enabled = !state.isLoading,
+                    colors = LbButtonDefaults.whiteColors(),
+                    border = BorderStroke(1.dp, LbColors.Line2),
+                    modifier = Modifier.weight(1f),
                 )
-            }
-            LbButton(
-                onClick = { onIntent(SignupIntent.ConfirmCodeClicked) },
-                enabled = isCodeComplete && !state.isLoading,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
+                LbBottomActionButton(
                     text = stringResource(R.string.signup_confirm_code),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
+                    onClick = { onIntent(SignupIntent.ConfirmCodeClicked) },
+                    enabled = isCodeComplete && !state.isLoading,
+                    modifier = Modifier.weight(1f),
                 )
             }
         }

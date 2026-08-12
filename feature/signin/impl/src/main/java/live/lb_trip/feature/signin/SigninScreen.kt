@@ -55,9 +55,8 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbTopBar
@@ -271,30 +270,18 @@ private fun SigninBottomAction(
     onSignupClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(LbBrush.BottomFadeGradient)
-            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
-            .padding(start = 24.dp, end = 24.dp, top = 14.dp, bottom = 14.dp),
+    LbBottomActionBar(
+        modifier = modifier,
+        windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime),
         verticalArrangement = Arrangement.spacedBy(13.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LbButton(
+        LbBottomActionButton(
+            text = stringResource(R.string.signin_title),
             onClick = onLoginClick,
             enabled = !isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-            colors = LbButtonDefaults.greenColors(),
-        ) {
-            Text(
-                text = stringResource(R.string.signin_title),
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.155).sp,
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
