@@ -21,6 +21,7 @@ data class SavedCourseDetailUiState(
     val status: TravelStatus = TravelStatus.BEFORE_TRIP,
     val stops: ImmutableList<SavedCourseStop> = persistentListOf(),
     val expandedStopIndices: PersistentSet<Int> = persistentSetOf(0),
+    val playingStopIndex: Int? = null,
     val benefits: ImmutableList<SavedCourseBenefit> = persistentListOf(),
     val isReceiptsLoading: Boolean = false,
     val hasLoadedReceipts: Boolean = false,
