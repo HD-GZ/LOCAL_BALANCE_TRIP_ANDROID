@@ -23,6 +23,8 @@ import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.feature.tour.R
 import live.lb_trip.feature.tour.TourUiState
 
+private val ButtonVerticalPadding = 16.dp
+
 @Composable
 internal fun TourActionBar(
     state: TourUiState,
@@ -46,13 +48,14 @@ internal fun TourActionBar(
                 LbButton(
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.whiteColors(),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = ButtonVerticalPadding),
                 ) {
                     Text(text = stringResource(R.string.tour_action_view_detail), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 }
                 LbButton(
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.greenColors(),
+                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = ButtonVerticalPadding),
                     modifier = Modifier.weight(1f),
                 ) {
                     Text(text = stringResource(R.string.tour_action_view_report), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
@@ -62,6 +65,7 @@ internal fun TourActionBar(
             LbButton(
                 onClick = onNextStopClick,
                 colors = LbButtonDefaults.greenColors(),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = ButtonVerticalPadding),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(
