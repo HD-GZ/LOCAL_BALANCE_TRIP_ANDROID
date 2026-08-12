@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -18,14 +19,18 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -80,6 +85,10 @@ internal fun ReceiptImage(imageUrl: String?, imageLoader: ImageLoader, modifier:
 
 @Composable
 internal fun ReceiptInfoContent(state: ReceiptDetailUiState, onIntent: (ReceiptDetailIntent) -> Unit, modifier: Modifier = Modifier) {
+    val isEditSubmittable = state.editMerchantName.isNotEmpty() && state.editAmount.isNotEmpty() && state.editPaidDate.isNotEmpty()
+    val amountFocusRequester = remember { FocusRequester() }
+    val paidDateFocusRequester = remember { FocusRequester() }
+
     Column(modifier = modifier) {
         if (state.isEditing) {
             Column(
@@ -92,6 +101,8 @@ internal fun ReceiptInfoContent(state: ReceiptDetailUiState, onIntent: (ReceiptD
                     label = stringResource(R.string.savedcourses_receipt_detail_field_merchant),
                     placeholder = stringResource(R.string.savedcourses_receipt_detail_field_merchant),
                     required = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { amountFocusRequester.requestFocus() }),
                 )
                 LbInputField(
                     value = state.editAmount,
@@ -99,7 +110,9 @@ internal fun ReceiptInfoContent(state: ReceiptDetailUiState, onIntent: (ReceiptD
                     label = stringResource(R.string.savedcourses_receipt_detail_field_amount),
                     placeholder = "0",
                     required = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { paidDateFocusRequester.requestFocus() }),
+                    textFieldModifier = Modifier.focusRequester(amountFocusRequester),
                 )
                 LbInputField(
                     value = state.editPaidDate,
@@ -107,7 +120,13 @@ internal fun ReceiptInfoContent(state: ReceiptDetailUiState, onIntent: (ReceiptD
                     label = stringResource(R.string.savedcourses_receipt_detail_field_date),
                     placeholder = "YYYY-MM-DD",
                     required = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (isEditSubmittable && !state.isSaving) onIntent(ReceiptDetailIntent.SaveClicked)
+                        },
+                    ),
+                    textFieldModifier = Modifier.focusRequester(paidDateFocusRequester),
                 )
             }
             Text(
