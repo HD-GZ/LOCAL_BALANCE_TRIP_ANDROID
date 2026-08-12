@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import live.lb_trip.feature.savedcourses.SavedCoursesRoute
 
 fun NavGraphBuilder.recommendationScreen(navController: NavController, onBack: () -> Unit) {
     navigation<RecommendationRoute>(startDestination = RegionRoute) {
@@ -29,6 +30,9 @@ fun NavGraphBuilder.recommendationScreen(navController: NavController, onBack: (
 
 fun NavGraphBuilder.courseDetailScreen(navController: NavController) {
     composable<CourseDetailRoute> {
-        DetailScreen(onBack = navController::popBackStack)
+        DetailScreen(
+            onBack = navController::popBackStack,
+            onNavigateToSavedCourses = { navController.navigate(SavedCoursesRoute()) },
+        )
     }
 }
