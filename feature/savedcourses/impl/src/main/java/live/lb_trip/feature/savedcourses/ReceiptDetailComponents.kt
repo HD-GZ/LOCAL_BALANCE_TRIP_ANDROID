@@ -33,7 +33,7 @@ import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.designsystem.component.LbInputField
 
@@ -117,30 +117,19 @@ internal fun ReceiptInfoContent(state: ReceiptDetailUiState, onIntent: (ReceiptD
                 modifier = Modifier.padding(top = 10.dp, bottom = 18.dp),
             )
             Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                LbButton(
+                LbBottomActionButton(
+                    text = stringResource(R.string.savedcourses_receipt_detail_save),
                     onClick = { onIntent(ReceiptDetailIntent.SaveClicked) },
                     enabled = !state.isSaving,
-                    colors = LbButtonDefaults.greenColors(),
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = stringResource(R.string.savedcourses_receipt_detail_save),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-                LbButton(
+                )
+                LbBottomActionButton(
+                    text = stringResource(R.string.savedcourses_receipt_detail_cancel),
                     onClick = { onIntent(ReceiptDetailIntent.EditCancelled) },
                     enabled = !state.isSaving,
                     colors = LbButtonDefaults.whiteColors(),
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = stringResource(R.string.savedcourses_receipt_detail_cancel),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
+                )
             }
         } else {
             Column(
@@ -167,35 +156,26 @@ internal fun ReceiptInfoContent(state: ReceiptDetailUiState, onIntent: (ReceiptD
                 )
             }
             Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
-                LbButton(
+                LbBottomActionButton(
+                    text = stringResource(R.string.savedcourses_receipt_detail_download),
                     onClick = { onIntent(ReceiptDetailIntent.DownloadClicked) },
                     colors = LbButtonDefaults.whiteColors(),
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_download),
-                        contentDescription = null,
-                        tint = LbColors.Ink,
-                        modifier = Modifier.size(17.dp),
-                    )
-                    Text(
-                        text = stringResource(R.string.savedcourses_receipt_detail_download),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.padding(start = 8.dp),
-                    )
-                }
-                LbButton(
+                    leadingIcon = {
+                        Icon(
+                            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_download),
+                            contentDescription = null,
+                            tint = LbColors.Ink,
+                            modifier = Modifier.size(17.dp).padding(end = 8.dp),
+                        )
+                    },
+                )
+                LbBottomActionButton(
+                    text = stringResource(R.string.savedcourses_receipt_detail_delete),
                     onClick = { onIntent(ReceiptDetailIntent.DeleteClicked) },
                     colors = receiptDetailDangerColors(),
                     modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = stringResource(R.string.savedcourses_receipt_detail_delete),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
+                )
             }
         }
     }

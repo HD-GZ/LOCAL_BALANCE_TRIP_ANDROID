@@ -81,6 +81,7 @@ fun LbBottomActionButton(
     colors: ButtonColors = LbButtonDefaults.greenColors(),
     elevation: ButtonElevation? = LbButtonDefaults.buttonElevation(),
     border: BorderStroke? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
 ) {
     LbButton(
         onClick = onClick,
@@ -90,6 +91,7 @@ fun LbBottomActionButton(
         border = border,
         modifier = modifier.height(LbBottomActionBarDefaults.ButtonHeight),
     ) {
+        leadingIcon?.invoke()
         Text(text = text, fontSize = 15.5.sp, fontWeight = FontWeight.SemiBold)
     }
 }

@@ -1,30 +1,15 @@
 package live.lb_trip.feature.tour.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.feature.tour.R
 import live.lb_trip.feature.tour.TourUiState
-
-private val ActionButtonHeight = 46.dp
 
 @Composable
 internal fun TourActionBar(
@@ -37,47 +22,31 @@ internal fun TourActionBar(
     val nextIndex = (state.furthestStopIndex + 1).coerceIn(0, lastIndex.coerceAtLeast(0))
     val targetStop = state.stops.getOrNull(nextIndex)
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(LbColors.Paper)
-            .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(horizontal = 14.dp, vertical = 11.dp),
-    ) {
+    LbBottomActionBar(modifier = modifier) {
         if (state.isFinished) {
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                LbButton(
+            LbBottomActionButtonRow {
+                LbBottomActionButton(
+                    text = stringResource(R.string.tour_action_view_detail),
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.whiteColors(),
-                    contentPadding = PaddingValues(horizontal = 16.dp),
-                    modifier = Modifier.height(ActionButtonHeight),
-                ) {
-                    Text(text = stringResource(R.string.tour_action_view_detail), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                }
-                LbButton(
+                    modifier = Modifier.weight(1f),
+                )
+                LbBottomActionButton(
+                    text = stringResource(R.string.tour_action_view_report),
                     onClick = onFinishAcknowledged,
-                    colors = LbButtonDefaults.greenColors(),
-                    modifier = Modifier.weight(1f).height(ActionButtonHeight),
-                ) {
-                    Text(text = stringResource(R.string.tour_action_view_report), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                }
-            }
-        } else {
-            LbButton(
-                onClick = onNextStopClick,
-                colors = LbButtonDefaults.greenColors(),
-                modifier = Modifier.fillMaxWidth().height(ActionButtonHeight),
-            ) {
-                Text(
-                    text = if (state.furthestStopIndex >= lastIndex) {
-                        stringResource(R.string.tour_finish)
-                    } else {
-                        stringResource(R.string.tour_next_stop_arrived, targetStop?.name.orEmpty())
-                    },
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
                 )
             }
+        } else {
+            LbBottomActionButton(
+                text = if (state.furthestStopIndex >= lastIndex) {
+                    stringResource(R.string.tour_finish)
+                } else {
+                    stringResource(R.string.tour_next_stop_arrived, targetStop?.name.orEmpty())
+                },
+                onClick = onNextStopClick,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
