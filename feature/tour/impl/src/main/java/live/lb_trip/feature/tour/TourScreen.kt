@@ -3,11 +3,13 @@ package live.lb_trip.feature.tour
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -238,24 +240,38 @@ private fun TourCompactContent(
     val density = LocalDensity.current
     var actionBarHeightPx by remember { mutableIntStateOf(0) }
     val actionBarHeight = with(density) { actionBarHeightPx.toDp() }
+    var topBarHeightPx by remember { mutableIntStateOf(0) }
+    val topBarHeight = with(density) { topBarHeightPx.toDp() }
 
-    Box(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val sheetMaxHeight = (maxHeight - topBarHeight - actionBarHeight).coerceAtLeast(0.dp)
+
         BottomSheetScaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = actionBarHeight),
             scaffoldState = scaffoldState,
-            topBar = { TourTopBar(state = state, onBackClick = onBack) },
+            topBar = {
+                TourTopBar(
+                    state = state,
+                    onBackClick = onBack,
+                    modifier = Modifier.onSizeChanged { topBarHeightPx = it.height },
+                )
+            },
             sheetPeekHeight = SheetPeekHeight,
             sheetContainerColor = LbColors.Paper,
-            sheetContent = { TourStopsContent(state = state, onIntent = onIntent) },
+            sheetContent = {
+                Box(modifier = Modifier.heightIn(max = sheetMaxHeight)) {
+                    TourStopsContent(state = state, onIntent = onIntent)
+                }
+            },
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             containerColor = LbColors.Paper,
         ) {
             TourMapContent(
                 state = state,
                 onIntent = onIntent,
-                mapContentPadding = PaddingValues(bottom = SheetPeekHeight + actionBarHeight),
+                mapContentPadding = PaddingValues(bottom = SheetPeekHeight),
             )
         }
 
@@ -386,7 +402,7 @@ private fun TourStopsContent(state: TourUiState, onIntent: (TourIntent) -> Unit)
     )
 }
 
-private val SheetPeekHeight = 96.dp
+private val SheetPeekHeight = 150.dp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3AdaptiveApi::class)
 @Preview(showBackground = true)
