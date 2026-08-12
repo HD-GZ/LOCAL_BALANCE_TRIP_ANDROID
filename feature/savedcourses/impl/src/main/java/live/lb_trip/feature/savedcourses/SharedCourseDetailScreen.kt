@@ -58,6 +58,7 @@ import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.core.designsystem.component.LbTopBar
+import live.lb_trip.core.util.formatAudioPosition
 import live.lb_trip.domain.model.TravelStatus
 
 @Composable
@@ -240,11 +241,15 @@ private fun SharedCourseDetailScreenContent(
                         },
                         audioContent = { index ->
                             LbAudioPlayer(
-                                isPlaying = state.playingStopIndex == index,
+                                isPlaying = state.playingStopIndex == index && state.isAudioPlaying,
                                 onPlayPauseClick = { onIntent(SharedCourseDetailIntent.PlaybackToggled(index)) },
                                 playContentDescription = stringResource(R.string.sharedcourse_content_description_play),
                                 pauseContentDescription = stringResource(R.string.sharedcourse_content_description_pause),
-                                positionLabel = stringResource(R.string.sharedcourse_audio_time_placeholder),
+                                positionLabel = if (state.playingStopIndex == index) {
+                                    formatAudioPosition(state.audioPositionMs, state.audioDurationMs)
+                                } else {
+                                    formatAudioPosition(0, 0)
+                                },
                             )
                         },
                         detailBottomPadding = 7.dp,

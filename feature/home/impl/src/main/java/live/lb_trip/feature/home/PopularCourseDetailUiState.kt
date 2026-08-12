@@ -15,6 +15,9 @@ data class PopularCourseDetailUiState(
     val benefits: ImmutableList<CourseBenefit> = persistentListOf(),
     val walkTotalMinutes: Int = 0,
     val playingStopIndex: Int? = null,
+    val isAudioPlaying: Boolean = false,
+    val audioPositionMs: Int = 0,
+    val audioDurationMs: Int = 0,
 ) {
     val audioGuideCount: Int get() = stops.count { it.hasAudioGuide }
 }

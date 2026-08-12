@@ -17,6 +17,7 @@ import live.lb_trip.core.designsystem.component.LbAudioPlayer
 import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
+import live.lb_trip.core.util.formatAudioPosition
 import live.lb_trip.feature.savedcourses.R
 import live.lb_trip.feature.savedcourses.SavedCourseDetailIntent
 import live.lb_trip.feature.savedcourses.SavedCourseDetailUiState
@@ -46,11 +47,15 @@ internal fun SavedCourseOrderTab(
             onToggle = { onIntent(SavedCourseDetailIntent.StopToggled(it)) },
             audioContent = { index ->
                 LbAudioPlayer(
-                    isPlaying = state.playingStopIndex == index,
+                    isPlaying = state.playingStopIndex == index && state.isAudioPlaying,
                     onPlayPauseClick = { onIntent(SavedCourseDetailIntent.PlaybackToggled(index)) },
                     playContentDescription = stringResource(R.string.sharedcourse_content_description_play),
                     pauseContentDescription = stringResource(R.string.sharedcourse_content_description_pause),
-                    positionLabel = stringResource(R.string.sharedcourse_audio_time_placeholder),
+                    positionLabel = if (state.playingStopIndex == index) {
+                        formatAudioPosition(state.audioPositionMs, state.audioDurationMs)
+                    } else {
+                        formatAudioPosition(0, 0)
+                    },
                 )
             },
         )
