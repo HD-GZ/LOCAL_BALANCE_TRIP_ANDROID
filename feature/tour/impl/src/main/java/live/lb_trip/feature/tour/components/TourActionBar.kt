@@ -59,7 +59,7 @@ internal fun TourActionBar(
                     colors = LbButtonDefaults.greenColors(),
                     modifier = Modifier.weight(1f).height(ActionButtonHeight),
                 ) {
-                    Text(text = stringResource(R.string.tour_action_view_report), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
+                    Text(text = stringResource(R.string.tour_action_view_report), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 }
             }
         } else {
@@ -74,7 +74,7 @@ internal fun TourActionBar(
                     } else {
                         stringResource(R.string.tour_next_stop_arrived, targetStop?.name.orEmpty())
                     },
-                    fontSize = 15.sp,
+                    fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                 )
             }
