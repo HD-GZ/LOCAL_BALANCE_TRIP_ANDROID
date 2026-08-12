@@ -65,3 +65,10 @@ data class TourPlaceVisit(
     val order: Int,
     val visited: Boolean,
 )
+
+data class TourEndResult(
+    val completed: Boolean,
+    val visitedPlaceCount: Int,
+    val totalPlaceCount: Int,
+    val durationMinutes: Long,
+)

@@ -10,6 +10,7 @@ import live.lb_trip.domain.model.SavedCourseList
 import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.model.ShareToken
 import live.lb_trip.domain.model.SharedCourseDetail
+import live.lb_trip.domain.model.TourEndResult
 import live.lb_trip.domain.model.TourPlaceVisit
 import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.domain.repository.SavedCourseRepository
@@ -65,9 +66,9 @@ class SavedCourseRepositoryImpl @Inject constructor(
             on(409, "TOUR_NOT_IN_PROGRESS") throws LbTripSavedCourseException.TourNotInProgressException()
         }
 
-    override suspend fun endTour(savedCourseId: Long, distanceMeters: Float?): Result<Unit> =
+    override suspend fun endTour(savedCourseId: Long, distanceMeters: Float?): Result<TourEndResult> =
         suspendRunCatching {
-            savedCourseRemoteDataSource.endTour(savedCourseId, distanceMeters?.roundToInt())
+            savedCourseRemoteDataSource.endTour(savedCourseId, distanceMeters?.roundToInt()).toDomain()
         }.mapApiFailure {
             on(404, "SAVED_COURSE_NOT_FOUND") throws LbTripSavedCourseException.SavedCourseNotFoundException()
             on(409, "TOUR_NOT_IN_PROGRESS") throws LbTripSavedCourseException.TourNotInProgressException()

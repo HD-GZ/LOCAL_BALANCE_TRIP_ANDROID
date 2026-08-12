@@ -111,3 +111,11 @@ data class TourPlaceResponseDto(
     val order: Int,
     val visited: Boolean,
 )
+
+@Serializable
+data class TourEndResponseDto(
+    val completed: Boolean,
+    val visitedPlaceCount: Int,
+    val totalPlaceCount: Int,
+    val durationMinutes: Long,
+)
