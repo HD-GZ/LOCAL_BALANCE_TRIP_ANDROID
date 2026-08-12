@@ -42,7 +42,7 @@ internal fun TourActionBar(
             .fillMaxWidth()
             .background(LbColors.Paper)
             .windowInsetsPadding(WindowInsets.navigationBars)
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = 14.dp, vertical = 11.dp),
     ) {
         if (state.isFinished) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
