@@ -7,7 +7,7 @@ import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.model.ShareToken
 import live.lb_trip.domain.model.SharedCourseDetail
 import live.lb_trip.domain.model.TourEndResult
-import live.lb_trip.domain.model.TourPlaceVisit
+import live.lb_trip.domain.model.TourStartResult
 
 interface SavedCourseRepository {
     suspend fun getSavedCourses(): Result<SavedCourseList>
@@ -20,7 +20,7 @@ interface SavedCourseRepository {
 
     suspend fun getSavedCourseReport(savedCourseId: Long): Result<SavedCourseReport>
 
-    suspend fun startTour(savedCourseId: Long): Result<List<TourPlaceVisit>>
+    suspend fun startTour(savedCourseId: Long): Result<TourStartResult>
 
     suspend fun checkInTourPlace(
         savedCourseId: Long,

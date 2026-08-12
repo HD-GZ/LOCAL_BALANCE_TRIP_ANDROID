@@ -102,6 +102,7 @@ data class SavedCourseReportResponseDto(
 
 @Serializable
 data class TourStartResponseDto(
+    val tourStartedAt: String,
     val places: List<TourPlaceResponseDto>,
 )
 

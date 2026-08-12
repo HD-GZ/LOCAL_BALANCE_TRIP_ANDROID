@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,7 +49,7 @@ import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.feature.tour.components.TourBottomSheetContent
 import live.lb_trip.feature.tour.components.TourHeader
 import live.lb_trip.feature.tour.components.TourMap
-import live.lb_trip.feature.tour.components.TourProgressChip
+import live.lb_trip.feature.tour.components.TourProgressSection
 import live.lb_trip.feature.tour.location.rememberActivityRecognitionPermissionGranted
 import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 
@@ -66,6 +67,7 @@ internal fun TourScreen(
     val scaffoldState = rememberBottomSheetScaffoldState()
     val directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo())
     val isTwoPane = directive.maxHorizontalPartitions > 1
+    val uriHandler = LocalUriHandler.current
     val retryActionLabel = stringResource(R.string.tour_action_retry)
     val courseNotFoundMessage = stringResource(R.string.tour_error_course_not_found)
     val emptyPlacesMessage = stringResource(R.string.tour_error_empty_places)
@@ -90,6 +92,7 @@ internal fun TourScreen(
                 ),
                 onIntent = onIntent,
                 onTourFinished = onTourFinished,
+                onOpenBenefitUrl = uriHandler::openUri,
             )
         }
     }
@@ -140,6 +143,7 @@ private data class TourSideEffectMessages(
     val endTourError: String,
 )
 
+@Suppress("LongParameterList")
 @OptIn(ExperimentalMaterial3Api::class)
 private suspend fun CoroutineScope.handleTourSideEffect(
     effect: TourSideEffect,
@@ -149,6 +153,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
     messages: TourSideEffectMessages,
     onIntent: (TourIntent) -> Unit,
     onTourFinished: () -> Unit,
+    onOpenBenefitUrl: (String) -> Unit,
 ) {
     when (effect) {
         is TourSideEffect.ShowLoadError -> launch {
@@ -170,10 +175,11 @@ private suspend fun CoroutineScope.handleTourSideEffect(
                 actionLabel = messages.retryActionLabel,
             )
             if (result == SnackbarResult.ActionPerformed) {
-                onIntent(TourIntent.EndTourClicked)
+                onIntent(TourIntent.NextStopArrived)
             }
         }
 
+        is TourSideEffect.OpenBenefitUrl -> onOpenBenefitUrl(effect.url)
         TourSideEffect.NavigateBack -> onTourFinished()
         TourSideEffect.CollapseSheet -> if (!isTwoPane) {
             launch { scaffoldState.bottomSheetState.partialExpand() }
@@ -228,9 +234,10 @@ private fun TourCompactContent(
     BottomSheetScaffold(
         modifier = modifier.fillMaxSize(),
         scaffoldState = scaffoldState,
-        topBar = { TourHeader(regionName = state.regionName, title = state.title, onBackClick = onBack) },
+        topBar = { TourTopBar(state = state, onBackClick = onBack) },
         sheetPeekHeight = SheetPeekHeight,
         sheetContainerColor = LbColors.Paper,
+        sheetDragHandle = {},
         sheetContent = { TourStopsContent(state = state, onIntent = onIntent) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = LbColors.Paper,
@@ -239,6 +246,24 @@ private fun TourCompactContent(
             state = state,
             onIntent = onIntent,
             mapContentPadding = PaddingValues(bottom = SheetPeekHeight),
+        )
+    }
+}
+
+@Composable
+private fun TourTopBar(state: TourUiState, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        TourHeader(
+            regionName = state.regionName,
+            title = state.title,
+            onBackClick = onBackClick,
+        )
+        TourProgressSection(
+            isFinished = state.isFinished,
+            completedCount = (state.furthestStopIndex + 1).coerceAtMost(state.stops.size),
+            totalCount = state.stops.size,
+            tourStartedAt = state.tourStartedAt,
+            elapsedMinutes = state.elapsedMinutes,
         )
     }
 }
@@ -257,7 +282,7 @@ private fun TourTwoPaneContent(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { TourHeader(regionName = state.regionName, title = state.title, onBackClick = onBack) },
+        topBar = { TourTopBar(state = state, onBackClick = onBack) },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = LbColors.Paper,
     ) { innerPadding ->
@@ -298,16 +323,10 @@ private fun TourMapContent(
         TourMap(
             stops = state.stops,
             currentStopIndex = state.currentStopIndex,
+            furthestStopIndex = state.furthestStopIndex,
+            isFinished = state.isFinished,
             onIntent = onIntent,
             mapContentPadding = mapContentPadding,
-        )
-
-        TourProgressChip(
-            completedCount = state.furthestStopIndex + 1,
-            totalCount = state.stops.size,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(16.dp),
         )
 
         if (state.isLoading) {
@@ -320,10 +339,20 @@ private fun TourMapContent(
 private fun TourStopsContent(state: TourUiState, onIntent: (TourIntent) -> Unit) {
     TourBottomSheetContent(
         stops = state.stops,
+        benefits = state.benefits,
         currentStopIndex = state.currentStopIndex,
-        progressStopIndex = state.furthestStopIndex,
-        onEndTourClick = { onIntent(TourIntent.EndTourClicked) },
+        furthestStopIndex = state.furthestStopIndex,
+        isFinished = state.isFinished,
+        isDetailExpanded = state.isDetailExpanded,
+        isAudioPlaying = state.isAudioPlaying,
+        audioPositionMs = state.audioPositionMs,
+        audioDurationMs = state.audioDurationMs,
+        onHeaderClick = { onIntent(TourIntent.DetailExpandToggled) },
+        onStopClick = { onIntent(TourIntent.StopSelected(it)) },
+        onPlaybackToggle = { onIntent(TourIntent.PlaybackToggled) },
+        onBenefitClick = { onIntent(TourIntent.BenefitClicked(it)) },
         onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
+        onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
     )
 }
 

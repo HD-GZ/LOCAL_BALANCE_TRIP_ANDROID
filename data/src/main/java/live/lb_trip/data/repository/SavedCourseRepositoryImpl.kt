@@ -11,7 +11,7 @@ import live.lb_trip.domain.model.SavedCourseReport
 import live.lb_trip.domain.model.ShareToken
 import live.lb_trip.domain.model.SharedCourseDetail
 import live.lb_trip.domain.model.TourEndResult
-import live.lb_trip.domain.model.TourPlaceVisit
+import live.lb_trip.domain.model.TourStartResult
 import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.domain.repository.SavedCourseRepository
 import live.lb_trip.domain.util.mapApiFailure
@@ -49,7 +49,7 @@ class SavedCourseRepositoryImpl @Inject constructor(
             on(409, "TOUR_REPORT_NOT_AVAILABLE") throws LbTripSavedCourseException.TourReportNotAvailableException()
         }
 
-    override suspend fun startTour(savedCourseId: Long): Result<List<TourPlaceVisit>> =
+    override suspend fun startTour(savedCourseId: Long): Result<TourStartResult> =
         suspendRunCatching {
             savedCourseRemoteDataSource.startTour(savedCourseId).toDomain()
         }.mapApiFailure {
