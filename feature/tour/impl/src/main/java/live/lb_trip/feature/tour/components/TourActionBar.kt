@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -23,7 +24,7 @@ import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.feature.tour.R
 import live.lb_trip.feature.tour.TourUiState
 
-private val ButtonVerticalPadding = 16.dp
+private val ActionButtonHeight = 46.dp
 
 @Composable
 internal fun TourActionBar(
@@ -48,15 +49,15 @@ internal fun TourActionBar(
                 LbButton(
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.whiteColors(),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = ButtonVerticalPadding),
+                    contentPadding = PaddingValues(horizontal = 16.dp),
+                    modifier = Modifier.height(ActionButtonHeight),
                 ) {
                     Text(text = stringResource(R.string.tour_action_view_detail), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
                 }
                 LbButton(
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.greenColors(),
-                    contentPadding = PaddingValues(horizontal = 24.dp, vertical = ButtonVerticalPadding),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).height(ActionButtonHeight),
                 ) {
                     Text(text = stringResource(R.string.tour_action_view_report), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
                 }
@@ -65,8 +66,7 @@ internal fun TourActionBar(
             LbButton(
                 onClick = onNextStopClick,
                 colors = LbButtonDefaults.greenColors(),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = ButtonVerticalPadding),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(ActionButtonHeight),
             ) {
                 Text(
                     text = if (state.furthestStopIndex >= lastIndex) {
