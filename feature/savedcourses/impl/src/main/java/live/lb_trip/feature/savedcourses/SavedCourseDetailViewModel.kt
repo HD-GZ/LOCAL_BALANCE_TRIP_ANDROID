@@ -25,6 +25,7 @@ import live.lb_trip.domain.usecase.GetReceiptsUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseDetailUseCase
 import live.lb_trip.domain.usecase.GetSavedCourseReportUseCase
 import live.lb_trip.domain.usecase.GetUserProfileUseCase
+import live.lb_trip.domain.usecase.IssueShareTokenUseCase
 
 @HiltViewModel(assistedFactory = SavedCourseDetailViewModel.Factory::class)
 class SavedCourseDetailViewModel @AssistedInject constructor(
@@ -33,6 +34,7 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
     private val getReceiptsUseCase: GetReceiptsUseCase,
     private val getSavedCourseReportUseCase: GetSavedCourseReportUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val issueShareTokenUseCase: IssueShareTokenUseCase,
     ) : BaseViewModel<SavedCourseDetailUiState, SavedCourseDetailIntent, SavedCourseDetailSideEffect>(
     SavedCourseDetailUiState(),
 ) {
@@ -66,6 +68,22 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
                     launch { reloadReceipts() }
                     launch { reloadReport() }
                 }
+            }
+            is SavedCourseDetailIntent.KakaoShareClicked -> viewModelScope.launch {
+                issueShareTokenUseCase(savedCourseId)
+                    .onSuccess { shareToken ->
+                        postSideEffect(
+                            SavedCourseDetailSideEffect.LaunchKakaoShare(
+                                title = intent.title,
+                                description = intent.description,
+                                imageUrl = intent.imageUrl,
+                                shareToken = shareToken.token,
+                            ),
+                        )
+                    }
+                    .onFailure {
+                        postSideEffect(SavedCourseDetailSideEffect.ShowKakaoShareError)
+                    }
             }
         }
     }

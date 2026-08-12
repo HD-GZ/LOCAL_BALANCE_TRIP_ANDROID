@@ -8,7 +8,10 @@ import live.lb_trip.domain.model.RecordedMovement
 import live.lb_trip.domain.model.SavedCourseDetail
 import live.lb_trip.domain.model.SavedCourseList
 import live.lb_trip.domain.model.SavedCourseReport
+import live.lb_trip.domain.model.ShareToken
+import live.lb_trip.domain.model.SharedCourseDetail
 import live.lb_trip.domain.model.TourPlaceVisit
+import live.lb_trip.domain.model.TravelStatus
 import live.lb_trip.domain.repository.SavedCourseRepository
 import live.lb_trip.domain.util.mapApiFailure
 import live.lb_trip.domain.util.suspendRunCatching
@@ -68,6 +71,32 @@ class SavedCourseRepositoryImpl @Inject constructor(
         }.mapApiFailure {
             on(404, "SAVED_COURSE_NOT_FOUND") throws LbTripSavedCourseException.SavedCourseNotFoundException()
             on(409, "TOUR_NOT_IN_PROGRESS") throws LbTripSavedCourseException.TourNotInProgressException()
+        }
+
+    override suspend fun issueShareToken(savedCourseId: Long): Result<ShareToken> =
+        suspendRunCatching {
+            val response = savedCourseRemoteDataSource.issueShareToken(savedCourseId)
+            ShareToken(token = response.token, expiresAt = response.expiresAt)
+        }.mapApiFailure {
+            on(404, "SAVED_COURSE_NOT_FOUND") throws LbTripSavedCourseException.SavedCourseNotFoundException()
+        }
+
+    override suspend fun getSharedCourseDetail(token: String): Result<SharedCourseDetail> =
+        suspendRunCatching {
+            val response = savedCourseRemoteDataSource.getSharedCourseDetail(token)
+            SharedCourseDetail(
+                savedCourseId = response.savedCourseId,
+                sharedByName = response.sharedByName,
+                imageUrl = response.imageUrl,
+                regionName = response.regionName,
+                title = response.title,
+                status = TravelStatus.valueOf(response.status),
+                places = response.places.map { it.toDomain() },
+                benefits = response.benefits.map { it.toDomain() },
+            )
+        }.mapApiFailure {
+            on(404, "SHARE_TOKEN_NOT_FOUND") throws LbTripSavedCourseException.ShareTokenNotFoundException()
+            on(410, "SHARE_TOKEN_EXPIRED") throws LbTripSavedCourseException.ShareTokenExpiredException()
         }
 
     override suspend fun saveTourMovement(savedCourseId: Long, movement: RecordedMovement) {

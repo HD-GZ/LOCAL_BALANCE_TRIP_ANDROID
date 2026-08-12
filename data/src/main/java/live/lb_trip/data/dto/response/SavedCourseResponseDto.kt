@@ -27,6 +27,24 @@ data class SavedCourseDetailResponseDto(
 )
 
 @Serializable
+data class ShareTokenResponseDto(
+    val token: String,
+    val expiresAt: String,
+)
+
+@Serializable
+data class SharedCourseDetailResponseDto(
+    val savedCourseId: Long,
+    val sharedByName: String,
+    val imageUrl: String? = null,
+    val regionName: String,
+    val title: String,
+    val status: String,
+    val places: List<PlaceResponseDto>,
+    val benefits: List<BenefitResponseDto>,
+)
+
+@Serializable
 data class BenefitResponseDto(
     val title: String,
     val description: String? = null,

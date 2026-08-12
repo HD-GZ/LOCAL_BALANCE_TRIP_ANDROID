@@ -18,4 +18,8 @@ sealed class LbTripSavedCourseException : LbTripException() {
     class TourAlreadyCompletedException : LbTripSavedCourseException()
 
     class TourNotInProgressException : LbTripSavedCourseException()
+
+    class ShareTokenNotFoundException : LbTripSavedCourseException()
+
+    class ShareTokenExpiredException : LbTripSavedCourseException()
 }

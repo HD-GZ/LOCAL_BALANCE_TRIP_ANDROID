@@ -64,6 +64,13 @@ sealed interface SavedCourseDetailSideEffect {
     data object ShowReportLoadError : SavedCourseDetailSideEffect
     data class OpenBenefitUrl(val url: String) : SavedCourseDetailSideEffect
     data class NavigateToTour(val savedCourseId: Long) : SavedCourseDetailSideEffect
+    data class LaunchKakaoShare(
+        val title: String,
+        val description: String,
+        val imageUrl: String?,
+        val shareToken: String,
+    ) : SavedCourseDetailSideEffect
+    data object ShowKakaoShareError : SavedCourseDetailSideEffect
 }
 
 enum class SavedCourseDetailLoadErrorReason {

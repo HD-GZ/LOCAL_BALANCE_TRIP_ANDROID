@@ -52,3 +52,10 @@ fun NavGraphBuilder.receiptDetailScreen(onBack: () -> Unit, onUpdated: () -> Uni
         ReceiptDetailScreen(onBack = onBack, onUpdated = onUpdated, onDeleted = onDeleted)
     }
 }
+
+fun NavGraphBuilder.sharedCourseDetailScreen(onBack: () -> Unit) {
+    composable<SharedCourseRoute> { backStackEntry ->
+        val route = backStackEntry.toRoute<SharedCourseRoute>()
+        SharedCourseDetailScreen(token = route.token, onBack = onBack)
+    }
+}

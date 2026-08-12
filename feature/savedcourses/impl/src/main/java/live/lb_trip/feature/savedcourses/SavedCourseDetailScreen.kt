@@ -1,5 +1,6 @@
 package live.lb_trip.feature.savedcourses
 
+import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -34,6 +35,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -100,25 +102,41 @@ internal fun SavedCourseDetailScreen(
     val receiptsErrorMessage = stringResource(R.string.savedcourses_detail_error_receipts)
     val reportErrorMessage = stringResource(R.string.savedcourses_detail_error_report)
     val retryActionLabel = stringResource(R.string.savedcourses_detail_action_retry)
+    val kakaoShareFailedMessage = stringResource(R.string.savedcourses_detail_kakao_share_failed)
+    val context = LocalContext.current
+
+    val sideEffectMessages = remember(
+        loadErrorMessage,
+        courseNotFoundMessage,
+        emptyPlacesMessage,
+        receiptsErrorMessage,
+        reportErrorMessage,
+        retryActionLabel,
+        kakaoShareFailedMessage,
+    ) {
+        SavedCourseDetailMessages(
+            loadError = loadErrorMessage,
+            courseNotFound = courseNotFoundMessage,
+            emptyPlaces = emptyPlacesMessage,
+            receiptsError = receiptsErrorMessage,
+            reportError = reportErrorMessage,
+            retryAction = retryActionLabel,
+            kakaoShareFailed = kakaoShareFailedMessage,
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
-            when (effect) {
-                is SavedCourseDetailSideEffect.ShowLoadError -> launch {
-                    val message = when (effect.reason) {
-                        SavedCourseDetailLoadErrorReason.CourseNotFound -> courseNotFoundMessage
-                        SavedCourseDetailLoadErrorReason.EmptyPlaces -> emptyPlacesMessage
-                        SavedCourseDetailLoadErrorReason.Unknown -> loadErrorMessage
-                    }
-                    val result = snackbarHostState.showSnackbar(message = message, actionLabel = retryActionLabel)
-                    if (result == SnackbarResult.ActionPerformed) {
-                        onIntent(SavedCourseDetailIntent.Retry)
-                    }
-                }
-                SavedCourseDetailSideEffect.ShowReceiptsLoadError -> launch { snackbarHostState.showSnackbar(receiptsErrorMessage) }
-                SavedCourseDetailSideEffect.ShowReportLoadError -> launch { snackbarHostState.showSnackbar(reportErrorMessage) }
-                is SavedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
-                is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
+            launch {
+                handleSavedCourseDetailSideEffect(
+                    effect = effect,
+                    context = context,
+                    uriHandler = uriHandler,
+                    snackbarHostState = snackbarHostState,
+                    onIntent = onIntent,
+                    onNavigateToTour = onNavigateToTour,
+                    messages = sideEffectMessages,
+                )
             }
         }
     }
@@ -156,6 +174,54 @@ internal fun SavedCourseDetailScreen(
         modifier = modifier,
         showBackButton = showBackButton,
     )
+}
+
+private data class SavedCourseDetailMessages(
+    val loadError: String,
+    val courseNotFound: String,
+    val emptyPlaces: String,
+    val receiptsError: String,
+    val reportError: String,
+    val retryAction: String,
+    val kakaoShareFailed: String,
+)
+
+private suspend fun handleSavedCourseDetailSideEffect(
+    effect: SavedCourseDetailSideEffect,
+    context: Context,
+    uriHandler: UriHandler,
+    snackbarHostState: SnackbarHostState,
+    onIntent: (SavedCourseDetailIntent) -> Unit,
+    onNavigateToTour: (Long) -> Unit,
+    messages: SavedCourseDetailMessages,
+) {
+    when (effect) {
+        is SavedCourseDetailSideEffect.ShowLoadError -> {
+            val message = when (effect.reason) {
+                SavedCourseDetailLoadErrorReason.CourseNotFound -> messages.courseNotFound
+                SavedCourseDetailLoadErrorReason.EmptyPlaces -> messages.emptyPlaces
+                SavedCourseDetailLoadErrorReason.Unknown -> messages.loadError
+            }
+            val result = snackbarHostState.showSnackbar(message = message, actionLabel = messages.retryAction)
+            if (result == SnackbarResult.ActionPerformed) {
+                onIntent(SavedCourseDetailIntent.Retry)
+            }
+        }
+        SavedCourseDetailSideEffect.ShowReceiptsLoadError -> snackbarHostState.showSnackbar(messages.receiptsError)
+        SavedCourseDetailSideEffect.ShowReportLoadError -> snackbarHostState.showSnackbar(messages.reportError)
+        is SavedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
+        is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
+        is SavedCourseDetailSideEffect.LaunchKakaoShare -> {
+            val feed = kakaoShareReportFeed(
+                title = effect.title,
+                description = effect.description,
+                imageUrl = effect.imageUrl,
+                shareToken = effect.shareToken,
+            )
+            kakaoShare(context, feed)
+        }
+        SavedCourseDetailSideEffect.ShowKakaoShareError -> snackbarHostState.showSnackbar(messages.kakaoShareFailed)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -306,8 +372,7 @@ private fun SavedCourseDetailScreenContent(
             },
             onKakaoShareClick = {
                 showShareSheet = false
-                val feed = kakaoShareReportFeed(state.title, shareDescription, state.reportImageUrl)
-                kakaoShare(context, feed)
+                onIntent(SavedCourseDetailIntent.KakaoShareClicked(state.title, shareDescription, state.reportImageUrl))
             },
             onInstagramStoryClick = {
                 showShareSheet = false
