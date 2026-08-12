@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -35,8 +34,6 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
 import live.lb_trip.core.designsystem.component.LbAudioPlayer
 import live.lb_trip.core.designsystem.component.LbBenefitRow
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.core.util.formatAudioPosition
 import live.lb_trip.feature.tour.R
 import live.lb_trip.feature.tour.TourBenefit
@@ -56,8 +53,6 @@ internal fun TourBottomSheetContent(
     onStopClick: (Int) -> Unit,
     onPlaybackToggle: () -> Unit,
     onBenefitClick: (String) -> Unit,
-    onNextStopClick: () -> Unit,
-    onFinishAcknowledged: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val stop = stops.getOrNull(currentStopIndex) ?: return
@@ -65,7 +60,6 @@ internal fun TourBottomSheetContent(
     val isVisited = currentStopIndex <= furthestStopIndex
     val nextIndex = (furthestStopIndex + 1).coerceIn(0, lastIndex)
     val isNextTarget = !isFinished && !isVisited && currentStopIndex == nextIndex
-    val targetStop = stops.getOrNull(nextIndex)
 
     Column(
         modifier = modifier
@@ -81,43 +75,6 @@ internal fun TourBottomSheetContent(
                 displayOrder = stop.order,
                 totalCount = stops.size,
             )
-
-            Spacer(modifier = Modifier.height(14.dp))
-
-            if (isFinished) {
-                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    LbButton(
-                        onClick = onFinishAcknowledged,
-                        colors = LbButtonDefaults.whiteColors(),
-                        contentPadding = PaddingValues(horizontal = 16.dp),
-                    ) {
-                        Text(text = stringResource(R.string.tour_action_view_detail), fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                    LbButton(
-                        onClick = onFinishAcknowledged,
-                        colors = LbButtonDefaults.greenColors(),
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Text(text = stringResource(R.string.tour_action_view_report), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                    }
-                }
-            } else {
-                LbButton(
-                    onClick = onNextStopClick,
-                    colors = LbButtonDefaults.greenColors(),
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(
-                        text = if (furthestStopIndex >= lastIndex) {
-                            stringResource(R.string.tour_finish)
-                        } else {
-                            stringResource(R.string.tour_next_stop_arrived, targetStop?.name.orEmpty())
-                        },
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                }
-            }
 
             TourSheetDetailBody(
                 stop = stop,
