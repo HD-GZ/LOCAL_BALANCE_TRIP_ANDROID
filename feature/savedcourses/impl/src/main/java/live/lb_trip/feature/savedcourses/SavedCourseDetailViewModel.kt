@@ -58,6 +58,8 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
         when (intent) {
             is SavedCourseDetailIntent.TabSelected -> updateState { it.copy(selectedTab = intent.tab) }
             is SavedCourseDetailIntent.StopToggled -> toggleStopExpanded(intent.index)
+            is SavedCourseDetailIntent.PlaybackToggled ->
+                updateState { it.copy(playingStopIndex = if (it.playingStopIndex == intent.stopIndex) null else intent.stopIndex) }
             is SavedCourseDetailIntent.BenefitClicked ->
                 postSideEffect(SavedCourseDetailSideEffect.OpenBenefitUrl(intent.url))
             SavedCourseDetailIntent.TourStartClicked ->

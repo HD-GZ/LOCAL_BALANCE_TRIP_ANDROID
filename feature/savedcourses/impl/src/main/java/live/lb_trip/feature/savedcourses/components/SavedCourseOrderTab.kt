@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.component.LbAudioPlayer
 import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
@@ -43,6 +44,15 @@ internal fun SavedCourseOrderTab(
                 stringResource(R.string.savedcourses_detail_walk_time_template, walkDuration)
             },
             onToggle = { onIntent(SavedCourseDetailIntent.StopToggled(it)) },
+            audioContent = { index ->
+                LbAudioPlayer(
+                    isPlaying = state.playingStopIndex == index,
+                    onPlayPauseClick = { onIntent(SavedCourseDetailIntent.PlaybackToggled(index)) },
+                    playContentDescription = stringResource(R.string.sharedcourse_content_description_play),
+                    pauseContentDescription = stringResource(R.string.sharedcourse_content_description_pause),
+                    positionLabel = stringResource(R.string.sharedcourse_audio_time_placeholder),
+                )
+            },
         )
 
         if (state.benefits.isNotEmpty()) {
