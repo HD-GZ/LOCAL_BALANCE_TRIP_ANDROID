@@ -43,8 +43,8 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBottomActionBar
 import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
-import live.lb_trip.feature.signup.components.SignupStepBar
 
 @Composable
 internal fun SignupAccountInfoScreen(
@@ -74,7 +74,7 @@ internal fun SignupAccountInfoScreen(
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            SignupStepBar(currentStep = 1, totalSteps = 2)
+            LbStepBar(currentStep = 1, totalSteps = 2)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(R.string.signup_account_heading),

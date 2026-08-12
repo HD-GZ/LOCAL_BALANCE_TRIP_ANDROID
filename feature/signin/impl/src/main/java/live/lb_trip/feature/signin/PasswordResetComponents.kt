@@ -27,50 +27,6 @@ import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
 
 @Composable
-internal fun PasswordResetStepBar(
-    currentStep: Int,
-    modifier: Modifier = Modifier,
-) {
-    val totalSteps = 3
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        repeat(totalSteps) { index ->
-            val step = index + 1
-            val isActive = step <= currentStep
-            Box(
-                modifier = Modifier
-                    .size(26.dp)
-                    .clip(CircleShape)
-                    .background(if (isActive) LbColors.Green else Color.Transparent)
-                    .border(
-                        width = 1.dp,
-                        color = if (isActive) LbColors.Green else LbColors.Line2,
-                        shape = CircleShape,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = step.toString(),
-                    color = if (isActive) Color.White else LbColors.Ink3,
-                    fontSize = 12.sp,
-                )
-            }
-            if (index < totalSteps - 1) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(2.dp)
-                        .background(LbColors.LineSoft),
-                )
-            }
-        }
-    }
-}
-
-@Composable
 internal fun PasswordResetOtpField(
     code: String,
     onCodeChange: (String) -> Unit,

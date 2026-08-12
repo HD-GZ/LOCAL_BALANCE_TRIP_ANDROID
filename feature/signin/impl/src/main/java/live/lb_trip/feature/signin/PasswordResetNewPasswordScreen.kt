@@ -34,6 +34,7 @@ import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBottomActionBar
 import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
@@ -62,7 +63,7 @@ internal fun PasswordResetNewPasswordScreen(
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            PasswordResetStepBar(currentStep = 3)
+            LbStepBar(currentStep = 3, totalSteps = 3)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(R.string.password_reset_new_password_title),

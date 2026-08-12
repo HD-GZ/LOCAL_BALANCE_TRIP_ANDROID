@@ -30,10 +30,10 @@ import live.lb_trip.core.designsystem.component.LbBirthField
 import live.lb_trip.core.designsystem.component.LbBottomActionBar
 import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.feature.signup.components.AgreeBlock
 import live.lb_trip.feature.signup.components.GenderSegmented
-import live.lb_trip.feature.signup.components.SignupStepBar
 
 @Composable
 internal fun SignupPersonalInfoScreen(
@@ -63,7 +63,7 @@ internal fun SignupPersonalInfoScreen(
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            SignupStepBar(currentStep = 2, totalSteps = 2)
+            LbStepBar(currentStep = 2, totalSteps = 2)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(R.string.signup_personal_heading),
