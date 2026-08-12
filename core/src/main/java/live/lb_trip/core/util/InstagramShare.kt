@@ -30,5 +30,7 @@ fun instagramStoryShare(
 
     context.grantUriPermission("com.instagram.android", stickerImage, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-    context.startActivity(intent)
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    }
 }
