@@ -8,6 +8,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -22,7 +23,11 @@ private const val PROGRESS_POLL_INTERVAL_MILLIS = 200L
  * Plays one audio-guide track at a time via Media3 [ExoPlayer]. Tapping the same [toggle] url
  * pauses/resumes in place (position retained); a different url releases the previous player
  * and starts fresh. Not thread-safe beyond the main thread a ViewModel normally calls from.
+ *
+ * Shared app-wide ([Singleton]) so switching screens while a track is playing releases it
+ * instead of running a second ExoPlayer/AudioTrack concurrently with the new screen's.
  */
+@Singleton
 class AudioGuidePlayer @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {

@@ -5,17 +5,24 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.Duration
+import java.time.LocalDateTime
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import live.lb_trip.core.util.AudioGuidePlayer
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
+import live.lb_trip.domain.model.CourseBenefit
 import live.lb_trip.domain.model.CoursePlace
 import live.lb_trip.domain.model.LocationFix
 import live.lb_trip.domain.model.RecordedMovement
@@ -28,6 +35,9 @@ import live.lb_trip.domain.usecase.StartTourUseCase
 import live.lb_trip.domain.util.suspendRunCatching
 import live.lb_trip.feature.tour.location.TourArrivalDetector
 
+private const val ELAPSED_TICK_INTERVAL_MILLIS = 30_000L
+
+@Suppress("TooManyFunctions", "LongParameterList")
 @HiltViewModel
 class TourViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -37,11 +47,13 @@ class TourViewModel @Inject constructor(
     private val checkInTourPlaceUseCase: CheckInTourPlaceUseCase,
     private val endTourUseCase: EndTourUseCase,
     private val distanceRecording: TourDistanceRecordingCoordinator,
+    private val audioGuidePlayer: AudioGuidePlayer,
 ) : BaseViewModel<TourUiState, TourIntent, TourSideEffect>(TourUiState()) {
 
     private val savedCourseId: Long = savedStateHandle.toRoute<TourRoute>().savedCourseId
 
     private var locationJob: Job? = null
+    private var elapsedTickerJob: Job? = null
     private val arrivalDetector = TourArrivalDetector()
     private var isEndingTour = false
     private var pendingTourMovement: RecordedMovement? = null
@@ -56,13 +68,20 @@ class TourViewModel @Inject constructor(
         when (intent) {
             TourIntent.NextStopArrived -> advanceToNextStop()
             is TourIntent.StopSelected -> selectStop(intent.index)
-            TourIntent.EndTourClicked -> endTourAndNavigateBack()
+            TourIntent.PlaybackToggled -> toggleAudioPlayback()
+            is TourIntent.BenefitClicked -> postSideEffect(TourSideEffect.OpenBenefitUrl(intent.url))
+            TourIntent.FinishAcknowledged -> postSideEffect(TourSideEffect.NavigateBack)
             TourIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
             TourIntent.LocationTrackingStarted -> setLocationTracking(active = true)
             TourIntent.LocationTrackingStopped -> setLocationTracking(active = false)
             TourIntent.DistanceRecordingPermissionGranted ->
                 viewModelScope.launch { distanceRecording.onPermissionGranted(savedCourseId) }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioGuidePlayer.release()
     }
 
     private fun setLocationTracking(active: Boolean) {
@@ -102,12 +121,14 @@ class TourViewModel @Inject constructor(
             val startDeferred = async { startTourUseCase(savedCourseId) }
             val detailResult = detailDeferred.await()
             val startResult = startDeferred.await()
-            val visitsByOrder = startResult.getOrNull().orEmpty().associateBy { it.order }
+            val startData = startResult.getOrNull()
+            val visitsByOrder = startData?.visits.orEmpty().associateBy { it.order }
 
             detailResult
                 .onSuccess { detail ->
                     val stops = detail.places.map { it.toTourStop(visitsByOrder[it.order]?.placeId) }
                     val initialIndex = restoredStopIndex(visitsByOrder, stops.lastIndex)
+                    val initialShownIndex = (initialIndex + 1).coerceAtMost(stops.lastIndex.coerceAtLeast(0))
                     furthestStopIndex = initialIndex
                     updateState {
                         it.copy(
@@ -115,7 +136,8 @@ class TourViewModel @Inject constructor(
                             regionName = detail.regionName,
                             title = detail.title,
                             stops = stops.toPersistentList(),
-                            currentStopIndex = initialIndex,
+                            benefits = detail.benefits.map(CourseBenefit::toTourBenefit).toPersistentList(),
+                            currentStopIndex = initialShownIndex,
                             furthestStopIndex = initialIndex,
                         )
                     }
@@ -123,12 +145,13 @@ class TourViewModel @Inject constructor(
                     if (detail.places.isEmpty()) {
                         postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.EmptyPlaces))
                     } else {
-                        if (startResult.isSuccess) {
+                        if (startData != null) {
                             distanceRecording.onTourStarted(savedCourseId)
+                            startElapsedTicker(startData.tourStartedAt)
                         } else {
                             postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.TourStartFailed))
                         }
-                        checkInCurrentStop()
+                        checkInStop(initialIndex)
                     }
                 }
                 .onFailure { throwable ->
@@ -138,16 +161,35 @@ class TourViewModel @Inject constructor(
         }
     }
 
+    private fun startElapsedTicker(tourStartedAt: String) {
+        val startedAt = runCatching { LocalDateTime.parse(tourStartedAt) }.getOrNull() ?: return
+        elapsedTickerJob?.cancel()
+        elapsedTickerJob = viewModelScope.launch {
+            while (isActive) {
+                val minutes = Duration.between(startedAt, LocalDateTime.now()).toMinutes().coerceAtLeast(0)
+                updateState { it.copy(tourStartedAt = tourStartedAt, elapsedMinutes = minutes.toInt()) }
+                delay(ELAPSED_TICK_INTERVAL_MILLIS.milliseconds)
+            }
+        }
+    }
+
     private fun advanceToNextStop() {
+        if (currentState.isFinished) return
         val lastIndex = currentState.stops.lastIndex
         if (furthestStopIndex >= lastIndex) {
-            endTourAndNavigateBack()
+            finishTour()
             return
         }
         furthestStopIndex += 1
-        updateState { it.copy(currentStopIndex = furthestStopIndex, furthestStopIndex = furthestStopIndex) }
+        stopAudioPlayback()
+        updateState {
+            it.copy(
+                currentStopIndex = furthestStopIndex,
+                furthestStopIndex = furthestStopIndex,
+            )
+        }
         arrivalDetector.reset()
-        checkInCurrentStop()
+        checkInStop(furthestStopIndex)
         postSideEffect(TourSideEffect.CollapseSheet)
     }
 
@@ -155,19 +197,39 @@ class TourViewModel @Inject constructor(
         val lastIndex = currentState.stops.lastIndex
         if (index !in 0..lastIndex) return
         val didChangeSelection = index != currentState.currentStopIndex
-        updateState { it.copy(currentStopIndex = index) }
         if (didChangeSelection) {
-            checkInCurrentStop()
+            stopAudioPlayback()
         }
+        updateState { it.copy(currentStopIndex = index) }
         postSideEffect(TourSideEffect.CollapseSheet)
     }
 
-    private fun checkInCurrentStop() {
-        val placeId = currentState.stops.getOrNull(currentState.currentStopIndex)?.placeId ?: return
+    private fun checkInStop(index: Int) {
+        val placeId = currentState.stops.getOrNull(index)?.placeId ?: return
         viewModelScope.launch { checkInTourPlaceUseCase(savedCourseId, placeId) }
     }
 
-    private fun endTourAndNavigateBack() {
+    private fun toggleAudioPlayback() {
+        val url = currentState.stops.getOrNull(currentState.currentStopIndex)?.audioUrl ?: return
+        audioGuidePlayer.toggle(
+            url = url,
+            scope = viewModelScope,
+            onState = { isPlaying, positionMs, durationMs ->
+                updateState { it.copy(isAudioPlaying = isPlaying, audioPositionMs = positionMs, audioDurationMs = durationMs) }
+            },
+            onCompletion = {
+                updateState { it.copy(isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0) }
+            },
+        )
+    }
+
+    private fun stopAudioPlayback() {
+        if (!currentState.isAudioPlaying) return
+        audioGuidePlayer.release()
+        updateState { it.copy(isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0) }
+    }
+
+    private fun finishTour() {
         if (isEndingTour) return
         isEndingTour = true
         viewModelScope.launch {
@@ -179,12 +241,20 @@ class TourViewModel @Inject constructor(
             val endTourResult = withContext(NonCancellable) {
                 endTourUseCase(savedCourseId, movement?.distanceMeters)
             }
+            isEndingTour = false
             if (endTourResult.isFailure) {
-                isEndingTour = false
                 postSideEffect(TourSideEffect.ShowEndTourError)
                 return@launch
             }
-            postSideEffect(TourSideEffect.NavigateBack)
+            elapsedTickerJob?.cancel()
+            val durationMinutes = endTourResult.getOrNull()?.durationMinutes
+            updateState {
+                it.copy(
+                    isFinished = true,
+                    currentStopIndex = furthestStopIndex,
+                    elapsedMinutes = durationMinutes?.toInt() ?: it.elapsedMinutes,
+                )
+            }
         }
     }
 }
@@ -199,11 +269,16 @@ internal fun restoredStopIndex(visitsByOrder: Map<Int, TourPlaceVisit>, lastInde
 private fun CoursePlace.toTourStop(placeId: Long?): TourStop = TourStop(
     order = order,
     name = name,
+    description = description,
     latitude = latitude,
     longitude = longitude,
     walkMinutesToNext = walkMinutes,
+    hasAudioGuide = hasAudio,
+    audioUrl = audioUrl,
     placeId = placeId,
 )
+
+private fun CourseBenefit.toTourBenefit(): TourBenefit = TourBenefit(title = title, description = description, url = url)
 
 private fun loadErrorReasonFor(throwable: Throwable?): TourLoadErrorReason = when (throwable) {
     is LbTripSavedCourseException.SavedCourseNotFoundException -> TourLoadErrorReason.CourseNotFound

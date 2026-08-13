@@ -2,6 +2,7 @@ package live.lb_trip.feature.tour.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,18 +37,26 @@ import live.lb_trip.feature.tour.R
 import live.lb_trip.feature.tour.TourStop
 
 @Composable
-internal fun TourRouteTimeline(stops: ImmutableList<TourStop>, currentStopIndex: Int, modifier: Modifier = Modifier) {
+internal fun TourRouteTimeline(
+    stops: ImmutableList<TourStop>,
+    furthestStopIndex: Int,
+    isFinished: Boolean,
+    onStopClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val nextIndex = (furthestStopIndex + 1).coerceAtMost(stops.lastIndex.coerceAtLeast(0))
     Column(modifier = modifier.fillMaxWidth()) {
         stops.fastForEachIndexed { index, stop ->
             key("${stop.name}_${stop.latitude}_${stop.longitude}") {
                 TourRouteRow(
                     stop = stop,
                     status = when {
-                        index < currentStopIndex -> TourStopStatus.Completed
-                        index == currentStopIndex -> TourStopStatus.Current
+                        index <= furthestStopIndex -> TourStopStatus.Completed
+                        !isFinished && index == nextIndex -> TourStopStatus.Current
                         else -> TourStopStatus.Upcoming
                     },
                     showConnector = index != stops.lastIndex,
+                    onClick = { onStopClick(index) },
                 )
             }
         }
@@ -55,8 +64,14 @@ internal fun TourRouteTimeline(stops: ImmutableList<TourStop>, currentStopIndex:
 }
 
 @Composable
-private fun TourRouteRow(stop: TourStop, status: TourStopStatus, showConnector: Boolean, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+private fun TourRouteRow(
+    stop: TourStop,
+    status: TourStopStatus,
+    showConnector: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier.fillMaxWidth().height(IntrinsicSize.Min).clickable(onClick = onClick)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxHeight()) {
             TourStopBadge(order = stop.order, status = status)
             if (showConnector) {

@@ -102,6 +102,7 @@ data class SavedCourseReportResponseDto(
 
 @Serializable
 data class TourStartResponseDto(
+    val tourStartedAt: String,
     val places: List<TourPlaceResponseDto>,
 )
 
@@ -110,4 +111,12 @@ data class TourPlaceResponseDto(
     val placeId: Long,
     val order: Int,
     val visited: Boolean,
+)
+
+@Serializable
+data class TourEndResponseDto(
+    val completed: Boolean,
+    val visitedPlaceCount: Int,
+    val totalPlaceCount: Int,
+    val durationMinutes: Long,
 )

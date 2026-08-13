@@ -15,6 +15,7 @@ import live.lb_trip.data.dto.response.SavedCourseListResponseDto
 import live.lb_trip.data.dto.response.SavedCourseReportResponseDto
 import live.lb_trip.data.dto.response.ShareTokenResponseDto
 import live.lb_trip.data.dto.response.SharedCourseDetailResponseDto
+import live.lb_trip.data.dto.response.TourEndResponseDto
 import live.lb_trip.data.dto.response.TourStartResponseDto
 import live.lb_trip.data.dto.response.bodyOrThrow
 import live.lb_trip.data.dto.response.checkOrThrow
@@ -42,12 +43,11 @@ class SavedCourseRemoteDataSource @Inject constructor(
         authClient.post("/saved-courses/$savedCourseId/tour/places/$placeId/check-in").checkOrThrow()
     }
 
-    suspend fun endTour(savedCourseId: Long, walkedDistanceMeters: Int?) {
+    suspend fun endTour(savedCourseId: Long, walkedDistanceMeters: Int?): TourEndResponseDto =
         authClient.post("/saved-courses/$savedCourseId/tour/end") {
             contentType(ContentType.Application.Json)
             setBody(TourEndRequestDto(walkedDistanceMeters))
-        }.checkOrThrow()
-    }
+        }.bodyOrThrow()
 
     suspend fun issueShareToken(savedCourseId: Long): ShareTokenResponseDto =
         authClient.post("/saved-courses/$savedCourseId/share-tokens").bodyOrThrow()

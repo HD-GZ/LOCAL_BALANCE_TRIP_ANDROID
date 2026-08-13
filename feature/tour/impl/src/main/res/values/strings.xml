@@ -3,13 +3,34 @@
     <string name="tour_action_retry">재시도</string>
 
     <string name="tour_progress_template">%1$d / %2$d 지점 완료</string>
-    <string name="tour_next_stop_label">다음 지점</string>
-    <string name="tour_last_stop_label">마지막 지점</string>
-    <string name="tour_end">종료</string>
-    <string name="tour_next_stop_arrived">다음 지점 도착</string>
-    <string name="tour_finish">투어 완료</string>
+    <string name="tour_next_stop_arrived">%1$s 도착</string>
+    <string name="tour_finish">도착 · 투어 완료</string>
     <string name="tour_full_route">전체 경로</string>
     <string name="tour_walk_time_template">도보 %1$s</string>
+
+    <string name="tour_progress_next_label">다음 목적지까지</string>
+    <string name="tour_progress_finished_label">코스를 완주했어요</string>
+    <string name="tour_progress_started_at">시작 %1$s</string>
+    <string name="tour_progress_elapsed">경과 %1$s</string>
+    <string name="tour_progress_elapsed_hours">%1$d시간 %2$d분</string>
+    <string name="tour_progress_elapsed_minutes">%1$d분</string>
+
+    <string name="tour_sheet_status_visited">방문 완료</string>
+    <string name="tour_sheet_status_next">다음 목적지 · %1$d/%2$d</string>
+    <string name="tour_sheet_status_other">코스 %1$d번째 지점</string>
+    <string name="tour_sheet_recorded">기록됨</string>
+    <string name="tour_sheet_order_label">%1$d번째</string>
+    <string name="tour_sheet_departure">출발</string>
+    <string name="tour_sheet_first_stop">첫 지점</string>
+    <string name="tour_sheet_walk_label">도보</string>
+
+    <string name="tour_audio_guide_label">오디오 가이드</string>
+    <string name="tour_audio_guide_empty">이 지점은 오디오 가이드가 없어요.</string>
+    <string name="tour_audio_play_content_description">재생</string>
+    <string name="tour_audio_pause_content_description">일시정지</string>
+
+    <string name="tour_action_view_detail">상세로</string>
+    <string name="tour_action_view_report">리포트 보기</string>
 
     <string name="tour_error_course_not_found">코스를 찾을 수 없어요.</string>
     <string name="tour_error_empty_places">표시할 장소 정보가 없어요.</string>
