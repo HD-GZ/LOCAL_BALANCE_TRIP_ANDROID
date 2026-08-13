@@ -13,8 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.feature.propensity.components.AxisRow
 import live.lb_trip.feature.propensity.components.Border
 import live.lb_trip.feature.propensity.components.PropensityStepShell
@@ -106,17 +105,11 @@ private fun PreferenceStepContent(
         HorizontalDivider(color = Border, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
 
-        LbButton(
+        LbBottomActionButton(
+            text = stringResource(R.string.propensity_cta_set_value_consumption),
             onClick = onNextStep,
-            colors = LbButtonDefaults.greenColors(),
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-        ) {
-            Text(
-                text = stringResource(R.string.propensity_cta_set_value_consumption),
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -36,14 +37,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -55,9 +60,8 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbTopBar
@@ -150,6 +154,7 @@ private fun SigninScreenContent(
                     onEmailChange = { onIntent(SigninIntent.EmailChanged(it)) },
                     onPasswordChange = { onIntent(SigninIntent.PasswordChanged(it)) },
                     onTogglePasswordVisibility = { onIntent(SigninIntent.TogglePasswordVisibility) },
+                    onLoginClick = { onIntent(SigninIntent.LoginClicked) },
                 )
             }
 
@@ -227,8 +232,12 @@ private fun SigninForm(
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     onTogglePasswordVisibility: () -> Unit,
+    onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val passwordFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(15.dp),
@@ -238,7 +247,8 @@ private fun SigninForm(
             onValueChange = onEmailChange,
             label = stringResource(R.string.signin_email),
             placeholder = stringResource(R.string.signin_email_placeholder),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { passwordFocusRequester.requestFocus() }),
         )
         LbInputField(
             value = password,
@@ -246,7 +256,14 @@ private fun SigninForm(
             label = stringResource(R.string.signin_password),
             placeholder = stringResource(R.string.signin_password_placeholder),
             visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    focusManager.clearFocus()
+                    onLoginClick()
+                },
+            ),
+            textFieldModifier = Modifier.focusRequester(passwordFocusRequester),
             trailingIcon = {
                 IconButton(
                     onClick = onTogglePasswordVisibility,
@@ -271,30 +288,18 @@ private fun SigninBottomAction(
     onSignupClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(LbBrush.BottomFadeGradient)
-            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
-            .padding(start = 24.dp, end = 24.dp, top = 14.dp, bottom = 14.dp),
+    LbBottomActionBar(
+        modifier = modifier,
+        windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime),
         verticalArrangement = Arrangement.spacedBy(13.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        LbButton(
+        LbBottomActionButton(
+            text = stringResource(R.string.signin_title),
             onClick = onLoginClick,
             enabled = !isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp),
-            colors = LbButtonDefaults.greenColors(),
-        ) {
-            Text(
-                text = stringResource(R.string.signin_title),
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.SemiBold,
-                letterSpacing = (-0.155).sp,
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,

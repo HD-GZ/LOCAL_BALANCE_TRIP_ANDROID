@@ -1,6 +1,12 @@
 package live.lb_trip.localbalancetrip
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.exclude
@@ -13,6 +19,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.PaneMotionDefaults
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +51,7 @@ private enum class MainTab {
     MY_INFO,
 }
 
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 internal fun MainTabScreen(
     isLoggedIn: Boolean,
@@ -125,35 +134,50 @@ internal fun MainTabScreen(
                 ScaffoldDefaults.contentWindowInsets.exclude(WindowInsets.navigationBars)
             },
         ) { innerPadding ->
-            when (selectedTab) {
-                MainTab.HOME -> HomeTabContent(
-                    onStartDiagnosisClick = onStartDiagnosis,
-                    onNavigateToSignin = onNavigateToSignin,
-                    onSavedAllClick = onSavedAllClick,
-                    onCourseClick = onNavigateToSavedCourseDetail,
-                    onPopularCourseClick = onNavigateToPopularCourseDetail,
-                    onPolicyAllClick = onNavigateToPolicyList,
-                    onNavigateToRecommendedRegion = onNavigateToRecommendedRegion,
-                    snackbarHostState = snackbarHostState,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .consumeWindowInsets(innerPadding),
-                )
+            AnimatedContent(
+                targetState = selectedTab,
+                transitionSpec = {
+                    val forward = targetState.ordinal > initialState.ordinal
+                    val enter = slideInHorizontally(PaneMotionDefaults.OffsetAnimationSpec) { width ->
+                        if (forward) width else -width
+                    } + fadeIn(PaneMotionDefaults.VisibilityAnimationSpec)
+                    val exit = slideOutHorizontally(PaneMotionDefaults.OffsetAnimationSpec) { width ->
+                        if (forward) -width else width
+                    } + fadeOut(PaneMotionDefaults.VisibilityAnimationSpec)
+                    enter.togetherWith(exit)
+                },
+                label = "MainTabContent",
+            ) { tab ->
+                when (tab) {
+                    MainTab.HOME -> HomeTabContent(
+                        onStartDiagnosisClick = onStartDiagnosis,
+                        onNavigateToSignin = onNavigateToSignin,
+                        onSavedAllClick = onSavedAllClick,
+                        onCourseClick = onNavigateToSavedCourseDetail,
+                        onPopularCourseClick = onNavigateToPopularCourseDetail,
+                        onPolicyAllClick = onNavigateToPolicyList,
+                        onNavigateToRecommendedRegion = onNavigateToRecommendedRegion,
+                        snackbarHostState = snackbarHostState,
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .consumeWindowInsets(innerPadding),
+                    )
 
-                MainTab.MY_INFO -> MyInfoPaneHost(
-                    onNavigateToSavedCourses = onNavigateToSavedCourses,
-                    onNavigateToDiagnosis = onRetakeDiagnosis,
-                    onNavigateToSignin = onNavigateToSignin,
-                    librariesRawResId = R.raw.aboutlibraries,
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .consumeWindowInsets(innerPadding),
-                    onDetailPaneVisibleChange = { isDetailShown ->
-                        coroutineScope.launch {
-                            if (isDetailShown) navSuiteState.hide() else navSuiteState.show()
-                        }
-                    },
-                )
+                    MainTab.MY_INFO -> MyInfoPaneHost(
+                        onNavigateToSavedCourses = onNavigateToSavedCourses,
+                        onNavigateToDiagnosis = onRetakeDiagnosis,
+                        onNavigateToSignin = onNavigateToSignin,
+                        librariesRawResId = R.raw.aboutlibraries,
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .consumeWindowInsets(innerPadding),
+                        onDetailPaneVisibleChange = { isDetailShown ->
+                            coroutineScope.launch {
+                                if (isDetailShown) navSuiteState.hide() else navSuiteState.show()
+                            }
+                        },
+                    )
+                }
             }
         }
     }

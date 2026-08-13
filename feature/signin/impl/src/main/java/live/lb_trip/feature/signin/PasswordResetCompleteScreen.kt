@@ -31,9 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 
 @Composable
 internal fun PasswordResetCompleteScreen(
@@ -87,27 +86,12 @@ internal fun PasswordResetCompleteScreen(
             }
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-        ) {
-            LbButton(
+        LbBottomActionBar {
+            LbBottomActionButton(
+                text = stringResource(R.string.password_reset_go_signin),
                 onClick = { onIntent(PasswordResetIntent.NavigateToSigninClicked) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
-                    text = stringResource(R.string.password_reset_go_signin),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

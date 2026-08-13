@@ -129,7 +129,14 @@ private fun MainNavGraph(
         }
     }
 
-    NavHost(navController = navController, startDestination = HomeRoute) {
+    NavHost(
+        navController = navController,
+        startDestination = HomeRoute,
+        enterTransition = appEnterTransition,
+        exitTransition = appExitTransition,
+        popEnterTransition = appPopEnterTransition,
+        popExitTransition = appPopExitTransition,
+    ) {
         composable<HomeRoute> {
             MainTabScreen(
                 isLoggedIn = isLoggedIn,

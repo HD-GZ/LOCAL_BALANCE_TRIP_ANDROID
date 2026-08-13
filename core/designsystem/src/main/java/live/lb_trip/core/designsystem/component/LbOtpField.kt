@@ -1,4 +1,4 @@
-package live.lb_trip.feature.signin
+package live.lb_trip.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,59 +19,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
 
+/** Six-digit verification code entry, split into two groups of three boxes. */
 @Composable
-internal fun PasswordResetStepBar(
-    currentStep: Int,
-    modifier: Modifier = Modifier,
-) {
-    val totalSteps = 3
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        repeat(totalSteps) { index ->
-            val step = index + 1
-            val isActive = step <= currentStep
-            Box(
-                modifier = Modifier
-                    .size(26.dp)
-                    .clip(CircleShape)
-                    .background(if (isActive) LbColors.Green else Color.Transparent)
-                    .border(
-                        width = 1.dp,
-                        color = if (isActive) LbColors.Green else LbColors.Line2,
-                        shape = CircleShape,
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(
-                    text = step.toString(),
-                    color = if (isActive) Color.White else LbColors.Ink3,
-                    fontSize = 12.sp,
-                )
-            }
-            if (index < totalSteps - 1) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(2.dp)
-                        .background(LbColors.LineSoft),
-                )
-            }
-        }
-    }
-}
-
-@Composable
-internal fun PasswordResetOtpField(
+fun LbOtpField(
     code: String,
     onCodeChange: (String) -> Unit,
+    onDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BasicTextField(
@@ -81,17 +38,19 @@ internal fun PasswordResetOtpField(
         onValueChange = { new ->
             if (new.length <= 6 && new.all { it.isDigit() }) onCodeChange(new)
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = { onDone() }),
         modifier = modifier,
         decorationBox = {
             Row(horizontalArrangement = Arrangement.Center) {
                 for (i in 0..2) {
-                    PasswordResetOtpBox(char = code.getOrNull(i), isCurrent = code.length == i)
+                    LbOtpBox(char = code.getOrNull(i), isCurrent = code.length == i)
                     if (i < 2) Spacer(modifier = Modifier.width(9.dp))
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 for (i in 3..5) {
-                    PasswordResetOtpBox(char = code.getOrNull(i), isCurrent = code.length == i)
+                    LbOtpBox(char = code.getOrNull(i), isCurrent = code.length == i)
                     if (i < 5) Spacer(modifier = Modifier.width(9.dp))
                 }
             }
@@ -100,7 +59,7 @@ internal fun PasswordResetOtpField(
 }
 
 @Composable
-private fun PasswordResetOtpBox(
+private fun LbOtpBox(
     char: Char?,
     isCurrent: Boolean,
     modifier: Modifier = Modifier,

@@ -13,20 +13,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -46,6 +51,10 @@ internal fun EditProfileForm(
     onWithdrawLinkClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val passwordFocusRequester = remember { FocusRequester() }
+    val passwordConfirmFocusRequester = remember { FocusRequester() }
+    val birthYearFocusRequester = remember { FocusRequester() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -85,6 +94,8 @@ internal fun EditProfileForm(
             onValueChange = { onIntent(EditProfileIntent.NameChanged(it)) },
             label = stringResource(R.string.edit_profile_name_label),
             placeholder = stringResource(R.string.edit_profile_name_placeholder),
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { passwordFocusRequester.requestFocus() }),
         )
 
         LbInputField(
@@ -94,7 +105,9 @@ internal fun EditProfileForm(
             placeholder = stringResource(R.string.edit_profile_password_placeholder),
             hintText = stringResource(R.string.edit_profile_password_hint),
             visualTransformation = if (state.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+            keyboardActions = KeyboardActions(onNext = { passwordConfirmFocusRequester.requestFocus() }),
+            textFieldModifier = Modifier.focusRequester(passwordFocusRequester),
             trailingIcon = {
                 PasswordVisibilityToggle(
                     onClick = { onIntent(EditProfileIntent.TogglePasswordVisibility) },
@@ -113,7 +126,9 @@ internal fun EditProfileForm(
                 } else {
                     PasswordVisualTransformation()
                 },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { birthYearFocusRequester.requestFocus() }),
+                textFieldModifier = Modifier.focusRequester(passwordConfirmFocusRequester),
                 trailingIcon = {
                     PasswordVisibilityToggle(
                         onClick = { onIntent(EditProfileIntent.ToggleConfirmPasswordVisibility) },
@@ -137,6 +152,7 @@ internal fun EditProfileForm(
             onMonthChange = { onIntent(EditProfileIntent.BirthMonthChanged(it)) },
             onDayChange = { onIntent(EditProfileIntent.BirthDayChanged(it)) },
             label = stringResource(R.string.edit_profile_birth_date_label),
+            yearFocusRequester = birthYearFocusRequester,
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(7.dp)) {

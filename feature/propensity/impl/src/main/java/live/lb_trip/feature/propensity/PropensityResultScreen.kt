@@ -28,7 +28,8 @@ import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.feature.propensity.components.Brand
 import live.lb_trip.feature.propensity.components.OutlineBorder
@@ -111,33 +112,19 @@ private fun ResultStepContent(
             lineHeight = 20.sp,
         )
         Spacer(modifier = Modifier.height(20.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            LbButton(
+        LbBottomActionButtonRow {
+            LbBottomActionButton(
+                text = stringResource(R.string.propensity_cta_restart),
                 onClick = { onIntent(PropensityIntent.RestartDiagnosis) },
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
-                modifier = Modifier.weight(1f).height(52.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.propensity_cta_restart),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-            LbButton(
+                modifier = Modifier.weight(1f),
+            )
+            LbBottomActionButton(
+                text = stringResource(R.string.propensity_cta_course_recommendation),
                 onClick = { onIntent(PropensityIntent.CourseRecommendationClicked) },
-                colors = LbButtonDefaults.greenColors(),
-                modifier = Modifier.weight(1f).height(52.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.propensity_cta_course_recommendation),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }

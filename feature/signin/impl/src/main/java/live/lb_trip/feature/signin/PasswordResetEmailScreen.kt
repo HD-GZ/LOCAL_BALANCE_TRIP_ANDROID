@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,16 +24,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
@@ -61,7 +63,7 @@ internal fun PasswordResetEmailScreen(
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            PasswordResetStepBar(currentStep = 1)
+            LbStepBar(currentStep = 1, totalSteps = 3)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(R.string.password_reset_forgot_title),
@@ -84,34 +86,25 @@ internal fun PasswordResetEmailScreen(
                 onValueChange = { onIntent(PasswordResetIntent.EmailChanged(it)) },
                 label = stringResource(R.string.signin_email),
                 placeholder = stringResource(R.string.signin_email_placeholder),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (state.email.isNotEmpty() && !state.isLoading) onIntent(PasswordResetIntent.SendCodeClicked)
+                    },
+                ),
             )
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(horizontal = 24.dp, vertical = 14.dp),
+        LbBottomActionBar(
             verticalArrangement = Arrangement.spacedBy(11.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            LbButton(
+            LbBottomActionButton(
+                text = stringResource(R.string.password_reset_get_code),
                 onClick = { onIntent(PasswordResetIntent.SendCodeClicked) },
                 enabled = state.email.isNotEmpty() && !state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
-                    text = stringResource(R.string.password_reset_get_code),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+            )
             Text(
                 text = buildAnnotatedString {
                     append(stringResource(R.string.password_reset_remembered))

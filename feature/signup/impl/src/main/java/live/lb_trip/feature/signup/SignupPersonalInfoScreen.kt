@@ -15,26 +15,31 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBirthField
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.feature.signup.components.AgreeBlock
 import live.lb_trip.feature.signup.components.GenderSegmented
-import live.lb_trip.feature.signup.components.SignupStepBar
 
 @Composable
 internal fun SignupPersonalInfoScreen(
@@ -43,6 +48,8 @@ internal fun SignupPersonalInfoScreen(
     onIntent: (SignupIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val birthYearFocusRequester = remember { FocusRequester() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -64,7 +71,7 @@ internal fun SignupPersonalInfoScreen(
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            SignupStepBar(currentStep = 2, totalSteps = 2)
+            LbStepBar(currentStep = 2, totalSteps = 2)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(R.string.signup_personal_heading),
@@ -88,6 +95,8 @@ internal fun SignupPersonalInfoScreen(
                 onValueChange = { onIntent(SignupIntent.NameChanged(it)) },
                 label = stringResource(R.string.signup_name),
                 placeholder = stringResource(R.string.signup_name_placeholder),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { birthYearFocusRequester.requestFocus() }),
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -100,6 +109,7 @@ internal fun SignupPersonalInfoScreen(
                 onDayChange = { onIntent(SignupIntent.BirthDayChanged(it)) },
                 label = stringResource(R.string.signup_birth_date),
                 required = true,
+                yearFocusRequester = birthYearFocusRequester,
             )
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -140,28 +150,13 @@ internal fun SignupPersonalInfoScreen(
             state.termsAgreed &&
             state.privacyAgreed
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-        ) {
-            LbButton(
+        LbBottomActionBar(windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime)) {
+            LbBottomActionButton(
+                text = stringResource(R.string.signup_next),
                 onClick = { onIntent(SignupIntent.PersonalInfoNextStepClicked) },
                 enabled = isPersonalInfoValid && !state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
-                    text = stringResource(R.string.signup_next),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

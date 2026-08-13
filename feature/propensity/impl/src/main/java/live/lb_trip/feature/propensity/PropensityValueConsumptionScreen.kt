@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -21,7 +22,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
 import live.lb_trip.feature.propensity.components.AxisRow
 import live.lb_trip.feature.propensity.components.Border
@@ -119,43 +121,26 @@ private fun ValueConsumptionStepContent(
         HorizontalDivider(color = Border, thickness = 1.dp)
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            LbButton(
+        LbBottomActionButtonRow {
+            LbBottomActionButton(
+                text = stringResource(R.string.propensity_cta_previous_step),
                 onClick = onBack,
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
-                modifier = Modifier.weight(1f).height(52.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.propensity_cta_previous_step),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
-            LbButton(
+                modifier = Modifier.weight(1f),
+            )
+            LbBottomActionButton(
+                text = stringResource(R.string.propensity_cta_view_result),
                 onClick = { onIntent(PropensityIntent.SubmitAndViewResult) },
-                colors = LbButtonDefaults.greenColors(),
-                modifier = Modifier.weight(1f).height(52.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.propensity_cta_view_result),
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                modifier = Modifier.weight(1f),
+                trailingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier.size(16.dp).padding(start = 6.dp),
                     )
-                }
-            }
+                },
+            )
         }
     }
 }

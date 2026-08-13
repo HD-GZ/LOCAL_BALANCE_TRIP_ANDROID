@@ -13,17 +13,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -31,10 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
@@ -44,6 +49,11 @@ internal fun PasswordResetNewPasswordScreen(
     onIntent: (PasswordResetIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isNewPasswordValid = state.newPassword.isNotEmpty() &&
+        state.newPasswordConfirm.isNotEmpty() &&
+        state.newPassword == state.newPasswordConfirm
+    val confirmFocusRequester = remember { FocusRequester() }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -63,7 +73,7 @@ internal fun PasswordResetNewPasswordScreen(
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            PasswordResetStepBar(currentStep = 3)
+            LbStepBar(currentStep = 3, totalSteps = 3)
             Spacer(modifier = Modifier.height(22.dp))
             Text(
                 text = stringResource(R.string.password_reset_new_password_title),
@@ -93,7 +103,8 @@ internal fun PasswordResetNewPasswordScreen(
                     } else {
                         PasswordVisualTransformation()
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Next),
+                    keyboardActions = KeyboardActions(onNext = { confirmFocusRequester.requestFocus() }),
                     trailingIcon = {
                         IconButton(
                             onClick = { onIntent(PasswordResetIntent.ToggleNewPasswordVisibility) },
@@ -118,7 +129,13 @@ internal fun PasswordResetNewPasswordScreen(
                     } else {
                         PasswordVisualTransformation()
                     },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            if (isNewPasswordValid && !state.isLoading) onIntent(PasswordResetIntent.ResetPasswordClicked)
+                        },
+                    ),
+                    textFieldModifier = Modifier.focusRequester(confirmFocusRequester),
                     trailingIcon = {
                         IconButton(
                             onClick = { onIntent(PasswordResetIntent.ToggleNewPasswordConfirmVisibility) },
@@ -135,32 +152,13 @@ internal fun PasswordResetNewPasswordScreen(
             }
         }
 
-        val isNewPasswordValid = state.newPassword.isNotEmpty() &&
-            state.newPasswordConfirm.isNotEmpty() &&
-            state.newPassword == state.newPasswordConfirm
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-        ) {
-            LbButton(
+        LbBottomActionBar {
+            LbBottomActionButton(
+                text = stringResource(R.string.password_reset_change_password),
                 onClick = { onIntent(PasswordResetIntent.ResetPasswordClicked) },
                 enabled = isNewPasswordValid && !state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
-                    text = stringResource(R.string.password_reset_change_password),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }

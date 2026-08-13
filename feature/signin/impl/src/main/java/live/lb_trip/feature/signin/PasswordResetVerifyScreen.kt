@@ -29,9 +29,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbBrush
-import live.lb_trip.core.designsystem.component.LbButton
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
+import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
 import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbOtpField
+import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
 
 @Composable
@@ -64,7 +67,7 @@ internal fun PasswordResetVerifyScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(6.dp))
-            PasswordResetStepBar(currentStep = 2)
+            LbStepBar(currentStep = 2, totalSteps = 3)
             Spacer(modifier = Modifier.height(28.dp))
             Text(
                 text = stringResource(R.string.password_reset_check_email),
@@ -88,9 +91,12 @@ internal fun PasswordResetVerifyScreen(
                 textAlign = TextAlign.Center,
             )
             Spacer(modifier = Modifier.height(40.dp))
-            PasswordResetOtpField(
+            LbOtpField(
                 code = state.code,
                 onCodeChange = { onIntent(PasswordResetIntent.CodeChanged(it)) },
+                onDone = {
+                    if (state.code.length == 6 && !state.isLoading) onIntent(PasswordResetIntent.ConfirmCodeClicked)
+                },
             )
             Spacer(modifier = Modifier.height(20.dp))
             if (state.remainingSeconds > 0) {
@@ -116,43 +122,21 @@ internal fun PasswordResetVerifyScreen(
         }
 
         val isCodeComplete = state.code.length == 6
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(LbBrush.BottomFadeGradient)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(horizontal = 24.dp, vertical = 14.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            LbButton(
-                onClick = { onIntent(PasswordResetIntent.ResendCodeClicked) },
-                enabled = !state.isLoading,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(54.dp),
-                colors = LbButtonDefaults.whiteColors(),
-                border = BorderStroke(1.dp, LbColors.Line2),
-            ) {
-                Text(
+        LbBottomActionBar {
+            LbBottomActionButtonRow {
+                LbBottomActionButton(
                     text = stringResource(R.string.password_reset_resend_code),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
+                    onClick = { onIntent(PasswordResetIntent.ResendCodeClicked) },
+                    enabled = !state.isLoading,
+                    colors = LbButtonDefaults.whiteColors(),
+                    border = BorderStroke(1.dp, LbColors.Line2),
+                    modifier = Modifier.weight(1f),
                 )
-            }
-            LbButton(
-                onClick = { onIntent(PasswordResetIntent.ConfirmCodeClicked) },
-                enabled = isCodeComplete && !state.isLoading,
-                modifier = Modifier
-                    .weight(1f)
-                    .height(54.dp),
-                colors = LbButtonDefaults.greenColors(),
-            ) {
-                Text(
+                LbBottomActionButton(
                     text = stringResource(R.string.password_reset_next),
-                    fontSize = 15.5.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    letterSpacing = (-0.155).sp,
+                    onClick = { onIntent(PasswordResetIntent.ConfirmCodeClicked) },
+                    enabled = isCodeComplete && !state.isLoading,
+                    modifier = Modifier.weight(1f),
                 )
             }
         }

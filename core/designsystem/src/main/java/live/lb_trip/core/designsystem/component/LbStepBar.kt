@@ -1,4 +1,4 @@
-package live.lb_trip.feature.signup.components
+package live.lb_trip.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,8 +19,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
 
+/**
+ * Small numbered-circle step bar used by multi-step form flows (password reset, signup).
+ * For the more emphasized "current step" treatment used by the propensity wizard, see
+ * [LbStepIndicator].
+ */
 @Composable
-internal fun SignupStepBar(
+fun LbStepBar(
     currentStep: Int,
     totalSteps: Int,
     modifier: Modifier = Modifier,

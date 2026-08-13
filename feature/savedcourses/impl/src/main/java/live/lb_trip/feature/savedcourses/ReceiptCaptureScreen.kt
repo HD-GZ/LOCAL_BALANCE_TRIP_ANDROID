@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,9 +26,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,8 +42,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import live.lb_trip.core.designsystem.LbColors
-import live.lb_trip.core.designsystem.component.LbButton
-import live.lb_trip.core.designsystem.component.LbButtonDefaults
+import live.lb_trip.core.designsystem.component.LbBottomActionBar
+import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbTopBar
 
@@ -147,6 +150,10 @@ private fun ReceiptVerifyStep(
     modifier: Modifier = Modifier,
 ) {
     val isSubmitting = state.step == ReceiptCaptureStep.SUBMITTING
+    val isSubmittable = state.merchantName.isNotEmpty() && state.amount.isNotEmpty() && state.paidDate.isNotEmpty()
+    val amountFocusRequester = remember { FocusRequester() }
+    val paidDateFocusRequester = remember { FocusRequester() }
+
     Column(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp),
@@ -164,6 +171,8 @@ private fun ReceiptVerifyStep(
                 label = stringResource(R.string.savedcourses_receipt_field_merchant),
                 placeholder = stringResource(R.string.savedcourses_receipt_field_merchant),
                 required = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { amountFocusRequester.requestFocus() }),
             )
             LbInputField(
                 value = state.amount,
@@ -171,7 +180,9 @@ private fun ReceiptVerifyStep(
                 label = stringResource(R.string.savedcourses_receipt_field_amount),
                 placeholder = "0",
                 required = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
+                keyboardActions = KeyboardActions(onNext = { paidDateFocusRequester.requestFocus() }),
+                textFieldModifier = Modifier.focusRequester(amountFocusRequester),
             )
             LbInputField(
                 value = state.paidDate,
@@ -179,28 +190,22 @@ private fun ReceiptVerifyStep(
                 label = stringResource(R.string.savedcourses_receipt_field_date),
                 placeholder = "YYYY-MM-DD",
                 required = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        if (isSubmittable && !isSubmitting) onIntent(ReceiptCaptureIntent.SubmitClicked)
+                    },
+                ),
+                textFieldModifier = Modifier.focusRequester(paidDateFocusRequester),
             )
         }
-        HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(horizontal = 14.dp, vertical = 11.dp),
-        ) {
-            LbButton(
+        LbBottomActionBar {
+            LbBottomActionButton(
+                text = stringResource(R.string.savedcourses_receipt_submit),
                 onClick = { onIntent(ReceiptCaptureIntent.SubmitClicked) },
                 enabled = !isSubmitting,
-                colors = LbButtonDefaults.greenColors(),
-                modifier = Modifier.weight(1f),
-            ) {
-                Text(
-                    text = stringResource(R.string.savedcourses_receipt_submit),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                )
-            }
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
     }
 }
