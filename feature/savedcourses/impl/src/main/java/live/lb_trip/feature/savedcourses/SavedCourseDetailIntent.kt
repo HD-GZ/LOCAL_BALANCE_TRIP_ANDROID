@@ -9,4 +9,5 @@ sealed interface SavedCourseDetailIntent {
     data object Retry : SavedCourseDetailIntent
     data object ReceiptRegistered : SavedCourseDetailIntent
     data class KakaoShareClicked(val title: String, val description: String, val imageUrl: String?) : SavedCourseDetailIntent
+    data object AudioPlaybackStopRequested : SavedCourseDetailIntent
 }

@@ -41,7 +41,7 @@ fun LbTimeline(
     walkDurationLabel: @Composable (String) -> String,
     onToggle: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    detailHeader: @Composable (Int) -> Unit = {},
+    detailHeader: (@Composable (Int) -> Unit)? = null,
     audioContent: (@Composable (Int) -> Unit)? = null,
     detailExtraContent: (@Composable (Int) -> Unit)? = null,
     detailBottomPadding: Dp = 12.dp,
@@ -68,7 +68,7 @@ fun LbTimeline(
                     audioGuideLabel = audioGuideLabel,
                     walkDurationLabel = walkDurationLabel,
                     onToggle = { onToggle(index) },
-                    detailHeader = { detailHeader(index) },
+                    detailHeader = detailHeader?.let { header -> { header(index) } },
                     audioContent = audioContent?.let { content -> { content(index) } },
                     detailExtraContent = detailExtraContent?.let { content -> { content(index) } },
                     detailBottomPadding = detailBottomPadding,
@@ -86,11 +86,12 @@ private fun LbTimelineStopBlock(
     audioGuideLabel: String,
     walkDurationLabel: @Composable (String) -> String,
     onToggle: () -> Unit,
-    detailHeader: @Composable () -> Unit,
+    detailHeader: (@Composable () -> Unit)?,
     audioContent: (@Composable () -> Unit)?,
     detailExtraContent: (@Composable () -> Unit)?,
     detailBottomPadding: Dp,
 ) {
+    val hasDetailContent = stop.description != null || stop.hasAudioGuide || detailHeader != null || detailExtraContent != null
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,7 +127,7 @@ private fun LbTimelineStopBlock(
                 modifier = Modifier.size(16.dp).rotate(if (isExpanded) 90f else 0f),
             )
         }
-        if (isExpanded) {
+        if (isExpanded && hasDetailContent) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.width(41.dp))
                 Column(modifier = Modifier.weight(1f).padding(bottom = detailBottomPadding)) {
@@ -137,30 +138,13 @@ private fun LbTimelineStopBlock(
                             .background(LbColors.Paper)
                             .border(1.dp, LbColors.LineSoft, RoundedCornerShape(12.dp)),
                     ) {
-                        detailHeader()
-                        Column(modifier = Modifier.padding(13.dp)) {
-                            stop.description?.let { description ->
-                                Text(text = description, color = LbColors.Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
-                            }
-                            detailExtraContent?.invoke()
-                            if (stop.hasAudioGuide) {
-                                Spacer(modifier = Modifier.padding(top = 9.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.ic_headphone),
-                                        contentDescription = null,
-                                        tint = LbColors.Ink3,
-                                        modifier = Modifier.size(15.dp),
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(text = audioGuideLabel, color = LbColors.Ink3, fontSize = 12.sp)
-                                }
-                                audioContent?.let { content ->
-                                    Spacer(modifier = Modifier.padding(top = 9.dp))
-                                    content()
-                                }
-                            }
-                        }
+                        detailHeader?.invoke()
+                        LbTimelineStopDetailBody(
+                            stop = stop,
+                            audioGuideLabel = audioGuideLabel,
+                            audioContent = audioContent,
+                            detailExtraContent = detailExtraContent,
+                        )
                     }
                 }
             }
@@ -180,6 +164,41 @@ private fun LbTimelineStopBlock(
                     )
                     Text(text = walkDurationLabel(walkDuration), color = LbColors.Ink3, fontSize = 10.5.sp)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LbTimelineStopDetailBody(
+    stop: LbTimelineStop,
+    audioGuideLabel: String,
+    audioContent: (@Composable () -> Unit)?,
+    detailExtraContent: (@Composable () -> Unit)?,
+) {
+    Column(modifier = Modifier.padding(13.dp)) {
+        val hasContentAboveAudio = stop.description != null || detailExtraContent != null
+        stop.description?.let { description ->
+            Text(text = description, color = LbColors.Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
+        }
+        detailExtraContent?.invoke()
+        if (stop.hasAudioGuide) {
+            if (hasContentAboveAudio) {
+                Spacer(modifier = Modifier.padding(top = 9.dp))
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_headphone),
+                    contentDescription = null,
+                    tint = LbColors.Ink3,
+                    modifier = Modifier.size(15.dp),
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(text = audioGuideLabel, color = LbColors.Ink3, fontSize = 12.sp)
+            }
+            audioContent?.let { content ->
+                Spacer(modifier = Modifier.padding(top = 9.dp))
+                content()
             }
         }
     }

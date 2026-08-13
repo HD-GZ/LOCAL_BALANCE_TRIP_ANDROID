@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -80,6 +81,12 @@ internal fun SharedCourseDetailScreen(
     val loadErrorMessage = stringResource(R.string.sharedcourse_error_load)
     val retryActionLabel = stringResource(R.string.savedcourses_action_retry)
     val mapAppUnavailableMessage = stringResource(R.string.sharedcourse_map_app_unavailable)
+
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+            onIntent(SharedCourseDetailIntent.AudioPlaybackStopRequested)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->

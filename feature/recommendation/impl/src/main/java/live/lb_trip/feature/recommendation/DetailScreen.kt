@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.collections.immutable.persistentSetOf
 import live.lb_trip.core.designsystem.component.LbAudioPlayer
@@ -75,6 +76,12 @@ internal fun DetailScreen(
     val genericLoadErrorMessage = stringResource(R.string.recommendation_error_generic_detail)
     val playContentDescription = stringResource(R.string.recommendation_content_description_play)
     val pauseContentDescription = stringResource(R.string.recommendation_content_description_pause)
+
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+            onIntent(RecommendationDetailIntent.AudioPlaybackStopRequested)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->

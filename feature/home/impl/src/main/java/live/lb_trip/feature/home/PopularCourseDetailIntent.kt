@@ -6,4 +6,5 @@ sealed interface PopularCourseDetailIntent {
     data class BenefitClicked(val url: String) : PopularCourseDetailIntent
     data class NavigateClicked(val latitude: Double, val longitude: Double, val label: String) : PopularCourseDetailIntent
     data object Retry : PopularCourseDetailIntent
+    data object AudioPlaybackStopRequested : PopularCourseDetailIntent
 }

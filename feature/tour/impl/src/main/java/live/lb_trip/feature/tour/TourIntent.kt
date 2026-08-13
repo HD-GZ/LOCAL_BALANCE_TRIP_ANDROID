@@ -10,4 +10,5 @@ sealed interface TourIntent {
     data object LocationTrackingStarted : TourIntent
     data object LocationTrackingStopped : TourIntent
     data object DistanceRecordingPermissionGranted : TourIntent
+    data object AudioPlaybackStopRequested : TourIntent
 }

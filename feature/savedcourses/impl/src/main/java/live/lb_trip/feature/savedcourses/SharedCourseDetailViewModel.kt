@@ -43,6 +43,7 @@ class SharedCourseDetailViewModel @AssistedInject constructor(
             is SharedCourseDetailIntent.NavigateClicked ->
                 postSideEffect(SharedCourseDetailSideEffect.OpenMap(intent.latitude, intent.longitude, intent.label))
             SharedCourseDetailIntent.Retry -> viewModelScope.launch { load() }
+            SharedCourseDetailIntent.AudioPlaybackStopRequested -> stopAudioPlayback()
         }
     }
 
@@ -121,6 +122,12 @@ class SharedCourseDetailViewModel @AssistedInject constructor(
                 }
             },
         )
+    }
+
+    private fun stopAudioPlayback() {
+        if (currentState.playingStopIndex == null) return
+        audioGuidePlayer.release()
+        updateState { it.copy(playingStopIndex = null, isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0) }
     }
 
     override fun onCleared() {
