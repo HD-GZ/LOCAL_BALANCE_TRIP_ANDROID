@@ -25,6 +25,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kakao.share)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.common)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.javax.inject)

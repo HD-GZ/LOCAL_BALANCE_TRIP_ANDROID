@@ -44,6 +44,7 @@ import live.lb_trip.core.designsystem.component.LbBenefitRow
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
+import live.lb_trip.core.util.formatAudioPosition
 import live.lb_trip.feature.recommendation.components.Ink
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
@@ -74,7 +75,6 @@ internal fun DetailScreen(
     val genericLoadErrorMessage = stringResource(R.string.recommendation_error_generic_detail)
     val playContentDescription = stringResource(R.string.recommendation_content_description_play)
     val pauseContentDescription = stringResource(R.string.recommendation_content_description_pause)
-    val audioTimePlaceholder = stringResource(R.string.recommendation_audio_time_placeholder)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -119,7 +119,6 @@ internal fun DetailScreen(
         onIntent = onIntent,
         playContentDescription = playContentDescription,
         pauseContentDescription = pauseContentDescription,
-        audioTimePlaceholder = audioTimePlaceholder,
         modifier = modifier,
     )
 }
@@ -132,7 +131,6 @@ private fun DetailScreenContent(
     onIntent: (RecommendationDetailIntent) -> Unit,
     playContentDescription: String,
     pauseContentDescription: String,
-    audioTimePlaceholder: String,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -197,11 +195,15 @@ private fun DetailScreenContent(
                     detailHeader = { RecommendationTimelineMapPlaceholder() },
                     audioContent = { index ->
                         LbAudioPlayer(
-                            isPlaying = state.playingStopIndex == index,
+                            isPlaying = state.playingStopIndex == index && state.isAudioPlaying,
                             onPlayPauseClick = { onIntent(RecommendationDetailIntent.PlaybackToggled(index)) },
                             playContentDescription = playContentDescription,
                             pauseContentDescription = pauseContentDescription,
-                            positionLabel = audioTimePlaceholder,
+                            positionLabel = if (state.playingStopIndex == index) {
+                                formatAudioPosition(state.audioPositionMs, state.audioDurationMs)
+                            } else {
+                                formatAudioPosition(0, 0)
+                            },
                         )
                     },
                     detailBottomPadding = 7.dp,
@@ -267,6 +269,5 @@ private fun DetailScreenPreview() {
         onIntent = {},
         playContentDescription = "재생",
         pauseContentDescription = "일시정지",
-        audioTimePlaceholder = "0:00 / 2:14",
     )
 }

@@ -22,6 +22,9 @@ data class SavedCourseDetailUiState(
     val stops: ImmutableList<SavedCourseStop> = persistentListOf(),
     val expandedStopIndices: PersistentSet<Int> = persistentSetOf(0),
     val playingStopIndex: Int? = null,
+    val isAudioPlaying: Boolean = false,
+    val audioPositionMs: Int = 0,
+    val audioDurationMs: Int = 0,
     val benefits: ImmutableList<SavedCourseBenefit> = persistentListOf(),
     val isReceiptsLoading: Boolean = false,
     val hasLoadedReceipts: Boolean = false,
@@ -44,6 +47,7 @@ data class SavedCourseStop(
     val hasAudioGuide: Boolean,
     val walkDuration: String?,
     val description: String?,
+    val audioUrl: String? = null,
 )
 
 data class SavedCourseBenefit(

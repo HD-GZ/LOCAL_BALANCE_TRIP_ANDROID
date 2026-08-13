@@ -13,6 +13,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import live.lb_trip.core.util.AudioGuidePlayer
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.savedcourse.LbTripSavedCourseException
 import live.lb_trip.domain.model.CourseBenefit
@@ -27,6 +28,7 @@ import live.lb_trip.domain.usecase.GetSavedCourseReportUseCase
 import live.lb_trip.domain.usecase.GetUserProfileUseCase
 import live.lb_trip.domain.usecase.IssueShareTokenUseCase
 
+@Suppress("TooManyFunctions")
 @HiltViewModel(assistedFactory = SavedCourseDetailViewModel.Factory::class)
 class SavedCourseDetailViewModel @AssistedInject constructor(
     @Assisted private val savedCourseId: Long,
@@ -35,6 +37,7 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
     private val getSavedCourseReportUseCase: GetSavedCourseReportUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val issueShareTokenUseCase: IssueShareTokenUseCase,
+    private val audioGuidePlayer: AudioGuidePlayer,
     ) : BaseViewModel<SavedCourseDetailUiState, SavedCourseDetailIntent, SavedCourseDetailSideEffect>(
     SavedCourseDetailUiState(),
 ) {
@@ -58,8 +61,7 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
         when (intent) {
             is SavedCourseDetailIntent.TabSelected -> updateState { it.copy(selectedTab = intent.tab) }
             is SavedCourseDetailIntent.StopToggled -> toggleStopExpanded(intent.index)
-            is SavedCourseDetailIntent.PlaybackToggled ->
-                updateState { it.copy(playingStopIndex = if (it.playingStopIndex == intent.stopIndex) null else intent.stopIndex) }
+            is SavedCourseDetailIntent.PlaybackToggled -> toggleAudioPlayback(intent.stopIndex)
             is SavedCourseDetailIntent.BenefitClicked ->
                 postSideEffect(SavedCourseDetailSideEffect.OpenBenefitUrl(intent.url))
             SavedCourseDetailIntent.TourStartClicked ->
@@ -68,7 +70,10 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
             SavedCourseDetailIntent.ReceiptRegistered -> viewModelScope.launch {
                 coroutineScope {
                     launch { reloadReceipts() }
-                    launch { reloadReport() }
+                    launch {
+                        updateState { it.copy(isReportLoading = true) }
+                        applyReportResult(fetchReportWithRetry())
+                    }
                 }
             }
             is SavedCourseDetailIntent.KakaoShareClicked -> viewModelScope.launch {
@@ -186,21 +191,61 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
         applyReceiptsResult(getReceiptsUseCase(savedCourseId))
     }
 
-    private suspend fun reloadReport() {
-        updateState { it.copy(isReportLoading = true) }
-        applyReportResult(fetchReportWithRetry())
-    }
-
     private fun toggleStopExpanded(index: Int) {
+        val isCollapsing = index in currentState.expandedStopIndices
+        if (isCollapsing && currentState.playingStopIndex == index) {
+            audioGuidePlayer.release()
+        }
         updateState {
             it.copy(
-                expandedStopIndices = if (index in it.expandedStopIndices) {
+                expandedStopIndices = if (isCollapsing) {
                     it.expandedStopIndices - index
                 } else {
                     it.expandedStopIndices + index
                 },
+                playingStopIndex = if (isCollapsing && it.playingStopIndex == index) null else it.playingStopIndex,
+                isAudioPlaying = if (isCollapsing && it.playingStopIndex == index) false else it.isAudioPlaying,
             )
         }
+    }
+
+    private fun toggleAudioPlayback(stopIndex: Int) {
+        val url = currentState.stops.getOrNull(stopIndex)?.audioUrl ?: return
+        val isSwitchingStop = currentState.playingStopIndex != stopIndex
+        updateState {
+            it.copy(
+                playingStopIndex = stopIndex,
+                audioPositionMs = if (isSwitchingStop) 0 else it.audioPositionMs,
+                audioDurationMs = if (isSwitchingStop) 0 else it.audioDurationMs,
+            )
+        }
+        audioGuidePlayer.toggle(
+            url = url,
+            scope = viewModelScope,
+            onState = { isPlaying, positionMs, durationMs ->
+                updateState {
+                    if (it.playingStopIndex == stopIndex) {
+                        it.copy(isAudioPlaying = isPlaying, audioPositionMs = positionMs, audioDurationMs = durationMs)
+                    } else {
+                        it
+                    }
+                }
+            },
+            onCompletion = {
+                updateState {
+                    if (it.playingStopIndex == stopIndex) {
+                        it.copy(playingStopIndex = null, isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0)
+                    } else {
+                        it
+                    }
+                }
+            },
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioGuidePlayer.release()
     }
 }
 
@@ -210,6 +255,7 @@ private fun CoursePlace.toSavedCourseStop(): SavedCourseStop = SavedCourseStop(
     hasAudioGuide = hasAudio,
     walkDuration = walkMinutes?.let { "${it}분" },
     description = description,
+    audioUrl = audioUrl,
 )
 
 private fun CourseBenefit.toSavedCourseBenefit(): SavedCourseBenefit =

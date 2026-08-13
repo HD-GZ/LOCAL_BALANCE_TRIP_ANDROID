@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.minus
 import kotlinx.collections.immutable.plus
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
+import live.lb_trip.core.util.AudioGuidePlayer
 import live.lb_trip.core.viewmodel.BaseViewModel
 import live.lb_trip.domain.exception.home.LbTripHomeException
 import live.lb_trip.domain.model.CoursePlace
@@ -18,6 +19,7 @@ import live.lb_trip.domain.usecase.GetPopularCourseDetailUseCase
 class PopularCourseDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getPopularCourseDetailUseCase: GetPopularCourseDetailUseCase,
+    private val audioGuidePlayer: AudioGuidePlayer,
 ) : BaseViewModel<PopularCourseDetailUiState, PopularCourseDetailIntent, PopularCourseDetailSideEffect>(
     PopularCourseDetailUiState(),
 ) {
@@ -67,8 +69,11 @@ class PopularCourseDetailViewModel @Inject constructor(
     }
 
     private fun toggleStopExpanded(index: Int) {
+        val isCollapsing = index in currentState.expandedStopIndices
+        if (isCollapsing && currentState.playingStopIndex == index) {
+            audioGuidePlayer.release()
+        }
         updateState {
-            val isCollapsing = index in it.expandedStopIndices
             it.copy(
                 expandedStopIndices = if (isCollapsing) {
                     it.expandedStopIndices - index
@@ -76,14 +81,48 @@ class PopularCourseDetailViewModel @Inject constructor(
                     it.expandedStopIndices + index
                 },
                 playingStopIndex = if (isCollapsing && it.playingStopIndex == index) null else it.playingStopIndex,
+                isAudioPlaying = if (isCollapsing && it.playingStopIndex == index) false else it.isAudioPlaying,
             )
         }
     }
 
     private fun toggleAudioPlayback(stopIndex: Int) {
+        val url = currentState.stops.getOrNull(stopIndex)?.audioUrl ?: return
+        val isSwitchingStop = currentState.playingStopIndex != stopIndex
         updateState {
-            it.copy(playingStopIndex = if (it.playingStopIndex == stopIndex) null else stopIndex)
+            it.copy(
+                playingStopIndex = stopIndex,
+                audioPositionMs = if (isSwitchingStop) 0 else it.audioPositionMs,
+                audioDurationMs = if (isSwitchingStop) 0 else it.audioDurationMs,
+            )
         }
+        audioGuidePlayer.toggle(
+            url = url,
+            scope = viewModelScope,
+            onState = { isPlaying, positionMs, durationMs ->
+                updateState {
+                    if (it.playingStopIndex == stopIndex) {
+                        it.copy(isAudioPlaying = isPlaying, audioPositionMs = positionMs, audioDurationMs = durationMs)
+                    } else {
+                        it
+                    }
+                }
+            },
+            onCompletion = {
+                updateState {
+                    if (it.playingStopIndex == stopIndex) {
+                        it.copy(playingStopIndex = null, isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0)
+                    } else {
+                        it
+                    }
+                }
+            },
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        audioGuidePlayer.release()
     }
 }
 

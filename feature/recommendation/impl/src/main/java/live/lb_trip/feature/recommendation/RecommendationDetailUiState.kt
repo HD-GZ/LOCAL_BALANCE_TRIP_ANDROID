@@ -14,6 +14,9 @@ data class RecommendationDetailUiState(
     val isSaved: Boolean = false,
     val isSaving: Boolean = false,
     val playingStopIndex: Int? = null,
+    val isAudioPlaying: Boolean = false,
+    val audioPositionMs: Int = 0,
+    val audioDurationMs: Int = 0,
 )
 
 sealed interface RecommendationDetailSideEffect {
