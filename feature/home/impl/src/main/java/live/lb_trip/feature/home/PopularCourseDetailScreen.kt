@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.ImageLoader
 import coil3.compose.AsyncImage
@@ -82,6 +83,12 @@ internal fun PopularCourseDetailScreen(
     val emptyPlacesMessage = stringResource(R.string.home_course_detail_error_empty_places)
     val genericLoadErrorMessage = stringResource(R.string.home_course_detail_error_generic)
     val mapAppUnavailableMessage = stringResource(R.string.home_course_detail_map_app_unavailable)
+
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+            onIntent(PopularCourseDetailIntent.AudioPlaybackStopRequested)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->

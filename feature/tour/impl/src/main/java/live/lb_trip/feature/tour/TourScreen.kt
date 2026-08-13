@@ -122,6 +122,12 @@ internal fun TourScreen(
         }
     }
 
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+            onIntent(TourIntent.AudioPlaybackStopRequested)
+        }
+    }
+
     val hasActivityRecognitionPermission = rememberActivityRecognitionPermissionGranted()
     LaunchedEffect(hasActivityRecognitionPermission) {
         if (hasActivityRecognitionPermission) {

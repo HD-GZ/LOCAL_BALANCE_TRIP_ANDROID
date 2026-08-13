@@ -92,6 +92,7 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
                         postSideEffect(SavedCourseDetailSideEffect.ShowKakaoShareError)
                     }
             }
+            SavedCourseDetailIntent.AudioPlaybackStopRequested -> stopAudioPlayback()
         }
     }
 
@@ -241,6 +242,12 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
                 }
             },
         )
+    }
+
+    private fun stopAudioPlayback() {
+        if (currentState.playingStopIndex == null) return
+        audioGuidePlayer.release()
+        updateState { it.copy(playingStopIndex = null, isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0) }
     }
 
     override fun onCleared() {

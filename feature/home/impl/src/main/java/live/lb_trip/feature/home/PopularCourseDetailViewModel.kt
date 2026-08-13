@@ -39,6 +39,7 @@ class PopularCourseDetailViewModel @Inject constructor(
             is PopularCourseDetailIntent.NavigateClicked ->
                 postSideEffect(PopularCourseDetailSideEffect.OpenMap(intent.latitude, intent.longitude, intent.label))
             PopularCourseDetailIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
+            PopularCourseDetailIntent.AudioPlaybackStopRequested -> stopAudioPlayback()
         }
     }
 
@@ -118,6 +119,12 @@ class PopularCourseDetailViewModel @Inject constructor(
                 }
             },
         )
+    }
+
+    private fun stopAudioPlayback() {
+        if (currentState.playingStopIndex == null) return
+        audioGuidePlayer.release()
+        updateState { it.copy(playingStopIndex = null, isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0) }
     }
 
     override fun onCleared() {

@@ -76,6 +76,7 @@ class TourViewModel @Inject constructor(
             TourIntent.LocationTrackingStopped -> setLocationTracking(active = false)
             TourIntent.DistanceRecordingPermissionGranted ->
                 viewModelScope.launch { distanceRecording.onPermissionGranted(savedCourseId) }
+            TourIntent.AudioPlaybackStopRequested -> stopAudioPlayback()
         }
     }
 

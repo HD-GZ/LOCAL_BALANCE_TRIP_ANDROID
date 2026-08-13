@@ -41,6 +41,7 @@ class RecommendationDetailViewModel @Inject constructor(
             is RecommendationDetailIntent.BenefitClicked ->
                 postSideEffect(RecommendationDetailSideEffect.OpenBenefitUrl(intent.url))
             RecommendationDetailIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
+            RecommendationDetailIntent.AudioPlaybackStopRequested -> stopAudioPlayback()
         }
     }
 
@@ -116,6 +117,12 @@ class RecommendationDetailViewModel @Inject constructor(
                 }
             },
         )
+    }
+
+    private fun stopAudioPlayback() {
+        if (currentState.playingStopIndex == null) return
+        audioGuidePlayer.release()
+        updateState { it.copy(playingStopIndex = null, isAudioPlaying = false, audioPositionMs = 0, audioDurationMs = 0) }
     }
 
     override fun onCleared() {

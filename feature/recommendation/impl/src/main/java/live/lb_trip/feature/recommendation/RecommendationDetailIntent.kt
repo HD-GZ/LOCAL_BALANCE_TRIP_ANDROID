@@ -6,4 +6,5 @@ sealed interface RecommendationDetailIntent {
     data object SaveClicked : RecommendationDetailIntent
     data class BenefitClicked(val url: String) : RecommendationDetailIntent
     data object Retry : RecommendationDetailIntent
+    data object AudioPlaybackStopRequested : RecommendationDetailIntent
 }

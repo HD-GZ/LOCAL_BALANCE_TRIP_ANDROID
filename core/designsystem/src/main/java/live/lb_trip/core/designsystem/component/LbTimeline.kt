@@ -41,7 +41,7 @@ fun LbTimeline(
     walkDurationLabel: @Composable (String) -> String,
     onToggle: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    detailHeader: @Composable (Int) -> Unit = {},
+    detailHeader: (@Composable (Int) -> Unit)? = null,
     audioContent: (@Composable (Int) -> Unit)? = null,
     detailExtraContent: (@Composable (Int) -> Unit)? = null,
     detailBottomPadding: Dp = 12.dp,
@@ -68,7 +68,7 @@ fun LbTimeline(
                     audioGuideLabel = audioGuideLabel,
                     walkDurationLabel = walkDurationLabel,
                     onToggle = { onToggle(index) },
-                    detailHeader = { detailHeader(index) },
+                    detailHeader = detailHeader?.let { header -> { header(index) } },
                     audioContent = audioContent?.let { content -> { content(index) } },
                     detailExtraContent = detailExtraContent?.let { content -> { content(index) } },
                     detailBottomPadding = detailBottomPadding,
@@ -86,11 +86,12 @@ private fun LbTimelineStopBlock(
     audioGuideLabel: String,
     walkDurationLabel: @Composable (String) -> String,
     onToggle: () -> Unit,
-    detailHeader: @Composable () -> Unit,
+    detailHeader: (@Composable () -> Unit)?,
     audioContent: (@Composable () -> Unit)?,
     detailExtraContent: (@Composable () -> Unit)?,
     detailBottomPadding: Dp,
 ) {
+    val hasDetailContent = stop.description != null || stop.hasAudioGuide || detailHeader != null || detailExtraContent != null
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,7 +127,7 @@ private fun LbTimelineStopBlock(
                 modifier = Modifier.size(16.dp).rotate(if (isExpanded) 90f else 0f),
             )
         }
-        if (isExpanded) {
+        if (isExpanded && hasDetailContent) {
             Row(modifier = Modifier.fillMaxWidth()) {
                 Spacer(modifier = Modifier.width(41.dp))
                 Column(modifier = Modifier.weight(1f).padding(bottom = detailBottomPadding)) {
@@ -137,7 +138,7 @@ private fun LbTimelineStopBlock(
                             .background(LbColors.Paper)
                             .border(1.dp, LbColors.LineSoft, RoundedCornerShape(12.dp)),
                     ) {
-                        detailHeader()
+                        detailHeader?.invoke()
                         Column(modifier = Modifier.padding(13.dp)) {
                             stop.description?.let { description ->
                                 Text(text = description, color = LbColors.Ink2, fontSize = 11.5.sp, lineHeight = 17.sp)
