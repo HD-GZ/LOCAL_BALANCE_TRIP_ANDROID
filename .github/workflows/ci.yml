@@ -20,6 +20,34 @@ jobs:
 
       - uses: ./.github/actions/gradle-setup
 
+      - name: Export Keystore
+        run: |
+          echo "$KEYSTORE" | base64 -di > ./keystore.jks
+        shell: bash
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+
+      - name: Write local.properties
+        run: |
+          cat <<EOF > local.properties
+          NCP_KEY_ID=$NCP_KEY_ID
+          KAKAO_KEY=$KAKAO_KEY
+          FACEBOOK_APP_ID=$FACEBOOK_APP_ID
+          KEYSTORE_FILE=$KEYSTORE_FILE
+          KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD
+          KEY_ALIAS=$KEY_ALIAS
+          KEY_PASSWORD=$KEY_PASSWORD
+          EOF
+        shell: bash
+        env:
+          NCP_KEY_ID: ${{ secrets.NCP_KEY_ID }}
+          KAKAO_KEY: ${{ secrets.KAKAO_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
       - name: ktlint
         run: ./gradlew ktlintCheck
 
