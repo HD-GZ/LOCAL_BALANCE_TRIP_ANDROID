@@ -22,7 +22,11 @@ jobs:
 
       - name: Export Keystore
         run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 --decode > ./keystore.jks
+          echo "${{ secrets.KEYSTORE }}" | base64 -di > ./keystore.jks
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KEYSTORE }}
+
 
       - name: Export NCP_KEY_ID
         run: |
