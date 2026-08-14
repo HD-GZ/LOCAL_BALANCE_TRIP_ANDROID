@@ -33,6 +33,15 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(localProperties["KEYSTORE_FILE"] ?: "")
+            storePassword = localProperties["KEYSTORE_PASSWORD"] as String? ?: ""
+            keyAlias = localProperties["KEY_ALIAS"] as String? ?: ""
+            keyPassword = localProperties["KEY_PASSWORD"] as String? ?: ""
+        }
+    }
+
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://api.stage.lb-trip.live\"")
@@ -53,6 +62,8 @@ android {
             buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
             buildConfigField("String", "FACEBOOK_APP_ID", "\"$facebookAppId\"")
             manifestPlaceholders["KAKAO_KEY"] = kakaoKey
+
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
