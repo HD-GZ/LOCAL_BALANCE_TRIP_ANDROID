@@ -30,13 +30,13 @@ jobs:
       - name: Write local.properties
         run: |
           cat <<EOF > local.properties
-          NCP_KEY_ID="$NCP_KEY_ID"
-          KAKAO_KEY="$KAKAO_KEY"
-          FACEBOOK_APP_ID="$FACEBOOK_APP_ID"
-          KEYSTORE_FILE="$KEYSTORE_FILE"
-          KEYSTORE_PASSWORD="$KEYSTORE_PASSWORD"
-          KEY_ALIAS="$KEY_ALIAS"
-          KEY_PASSWORD="$KEY_PASSWORD"
+          NCP_KEY_ID=$NCP_KEY_ID
+          KAKAO_KEY=$KAKAO_KEY
+          FACEBOOK_APP_ID=$FACEBOOK_APP_ID
+          KEYSTORE_FILE=$KEYSTORE_FILE
+          KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD
+          KEY_ALIAS=$KEY_ALIAS
+          KEY_PASSWORD=$KEY_PASSWORD
           EOF
         shell: bash
         env:
