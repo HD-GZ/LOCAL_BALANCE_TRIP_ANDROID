@@ -141,6 +141,7 @@ internal fun TourScreen(
         scaffoldState = scaffoldState,
         directive = directive,
         isTwoPane = isTwoPane,
+        hasLocationPermission = hasLocationPermission,
         onBack = onBack,
         onIntent = onIntent,
         modifier = modifier,
@@ -208,6 +209,7 @@ private fun TourScreenContent(
     scaffoldState: BottomSheetScaffoldState,
     directive: PaneScaffoldDirective,
     isTwoPane: Boolean,
+    hasLocationPermission: Boolean,
     onBack: () -> Unit,
     onIntent: (TourIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -217,6 +219,7 @@ private fun TourScreenContent(
             state = state,
             snackbarHostState = snackbarHostState,
             directive = directive,
+            hasLocationPermission = hasLocationPermission,
             onBack = onBack,
             onIntent = onIntent,
             modifier = modifier,
@@ -226,6 +229,7 @@ private fun TourScreenContent(
             state = state,
             snackbarHostState = snackbarHostState,
             scaffoldState = scaffoldState,
+            hasLocationPermission = hasLocationPermission,
             onBack = onBack,
             onIntent = onIntent,
             modifier = modifier,
@@ -239,6 +243,7 @@ private fun TourCompactContent(
     state: TourUiState,
     snackbarHostState: SnackbarHostState,
     scaffoldState: BottomSheetScaffoldState,
+    hasLocationPermission: Boolean,
     onBack: () -> Unit,
     onIntent: (TourIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -276,6 +281,7 @@ private fun TourCompactContent(
         ) {
             TourMapContent(
                 state = state,
+                hasLocationPermission = hasLocationPermission,
                 onIntent = onIntent,
                 mapContentPadding = PaddingValues(bottom = SheetPeekHeight),
             )
@@ -316,6 +322,7 @@ private fun TourTwoPaneContent(
     state: TourUiState,
     snackbarHostState: SnackbarHostState,
     directive: PaneScaffoldDirective,
+    hasLocationPermission: Boolean,
     onBack: () -> Unit,
     onIntent: (TourIntent) -> Unit,
     modifier: Modifier = Modifier,
@@ -338,7 +345,12 @@ private fun TourTwoPaneContent(
                 .consumeWindowInsets(innerPadding),
             mainPane = {
                 AnimatedPane {
-                    TourMapContent(state = state, onIntent = onIntent, mapContentPadding = PaddingValues())
+                    TourMapContent(
+                        state = state,
+                        hasLocationPermission = hasLocationPermission,
+                        onIntent = onIntent,
+                        mapContentPadding = PaddingValues(),
+                    )
                 }
             },
             supportingPane = {
@@ -371,6 +383,7 @@ private fun TourTwoPaneContent(
 @Composable
 private fun TourMapContent(
     state: TourUiState,
+    hasLocationPermission: Boolean,
     onIntent: (TourIntent) -> Unit,
     mapContentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -381,6 +394,7 @@ private fun TourMapContent(
             currentStopIndex = state.currentStopIndex,
             furthestStopIndex = state.furthestStopIndex,
             isFinished = state.isFinished,
+            hasLocationPermission = hasLocationPermission,
             onIntent = onIntent,
             mapContentPadding = mapContentPadding,
         )
@@ -420,6 +434,7 @@ private fun TourScreenPreview() {
         scaffoldState = rememberBottomSheetScaffoldState(),
         directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo()),
         isTwoPane = false,
+        hasLocationPermission = false,
         onBack = {},
         onIntent = {},
     )
@@ -435,6 +450,7 @@ private fun TourScreenTwoPanePreview() {
         scaffoldState = rememberBottomSheetScaffoldState(),
         directive = calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(currentWindowAdaptiveInfo()),
         isTwoPane = true,
+        hasLocationPermission = false,
         onBack = {},
         onIntent = {},
     )
