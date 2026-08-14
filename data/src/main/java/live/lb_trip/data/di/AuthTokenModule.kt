@@ -41,6 +41,11 @@ object AuthTokenModule {
         installCommon(baseUrl)
         install(Auth) {
             bearer {
+                // DataStore is the single source of truth for tokens; without this, Ktor caches
+                // the BearerTokens it last loaded in memory and keeps reusing them even after
+                // login/logout writes a different value to the DataStore, which can send a dead
+                // token from a previous session and wipe out a freshly saved one on refresh failure.
+                cacheTokens = false
                 loadTokens {
                     tokenDataStore.tokens.firstOrNull()?.let {
                         BearerTokens(
@@ -66,7 +71,10 @@ object AuthTokenModule {
                         )
                     } else {
                         if (response.status == HttpStatusCode.Unauthorized) {
-                            tokenDataStore.clear()
+                            val currentRefreshToken = tokenDataStore.tokens.firstOrNull()?.refreshToken
+                            if (currentRefreshToken == refreshToken) {
+                                tokenDataStore.clear()
+                            }
                         }
                         null
                     }
