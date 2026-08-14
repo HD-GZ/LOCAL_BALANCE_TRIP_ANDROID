@@ -20,6 +20,59 @@ jobs:
 
       - uses: ./.github/actions/gradle-setup
 
+      - name: Export Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE }}" | base64 --decode > keystore.jks
+
+      - name: Export NCP_KEY_ID
+        run: |
+          echo NCP_KEY_ID=\"$NCP_KEY_ID\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.NCP_KEY_ID }}
+
+      - name: Export KAKAO_KEY
+        run: |
+          echo KAKAO_KEY=\"$KAKAO_KEY\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KAKAO_KEY }}
+
+      - name: Export FACEBOOK_APP_ID
+        run: |
+          echo FACEBOOK_APP_ID=\"$FACEBOOK_APP_ID\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.FACEBOOK_APP_ID }}
+
+      - name: Export KEYSTORE_FILE
+        run: |
+          echo KEYSTORE_FILE=\"$KEYSTORE_FILE\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KEYSTORE_FILE }}
+
+      - name: Export KEYSTORE_PASSWORD
+        run: |
+          echo KEYSTORE_PASSWORD=\"$KEYSTORE_PASSWORD\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KEYSTORE_PASSWORD }}
+
+      - name: Export KEY_ALIAS
+        run: |
+          echo KEY_ALIAS=\"$KEY_ALIAS\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KEY_ALIAS }}
+
+      - name: Export KEY_PASSWORD
+        run: |
+          echo KEY_PASSWORD=\"$KEY_PASSWORD\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KEY_PASSWORD }}
+
       - name: ktlint
         run: ./gradlew ktlintCheck
 
