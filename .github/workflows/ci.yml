@@ -22,60 +22,31 @@ jobs:
 
       - name: Export Keystore
         run: |
-          echo "${{ secrets.KEYSTORE }}" | base64 -di > ./keystore.jks
+          echo "$KEYSTORE" | base64 -di > ./keystore.jks
         shell: bash
         env:
-          API_KEY: ${{ secrets.KEYSTORE }}
+          KEYSTORE: ${{ secrets.KEYSTORE }}
 
-
-      - name: Export NCP_KEY_ID
+      - name: Write local.properties
         run: |
-          echo NCP_KEY_ID=\"$NCP_KEY_ID\" > local.properties
+          cat <<EOF > local.properties
+          NCP_KEY_ID="$NCP_KEY_ID"
+          KAKAO_KEY="$KAKAO_KEY"
+          FACEBOOK_APP_ID="$FACEBOOK_APP_ID"
+          KEYSTORE_FILE="$KEYSTORE_FILE"
+          KEYSTORE_PASSWORD="$KEYSTORE_PASSWORD"
+          KEY_ALIAS="$KEY_ALIAS"
+          KEY_PASSWORD="$KEY_PASSWORD"
+          EOF
         shell: bash
         env:
-          API_KEY: ${{ secrets.NCP_KEY_ID }}
-
-      - name: Export KAKAO_KEY
-        run: |
-          echo KAKAO_KEY=\"$KAKAO_KEY\" > local.properties
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.KAKAO_KEY }}
-
-      - name: Export FACEBOOK_APP_ID
-        run: |
-          echo FACEBOOK_APP_ID=\"$FACEBOOK_APP_ID\" > local.properties
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.FACEBOOK_APP_ID }}
-
-      - name: Export KEYSTORE_FILE
-        run: |
-          echo KEYSTORE_FILE=\"$KEYSTORE_FILE\" > local.properties
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.KEYSTORE_FILE }}
-
-      - name: Export KEYSTORE_PASSWORD
-        run: |
-          echo KEYSTORE_PASSWORD=\"$KEYSTORE_PASSWORD\" > local.properties
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.KEYSTORE_PASSWORD }}
-
-      - name: Export KEY_ALIAS
-        run: |
-          echo KEY_ALIAS=\"$KEY_ALIAS\" > local.properties
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.KEY_ALIAS }}
-
-      - name: Export KEY_PASSWORD
-        run: |
-          echo KEY_PASSWORD=\"$KEY_PASSWORD\" > local.properties
-        shell: bash
-        env:
-          API_KEY: ${{ secrets.KEY_PASSWORD }}
+          NCP_KEY_ID: ${{ secrets.NCP_KEY_ID }}
+          KAKAO_KEY: ${{ secrets.KAKAO_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
       - name: ktlint
         run: ./gradlew ktlintCheck
