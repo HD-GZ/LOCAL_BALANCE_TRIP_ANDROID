@@ -1,0 +1,66 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    name: Build & Deploy to Play Store (internal)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/gradle-setup
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Export Keystore
+        run: |
+          echo "$KEYSTORE" | base64 -di > ./keystore.jks
+        shell: bash
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+
+      - name: Write local.properties
+        run: |
+          cat <<EOF > local.properties
+          NCP_KEY_ID=$NCP_KEY_ID
+          KAKAO_KEY=$KAKAO_KEY
+          FACEBOOK_APP_ID=$FACEBOOK_APP_ID
+          KEYSTORE_FILE=$KEYSTORE_FILE
+          KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD
+          KEY_ALIAS=$KEY_ALIAS
+          KEY_PASSWORD=$KEY_PASSWORD
+          EOF
+        shell: bash
+        env:
+          NCP_KEY_ID: ${{ secrets.NCP_KEY_ID }}
+          KAKAO_KEY: ${{ secrets.KAKAO_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Extract version name from tag
+        id: version
+        run: echo "name=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to Play Store internal track
+        run: bundle exec fastlane internal
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.name }}
+          PLAY_STORE_JSON_KEY: ${{ secrets.PLAY_STORE_JSON_KEY }}
+
+      - name: Upload AAB artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-aab
+          path: app/build/outputs/bundle/release/app-release.aab
+          retention-days: 30

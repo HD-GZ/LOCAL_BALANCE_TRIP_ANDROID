@@ -24,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId = "live.lb_trip.localbalancetrip"
-        versionCode = 1
-        versionName = "0.0.1"
+        versionCode = (project.findProperty("versionCode") as String?)?.toIntOrNull() ?: 1
+        versionName = project.findProperty("versionName") as String? ?: "0.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
