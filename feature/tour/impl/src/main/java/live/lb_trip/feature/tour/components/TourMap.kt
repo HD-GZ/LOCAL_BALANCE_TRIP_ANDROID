@@ -28,11 +28,14 @@ import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.CameraUpdate
 import com.naver.maps.map.compose.ExperimentalNaverMapApi
+import com.naver.maps.map.compose.LocationTrackingMode
+import com.naver.maps.map.compose.MapProperties
 import com.naver.maps.map.compose.MarkerComposable
 import com.naver.maps.map.compose.MarkerState
 import com.naver.maps.map.compose.NaverMap
 import com.naver.maps.map.compose.PolylineOverlay
 import com.naver.maps.map.compose.rememberCameraPositionState
+import com.naver.maps.map.compose.rememberFusedLocationSource
 import kotlinx.collections.immutable.ImmutableList
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.feature.tour.R
@@ -50,6 +53,7 @@ internal fun TourMap(
     currentStopIndex: Int,
     furthestStopIndex: Int,
     isFinished: Boolean,
+    hasLocationPermission: Boolean,
     onIntent: (TourIntent) -> Unit,
     mapContentPadding: PaddingValues,
     modifier: Modifier = Modifier,
@@ -57,6 +61,7 @@ internal fun TourMap(
     val points = stops.map { LatLng(it.latitude, it.longitude) }
     val cameraPositionState = rememberCameraPositionState()
     val nextIndex = (furthestStopIndex + 1).coerceAtMost(stops.lastIndex)
+    val locationSource = if (hasLocationPermission) rememberFusedLocationSource() else null
 
     LaunchedEffect(points, currentStopIndex) {
         val focused = points.getOrNull(currentStopIndex) ?: points.firstOrNull() ?: return@LaunchedEffect
@@ -68,6 +73,10 @@ internal fun TourMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState,
         contentPadding = mapContentPadding,
+        locationSource = locationSource,
+        properties = MapProperties(
+            locationTrackingMode = if (hasLocationPermission) LocationTrackingMode.NoFollow else LocationTrackingMode.None,
+        ),
     ) {
         points.zipWithNext().forEachIndexed { index, (start, end) ->
             key("segment_$index") {
