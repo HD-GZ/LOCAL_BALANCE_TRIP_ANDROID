@@ -51,8 +51,6 @@ data class HomeIncentivesResponseDto(
 @Serializable
 data class RegionTabResponseDto(
     val regionName: String,
-    val ldongRegnCd: String,
-    val ldongSignguCd: String,
     val incentives: List<IncentiveResponseDto>,
 )
 

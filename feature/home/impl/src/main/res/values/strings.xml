@@ -19,6 +19,19 @@
     <string name="home_mytype_retake">Retake test</string>
     <string name="home_mytype_diagnosed_date_template">Tested on %1$s</string>
 
+    <string name="home_notype_chip">Not tested yet</string>
+    <string name="home_notype_subtitle">Knowing your style makes recommendations much more accurate</string>
+    <string name="home_notype_card_title">You haven\'t taken the test yet</string>
+    <string name="home_notype_card_description">Answer 6 questions and we\'ll recommend regions and courses that fit you</string>
+    <string name="home_notype_step_time_value">1 min</string>
+    <string name="home_notype_step_time_label">Time needed</string>
+    <string name="home_notype_step_questions_value">6</string>
+    <string name="home_notype_step_questions_label">Questions</string>
+    <string name="home_notype_step_retake_value">Anytime</string>
+    <string name="home_notype_step_retake_label">Retake</string>
+    <string name="home_notype_cta">Start the travel style test</string>
+    <string name="home_notype_peek_more_template">+%1$d more</string>
+
     <string name="home_incentive_section_title">Travel support programs you can apply for</string>
     <string name="home_incentive_section_subtitle">Sorted by closest deadline · Apply through each organization\'s official channel</string>
     <string name="home_incentive_view_all">View all</string>
