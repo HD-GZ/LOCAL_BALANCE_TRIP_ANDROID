@@ -31,7 +31,6 @@ import live.lb_trip.feature.home.PolicyListRoute
 import live.lb_trip.feature.home.PopularCourseDetailRoute
 import live.lb_trip.feature.home.policyListScreen
 import live.lb_trip.feature.home.popularCourseDetailScreen
-import live.lb_trip.feature.onboarding.onboardingScreen
 import live.lb_trip.feature.propensity.PropensityRoute
 import live.lb_trip.feature.propensity.propensityScreen
 import live.lb_trip.feature.recommendation.CourseRoute
@@ -210,10 +209,6 @@ private fun MainNavGraph(
         signupScreen(
             navController = navController,
             onBack = navController::popBackStack,
-            onNavigateToSignin = { navController.navigate(SigninRoute) },
-        )
-        onboardingScreen(
-            onNavigateToSignup = { navController.navigate(SignupRoute) },
             onNavigateToSignin = { navController.navigate(SigninRoute) },
         )
     }
