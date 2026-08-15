@@ -166,7 +166,12 @@ private fun TourSheetHeaderRow(
                     Text(stringResource(R.string.tour_sheet_order_label, displayOrder), color = LbColors.Ink2, fontSize = 9.5.sp)
                 }
                 stop.walkMinutesToNext != null -> {
-                    Text("${stop.walkMinutesToNext}분", color = LbColors.GreenForest, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+                    Text(
+                        stringResource(R.string.tour_sheet_walk_minutes_template, stop.walkMinutesToNext),
+                        color = LbColors.GreenForest,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                         Icon(
                             imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_walk),

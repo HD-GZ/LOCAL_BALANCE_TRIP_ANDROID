@@ -1,44 +1,44 @@
 <resources>
-    <string name="recommendation_title_region">추천 코스</string>
-    <string name="recommendation_title_course">%1$s 추천 코스</string>
-    <string name="recommendation_title_detail">코스 상세</string>
-    <string name="recommendation_back_content_description">뒤로</string>
+    <string name="recommendation_title_region">Recommended Courses</string>
+    <string name="recommendation_title_course">%1$s Recommended Courses</string>
+    <string name="recommendation_title_detail">Course Details</string>
+    <string name="recommendation_back_content_description">Back</string>
 
-    <string name="recommendation_step_caption_region">추천</string>
-    <string name="recommendation_step_caption_course">선택</string>
-    <string name="recommendation_step_caption_detail">코스</string>
+    <string name="recommendation_step_caption_region">Recommend</string>
+    <string name="recommendation_step_caption_course">Select</string>
+    <string name="recommendation_step_caption_detail">Course</string>
 
-    <string name="recommendation_header_region_title">성향에 맞는 추천 여행지</string>
-    <string name="recommendation_header_region_subtitle">취향 진단과 가치소비 성향에 꼭 맞는 여행지예요. 지역을 누르면 맞춤 추천 코스를 볼 수 있어요.</string>
-    <string name="recommendation_header_course_subtitle">%1$s에서 프로필과 가장 잘 맞는 코스예요. 코스를 누르면 상세 동선·오디오·혜택을 볼 수 있어요.</string>
+    <string name="recommendation_header_region_title">Destinations matched to your style</string>
+    <string name="recommendation_header_region_subtitle">These destinations perfectly match your travel and spending style. Tap a region to see personalized course recommendations.</string>
+    <string name="recommendation_header_course_subtitle">These are the courses in %1$s that best match your profile. Tap a course to see the detailed route, audio guide, and benefits.</string>
 
-    <string name="recommendation_section_course_order">코스 순서</string>
-    <string name="recommendation_section_incentives">이 코스 적용 가능 혜택</string>
+    <string name="recommendation_section_course_order">Course order</string>
+    <string name="recommendation_section_incentives">Benefits available for this course</string>
 
-    <string name="recommendation_audio_guide_label">오디오 가이드</string>
+    <string name="recommendation_audio_guide_label">Audio guide</string>
     <string name="recommendation_audio_time_placeholder">0:00 / 2:14</string>
-    <string name="recommendation_walk_time_template">도보 %1$s</string>
+    <string name="recommendation_walk_time_template">%1$s min walk</string>
 
-    <string name="recommendation_cta_save">저장</string>
-    <string name="recommendation_cta_saved">저장됨</string>
+    <string name="recommendation_cta_save">Save</string>
+    <string name="recommendation_cta_saved">Saved</string>
 
-    <string name="recommendation_snackbar_save_confirmation">코스를 저장했어요. 나의 정보 &gt; 저장한 코스에서 다시 볼 수 있어요.</string>
-    <string name="recommendation_snackbar_save_error">코스 저장에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="recommendation_snackbar_save_confirmation">Course saved. You can find it again under My Info &gt; Saved Courses.</string>
+    <string name="recommendation_snackbar_save_error">Couldn\'t save the course. Please try again in a moment.</string>
 
-    <string name="recommendation_content_description_play">재생</string>
-    <string name="recommendation_content_description_pause">일시정지</string>
+    <string name="recommendation_content_description_play">Play</string>
+    <string name="recommendation_content_description_pause">Pause</string>
 
-    <string name="recommendation_action_retry">재시도</string>
-    <string name="recommendation_action_view_saved_courses">저장한 코스 보기</string>
+    <string name="recommendation_action_retry">Retry</string>
+    <string name="recommendation_action_view_saved_courses">View saved courses</string>
 
-    <string name="recommendation_error_propensity_not_found">취향 진단 결과가 없어요. 성향 진단을 먼저 완료해 주세요.</string>
-    <string name="recommendation_error_tour_api_unavailable">관광 정보를 가져오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="recommendation_error_region_not_found">추천 여행지를 찾을 수 없어요.</string>
-    <string name="recommendation_error_course_not_found">코스를 찾을 수 없어요.</string>
-    <string name="recommendation_error_empty_regions">추천 여행지를 찾지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="recommendation_error_empty_courses">추천 코스를 찾지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="recommendation_error_empty_places">표시할 장소 정보가 없어요.</string>
-    <string name="recommendation_error_generic_region">추천 여행지를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="recommendation_error_generic_course">추천 코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="recommendation_error_generic_detail">코스 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="recommendation_error_propensity_not_found">No travel style test result found. Please complete the test first.</string>
+    <string name="recommendation_error_tour_api_unavailable">Couldn\'t get tour information. Please try again in a moment.</string>
+    <string name="recommendation_error_region_not_found">Recommended destination not found.</string>
+    <string name="recommendation_error_course_not_found">Course not found.</string>
+    <string name="recommendation_error_empty_regions">Couldn\'t find recommended destinations. Please try again in a moment.</string>
+    <string name="recommendation_error_empty_courses">Couldn\'t find recommended courses. Please try again in a moment.</string>
+    <string name="recommendation_error_empty_places">No place information to display.</string>
+    <string name="recommendation_error_generic_region">Couldn\'t load recommended destinations. Please try again in a moment.</string>
+    <string name="recommendation_error_generic_course">Couldn\'t load recommended courses. Please try again in a moment.</string>
+    <string name="recommendation_error_generic_detail">Couldn\'t load course information. Please try again in a moment.</string>
 </resources>

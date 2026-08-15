@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
@@ -146,6 +147,7 @@ private fun PasswordResetStepScaffold(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val codeResentMessage = stringResource(R.string.signin_resend_code_success)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
@@ -156,7 +158,7 @@ private fun PasswordResetStepScaffold(
                 PasswordResetSideEffect.NavigateToSignin ->
                     navController.popBackStack(route = SigninHomeRoute, inclusive = false)
                 PasswordResetSideEffect.ShowCodeResent ->
-                    snackbarHostState.showSnackbar("인증 코드를 다시 보냈어요.")
+                    snackbarHostState.showSnackbar(codeResentMessage)
             }
         }
     }

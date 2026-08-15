@@ -1,12 +1,12 @@
 <resources>
-    <string name="onboarding_eyebrow">취향 · 가치소비 기반 AI 큐레이션</string>
-    <string name="onboarding_hero_prefix">내 취향과 예산에 맞춘\n</string>
-    <string name="onboarding_hero_highlight">로컬 슬로우 트립</string>
-    <string name="onboarding_hero_suffix">을 설계해요</string>
-    <string name="onboarding_description">친환경 로컬 코스 추천부터 KTX 할인·반값여행·관광주민증 혜택까지 자동으로 연결해요.</string>
-    <string name="onboarding_chip_ktx">KTX 할인</string>
-    <string name="onboarding_chip_half_price">반값여행</string>
-    <string name="onboarding_chip_tourism_resident">관광주민증</string>
-    <string name="onboarding_signup">이메일로 회원가입</string>
-    <string name="onboarding_signin">이미 계정이 있어요 · 로그인</string>
+    <string name="onboarding_eyebrow">AI curation based on taste &amp; spending style</string>
+    <string name="onboarding_hero_prefix">We design a\n</string>
+    <string name="onboarding_hero_highlight">Local Slow Trip</string>
+    <string name="onboarding_hero_suffix">" for your taste and budget"</string>
+    <string name="onboarding_description">From eco-friendly local course recommendations to KTX discounts, half-price trips, and tourism resident card benefits — all connected automatically.</string>
+    <string name="onboarding_chip_ktx">KTX Discount</string>
+    <string name="onboarding_chip_half_price">Half-Price Trip</string>
+    <string name="onboarding_chip_tourism_resident">Tourism Resident Card</string>
+    <string name="onboarding_signup">Sign up with email</string>
+    <string name="onboarding_signin">Already have an account? · Sign in</string>
 </resources>

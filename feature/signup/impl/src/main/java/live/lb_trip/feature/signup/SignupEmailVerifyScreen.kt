@@ -83,6 +83,9 @@ internal fun SignupEmailVerifyScreen(
             Spacer(modifier = Modifier.height(61.dp))
             Text(
                 text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = LbColors.Ink2, fontWeight = FontWeight.Normal)) {
+                        append(stringResource(R.string.signup_code_sent_prefix))
+                    }
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) { append(state.email) }
                     withStyle(SpanStyle(color = LbColors.Ink2, fontWeight = FontWeight.Normal)) {
                         append(stringResource(R.string.signup_code_sent_suffix))

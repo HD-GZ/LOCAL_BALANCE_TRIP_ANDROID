@@ -1,0 +1,7 @@
+<resources>
+    <string name="core_field_validation_password">Password must be at least 8 characters, including letters and numbers.</string>
+    <string name="core_field_validation_password_confirm">Passwords don\'t match.</string>
+    <string name="core_field_validation_name">Please check your name.</string>
+    <string name="core_field_validation_birth_date">Please check your date of birth.</string>
+    <string name="core_kakao_share_view_report">View Trip Log</string>
+</resources>

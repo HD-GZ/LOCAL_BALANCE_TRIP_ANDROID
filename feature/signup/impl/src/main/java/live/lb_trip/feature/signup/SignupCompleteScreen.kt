@@ -75,6 +75,7 @@ internal fun SignupCompleteScreen(
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = buildAnnotatedString {
+                        append(stringResource(R.string.signup_welcome_prefix))
                         withStyle(SpanStyle(color = LbColors.Green)) {
                             append(state.name.ifEmpty { stringResource(R.string.signup_default_name) })
                         }

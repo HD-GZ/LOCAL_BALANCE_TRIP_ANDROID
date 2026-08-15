@@ -11,10 +11,12 @@ import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import live.lb_trip.core.BuildConfig
+import live.lb_trip.core.R
 
 private const val TAG = "Kakao Share"
 
 fun kakaoShareReportFeed(
+    context: Context,
     title: String,
     description: String,
     imageUrl: String?,
@@ -34,7 +36,7 @@ fun kakaoShareReportFeed(
         ),
         buttons = listOf(
             Button(
-                "여행 일지 보기",
+                context.getString(R.string.core_kakao_share_view_report),
                 link = Link(
                     androidExecutionParams = executionParams
                 )

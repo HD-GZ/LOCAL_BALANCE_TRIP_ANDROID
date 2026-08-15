@@ -1,0 +1,119 @@
+<resources>
+    <string name="savedcourses_title">저장한 코스</string>
+    <string name="savedcourses_count_template">%1$d</string>
+    <string name="savedcourses_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_empty">저장한 코스가 없어요.</string>
+    <string name="savedcourses_select_prompt">왼쪽 목록에서 코스를 선택해 주세요.</string>
+    <string name="savedcourses_action_retry">재시도</string>
+    <string name="savedcourses_back_content_description">뒤로</string>
+    <string name="sharedcourse_error_token_not_found">공유 링크를 찾을 수 없어요.</string>
+    <string name="sharedcourse_error_token_expired">만료된 공유 링크예요.</string>
+    <string name="sharedcourse_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="sharedcourse_title">공유받은 코스</string>
+    <string name="sharedcourse_back_content_description">뒤로</string>
+    <string name="sharedcourse_from_template">%1$s님이 공유한 코스예요</string>
+    <string name="sharedcourse_meta_places_label">방문 장소</string>
+    <string name="sharedcourse_meta_walk_label">총 도보</string>
+    <string name="sharedcourse_meta_audio_label">오디오 가이드</string>
+    <string name="sharedcourse_meta_places_value">%1$d곳</string>
+    <string name="sharedcourse_meta_walk_value">%1$d분</string>
+    <string name="sharedcourse_meta_audio_value">%1$d개</string>
+    <string name="sharedcourse_section_course_order">코스 순서</string>
+    <string name="sharedcourse_section_benefits">이 코스 적용 가능 혜택</string>
+    <string name="sharedcourse_audio_guide_label">오디오 가이드</string>
+    <string name="sharedcourse_walk_time_template">다음 장소까지 도보 %1$s</string>
+    <string name="sharedcourse_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="sharedcourse_content_description_play">재생</string>
+    <string name="sharedcourse_content_description_pause">일시정지</string>
+    <string name="sharedcourse_navigate_cta">길찾기</string>
+    <string name="sharedcourse_map_app_unavailable">지도 앱을 열 수 없어요.</string>
+    <string name="sharedcourse_readonly_note">공유받은 코스는 읽기 전용이에요.</string>
+    <string name="savedcourses_status_before_trip">여행 전</string>
+    <string name="savedcourses_status_traveling">여행 중</string>
+    <string name="savedcourses_status_completed">완주</string>
+
+    <string name="savedcourses_detail_tab_course">코스 순서</string>
+    <string name="savedcourses_detail_tab_receipt">환급 증빙</string>
+    <string name="savedcourses_detail_tab_report">리포트</string>
+
+    <string name="savedcourses_detail_audio_guide_label">오디오 가이드</string>
+    <string name="savedcourses_detail_walk_time_template">도보 %1$s</string>
+    <string name="savedcourses_detail_benefits_title">이 코스 적용 가능 혜택</string>
+
+    <string name="savedcourses_detail_receipt_total_label">적립 완료 금액</string>
+    <string name="savedcourses_detail_receipt_amount_template">%1$,d원</string>
+    <string name="savedcourses_detail_receipt_empty">등록된 환급 증빙이 없어요.</string>
+
+    <string name="savedcourses_detail_report_meta_template">%1$s · 여행 완료</string>
+    <string name="savedcourses_detail_report_places_label">방문 장소</string>
+    <string name="savedcourses_detail_report_places_template">%1$d곳</string>
+    <string name="savedcourses_detail_report_amount_label">지역 소비</string>
+    <string name="savedcourses_detail_report_distance_label">걸은 거리</string>
+    <string name="savedcourses_detail_report_distance_template">%1$,d</string>
+    <string name="savedcourses_detail_report_distance_unit">m</string>
+    <string name="savedcourses_detail_report_share_button">공유하기</string>
+    <string name="savedcourses_detail_report_not_available">투어를 종료하면 리포트를 확인할 수 있어요.</string>
+
+    <string name="savedcourses_detail_share_sheet_title">어디에 공유할까요?</string>
+    <string name="savedcourses_detail_share_save_image">이미지\n저장하기</string>
+    <string name="savedcourses_detail_share_send">다른 앱으로\n공유하기</string>
+    <string name="savedcourses_detail_share_kakaotalk">카카오톡으로\n공유하기</string>
+    <string name="savedcourses_detail_share_story">스토리로\n공유하기</string>
+    <string name="savedcourses_detail_share_saved_toast">갤러리에 저장했어요</string>
+    <string name="savedcourses_detail_share_failed">이미지를 저장하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_detail_kakao_share_failed">카카오톡 공유에 실패했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_detail_share_description">%1$s님의 여행 기록을 지금 확인해보세요!</string>
+
+    <string name="savedcources_detail_story_distance_label">걷기 거리</string>
+    <string name="savedcources_detail_story_date_label">여행한 날짜</string>
+    <string name="savedcources_detail_story_app_name">로컬 밸런스 트립</string>
+
+    <string name="savedcourses_detail_cta_tour_start">투어 시작</string>
+    <string name="savedcourses_detail_cta_register_receipt">영수증 등록하기</string>
+
+    <string name="savedcourses_detail_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_detail_error_course_not_found">코스를 찾을 수 없어요.</string>
+    <string name="savedcourses_detail_error_empty_places">표시할 장소 정보가 없어요.</string>
+    <string name="savedcourses_detail_error_receipts">환급 증빙 목록을 불러오지 못했어요.</string>
+    <string name="savedcourses_detail_error_report">리포트를 불러오지 못했어요.</string>
+    <string name="savedcourses_detail_action_retry">재시도</string>
+    <string name="savedcourses_detail_back_content_description">뒤로</string>
+
+    <string name="savedcourses_receipt_title">영수증 등록</string>
+    <string name="savedcourses_receipt_source_sheet_title">영수증 사진 등록</string>
+    <string name="savedcourses_receipt_source_gallery">갤러리에서 선택하기</string>
+    <string name="savedcourses_receipt_source_camera">촬영하기</string>
+    <string name="savedcourses_receipt_scanning">영수증을 인식하고 있어요…</string>
+    <string name="savedcourses_receipt_verify_title">인식 결과 확인</string>
+    <string name="savedcourses_receipt_field_merchant">가맹점명</string>
+    <string name="savedcourses_receipt_field_amount">결제 금액</string>
+    <string name="savedcourses_receipt_field_date">결제 일자 (YYYY-MM-DD)</string>
+    <string name="savedcourses_receipt_submit">증빙 제출하기</string>
+    <string name="savedcourses_receipt_error_scan">영수증 인식에 실패했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_error_submit">증빙 등록에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_error_invalid">모든 항목을 올바르게 입력해 주세요.</string>
+    <string name="savedcourses_receipt_back_content_description">뒤로</string>
+
+    <string name="savedcourses_receipt_detail_title">증빙 상세</string>
+    <string name="savedcourses_receipt_detail_edit_content_description">수정</string>
+    <string name="savedcourses_receipt_detail_state_registered">환급 증빙 등록 완료</string>
+    <string name="savedcourses_receipt_detail_field_merchant">가맹점명</string>
+    <string name="savedcourses_receipt_detail_field_amount">결제 금액</string>
+    <string name="savedcourses_receipt_detail_field_date">결제 일자</string>
+    <string name="savedcourses_receipt_detail_edit_hint">OCR이 잘못 읽은 값을 직접 고칠 수 있어요.</string>
+    <string name="savedcourses_receipt_detail_save">수정 내용 저장</string>
+    <string name="savedcourses_receipt_detail_cancel">취소</string>
+    <string name="savedcourses_receipt_detail_download">원본 다운로드</string>
+    <string name="savedcourses_receipt_detail_delete">증빙 삭제</string>
+    <string name="savedcourses_receipt_detail_updated">증빙 정보를 수정했어요.</string>
+    <string name="savedcourses_receipt_detail_error_load">증빙 정보를 불러오지 못했어요.</string>
+    <string name="savedcourses_receipt_detail_error_update">증빙 정보를 수정하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_detail_error_delete">증빙을 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_detail_error_invalid">모든 항목을 올바르게 입력해 주세요.</string>
+    <string name="savedcourses_receipt_detail_download_saved">영수증 원본을 갤러리에 저장했어요.</string>
+    <string name="savedcourses_receipt_detail_download_failed">원본을 저장하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_title">증빙을 삭제할까요?</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_body">삭제하면 영수증 원본과 인식 정보가 함께 지워져요.</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_ok">삭제하기</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_cancel">취소</string>
+</resources>

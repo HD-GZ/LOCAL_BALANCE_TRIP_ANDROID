@@ -1,0 +1,80 @@
+<resources>
+    <string name="settings_edit_info">정보 변경</string>
+    <string name="settings_pane_title">나의 정보</string>
+    <string name="settings_select_prompt">왼쪽 목록에서 항목을 선택해 주세요.</string>
+
+    <string name="settings_stat_saved_courses">저장한 코스</string>
+    <string name="settings_stat_count_template">%1$d개</string>
+
+    <string name="settings_group_label">설정</string>
+    <string name="settings_menu_retake_diagnosis">여행 프로필 · 재진단</string>
+    <string name="settings_menu_licenses">오픈소스 라이선스</string>
+    <string name="settings_menu_terms">이용약관 확인</string>
+    <string name="settings_menu_privacy">개인정보 처리방침</string>
+    <string name="settings_menu_contact">문의하기</string>
+    <string name="settings_menu_version">버전 정보</string>
+    <string name="settings_menu_unavailable_template">%1$s 화면은 기능 완성 후 추가될 예정이에요.</string>
+
+    <string name="settings_logout">로그아웃</string>
+
+    <string name="settings_guest_title">로그인이 필요해요</string>
+    <string name="settings_guest_description">저장한 코스와 적립 내역을 볼 수 있어요</string>
+    <string name="settings_guest_login_cta">로그인</string>
+
+    <string name="settings_auth_prompt_title">로그인이 필요해요</string>
+    <string name="settings_auth_prompt_body">로그인이 필요한 기능이에요.\n지원 정책은 로그인 없이도 볼 수 있어요.</string>
+    <string name="settings_auth_prompt_confirm">로그인</string>
+    <string name="settings_auth_prompt_dismiss">다음에</string>
+
+    <string name="settings_error_load">내 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="settings_action_retry">재시도</string>
+    <string name="settings_profile_updated">정보가 수정되었어요.</string>
+
+    <string name="edit_profile_title">정보 변경</string>
+    <string name="edit_profile_back_cd">뒤로</string>
+    <string name="edit_profile_error_load">내 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+
+    <string name="edit_profile_email_label">이메일</string>
+    <string name="edit_profile_email_hint">계정 이메일은 변경하실 수 없어요.</string>
+
+    <string name="edit_profile_name_label">이름</string>
+    <string name="edit_profile_name_placeholder">홍길동</string>
+
+    <string name="edit_profile_password_label">비밀번호 변경 (선택)</string>
+    <string name="edit_profile_password_placeholder">영문·숫자 8자 이상</string>
+    <string name="edit_profile_password_hint">영문·숫자 포함 8자 이상</string>
+    <string name="edit_profile_password_visibility_cd">비밀번호 표시</string>
+
+    <string name="edit_profile_password_confirm_label">비밀번호 확인 (선택)</string>
+    <string name="edit_profile_password_confirm_placeholder">비밀번호를 한번 더 입력</string>
+    <string name="edit_profile_password_mismatch">비밀번호가 일치하지 않아요.</string>
+
+    <string name="edit_profile_birth_date_label">생년월일</string>
+
+    <string name="edit_profile_gender_label">성별</string>
+    <string name="edit_profile_gender_male">남성</string>
+    <string name="edit_profile_gender_female">여성</string>
+    <string name="edit_profile_gender_not_specified">선택 안 함</string>
+
+    <string name="edit_profile_withdraw_link">탈퇴를 원하시나요? 회원탈퇴 ›</string>
+    <string name="edit_profile_withdraw_dialog_title">탈퇴하시겠어요?</string>
+    <string name="edit_profile_withdraw_dialog_body">탈퇴하면 모든 데이터가 삭제돼요. 정말 탈퇴하시겠어요?</string>
+    <string name="edit_profile_withdraw_cancel">취소</string>
+    <string name="edit_profile_withdraw_confirm">탈퇴하기</string>
+
+    <string name="edit_profile_submit">정보수정</string>
+
+    <string name="edit_profile_error_invalid_input">입력값을 다시 확인해 주세요.</string>
+    <string name="edit_profile_error_save_failed">정보 수정에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="edit_profile_error_already_withdrawn">이미 탈퇴한 계정이에요.</string>
+    <string name="edit_profile_error_user_not_found">사용자 정보를 찾을 수 없어요.</string>
+    <string name="edit_profile_error_withdraw_failed">회원 탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요.</string>
+
+    <string name="licenses_title">오픈소스 라이선스</string>
+    <string name="licenses_back_cd">뒤로</string>
+
+    <string name="terms_back_cd">뒤로</string>
+    <string name="terms_revision_template">시행일 %1$s · 버전 %2$s</string>
+    <string name="terms_error_load">약관을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
+    <string name="terms_action_retry">재시도</string>
+</resources>

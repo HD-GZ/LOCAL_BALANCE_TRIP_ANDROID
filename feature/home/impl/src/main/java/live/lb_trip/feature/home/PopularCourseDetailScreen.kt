@@ -210,7 +210,7 @@ private fun PopularCourseDetailScreenContent(
                             order = it.order,
                             name = it.name,
                             description = it.description,
-                            walkDuration = it.walkToNextMinutes?.let { minutes -> "${minutes}분" },
+                            walkDuration = it.walkToNextMinutes?.toString(),
                             hasAudioGuide = it.hasAudioGuide,
                         )
                     },

@@ -103,7 +103,7 @@ private fun TourRouteRow(
                         modifier = Modifier.size(13.dp),
                     )
                     Text(
-                        text = stringResource(R.string.tour_walk_time_template, "${stop.walkMinutesToNext}분"),
+                        text = stringResource(R.string.tour_walk_time_template, stop.walkMinutesToNext),
                         color = LbColors.Ink3,
                         fontSize = 10.5.sp,
                     )

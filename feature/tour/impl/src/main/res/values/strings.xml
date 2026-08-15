@@ -1,51 +1,52 @@
 <resources>
-    <string name="tour_back_content_description">뒤로</string>
-    <string name="tour_action_retry">재시도</string>
+    <string name="tour_back_content_description">Back</string>
+    <string name="tour_action_retry">Retry</string>
 
-    <string name="tour_progress_template">%1$d / %2$d 지점 완료</string>
-    <string name="tour_next_stop_arrived">%1$s 도착</string>
-    <string name="tour_finish">도착 · 투어 완료</string>
-    <string name="tour_full_route">전체 경로</string>
-    <string name="tour_walk_time_template">도보 %1$s</string>
+    <string name="tour_progress_template">%1$d / %2$d stops completed</string>
+    <string name="tour_next_stop_arrived">Arrived at %1$s</string>
+    <string name="tour_finish">Arrived · Tour Complete</string>
+    <string name="tour_full_route">Full route</string>
+    <string name="tour_walk_time_template">%1$d min walk</string>
 
-    <string name="tour_progress_next_label">다음 목적지까지</string>
-    <string name="tour_progress_finished_label">코스를 완주했어요</string>
-    <string name="tour_progress_started_at">시작 %1$s</string>
-    <string name="tour_progress_elapsed">경과 %1$s</string>
-    <string name="tour_progress_elapsed_hours">%1$d시간 %2$d분</string>
-    <string name="tour_progress_elapsed_minutes">%1$d분</string>
+    <string name="tour_progress_next_label">To next stop</string>
+    <string name="tour_progress_finished_label">You completed the course</string>
+    <string name="tour_progress_started_at">Started %1$s</string>
+    <string name="tour_progress_elapsed">Elapsed %1$s</string>
+    <string name="tour_progress_elapsed_hours">%1$dh %2$dm</string>
+    <string name="tour_progress_elapsed_minutes">%1$d min</string>
 
-    <string name="tour_sheet_status_visited">방문 완료</string>
-    <string name="tour_sheet_status_next">다음 목적지 · %1$d/%2$d</string>
-    <string name="tour_sheet_status_other">코스 %1$d번째 지점</string>
-    <string name="tour_sheet_recorded">기록됨</string>
-    <string name="tour_sheet_order_label">%1$d번째</string>
-    <string name="tour_sheet_departure">출발</string>
-    <string name="tour_sheet_first_stop">첫 지점</string>
-    <string name="tour_sheet_walk_label">도보</string>
+    <string name="tour_sheet_status_visited">Visited</string>
+    <string name="tour_sheet_status_next">Next stop · %1$d/%2$d</string>
+    <string name="tour_sheet_status_other">Stop %1$d of the course</string>
+    <string name="tour_sheet_recorded">Recorded</string>
+    <string name="tour_sheet_order_label">#%1$d</string>
+    <string name="tour_sheet_departure">Departure</string>
+    <string name="tour_sheet_first_stop">First stop</string>
+    <string name="tour_sheet_walk_label">Walk</string>
+    <string name="tour_sheet_walk_minutes_template">%1$d min</string>
 
-    <string name="tour_audio_guide_label">오디오 가이드</string>
-    <string name="tour_audio_guide_empty">이 지점은 오디오 가이드가 없어요.</string>
-    <string name="tour_audio_play_content_description">재생</string>
-    <string name="tour_audio_pause_content_description">일시정지</string>
+    <string name="tour_audio_guide_label">Audio guide</string>
+    <string name="tour_audio_guide_empty">No audio guide for this stop.</string>
+    <string name="tour_audio_play_content_description">Play</string>
+    <string name="tour_audio_pause_content_description">Pause</string>
 
-    <string name="tour_action_view_detail">상세로</string>
-    <string name="tour_action_view_report">리포트 보기</string>
+    <string name="tour_action_view_detail">View details</string>
+    <string name="tour_action_view_report">View report</string>
 
-    <string name="tour_error_course_not_found">코스를 찾을 수 없어요.</string>
-    <string name="tour_error_empty_places">표시할 장소 정보가 없어요.</string>
-    <string name="tour_error_start_failed">투어를 시작하지 못했어요. 종료가 안 될 수 있으니 다시 시도해 주세요.</string>
-    <string name="tour_error_generic_detail">코스 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
-    <string name="tour_error_end_tour_failed">투어를 종료하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="tour_error_course_not_found">Course not found.</string>
+    <string name="tour_error_empty_places">No place information to display.</string>
+    <string name="tour_error_start_failed">Couldn\'t start the tour. It may fail to end properly, so please try again.</string>
+    <string name="tour_error_generic_detail">Couldn\'t load course information. Please try again in a moment.</string>
+    <string name="tour_error_end_tour_failed">Couldn\'t end the tour. Please try again.</string>
 
-    <string name="tour_action_confirm">확인</string>
-    <string name="tour_location_permission_rationale_title">위치 권한이 필요해요</string>
-    <string name="tour_location_permission_rationale_message">자동으로 도착 처리를 하기 위해, 위치 권한을 허용해주세요.</string>
-    <string name="tour_location_permission_denied_title">위치 권한이 거부되었어요</string>
-    <string name="tour_location_permission_denied_message">위치 권한이 거부되어 자동으로 도착 처리를 할 수 없어요. 도착 후 수동으로 처리해주세요.</string>
+    <string name="tour_action_confirm">OK</string>
+    <string name="tour_location_permission_rationale_title">Location permission needed</string>
+    <string name="tour_location_permission_rationale_message">Please allow location access so we can automatically detect your arrival.</string>
+    <string name="tour_location_permission_denied_title">Location permission denied</string>
+    <string name="tour_location_permission_denied_message">Location permission was denied, so we can\'t detect your arrival automatically. Please mark it manually after you arrive.</string>
 
-    <string name="tour_activity_recognition_permission_rationale_title">신체 활동 권한이 필요해요</string>
-    <string name="tour_activity_recognition_permission_rationale_message">투어 중 걸은 거리를 기록하기 위해, 신체 활동 권한을 허용해주세요.</string>
-    <string name="tour_activity_recognition_permission_denied_title">신체 활동 권한이 거부되었어요</string>
-    <string name="tour_activity_recognition_permission_denied_message">신체 활동 권한이 거부되어 걸은 거리를 기록할 수 없어요. 투어는 계속 진행할 수 있어요.</string>
+    <string name="tour_activity_recognition_permission_rationale_title">Physical activity permission needed</string>
+    <string name="tour_activity_recognition_permission_rationale_message">Please allow physical activity access so we can record the distance you walk during the tour.</string>
+    <string name="tour_activity_recognition_permission_denied_title">Physical activity permission denied</string>
+    <string name="tour_activity_recognition_permission_denied_message">Physical activity permission was denied, so we can\'t record your walking distance. You can still continue the tour.</string>
 </resources>

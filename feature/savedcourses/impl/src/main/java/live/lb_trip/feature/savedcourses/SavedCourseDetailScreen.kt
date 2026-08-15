@@ -220,6 +220,7 @@ private suspend fun handleSavedCourseDetailSideEffect(
         is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
         is SavedCourseDetailSideEffect.LaunchKakaoShare -> {
             val feed = kakaoShareReportFeed(
+                context = context,
                 title = effect.title,
                 description = effect.description,
                 imageUrl = effect.imageUrl,
