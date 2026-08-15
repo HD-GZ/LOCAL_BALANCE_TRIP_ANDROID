@@ -42,8 +42,6 @@ fun HomeIncentivesResponseDto.toDomain(): List<RegionIncentives> = regions.map {
 fun RegionTabResponseDto.toDomain(): RegionIncentives =
     RegionIncentives(
         regionName = regionName,
-        ldongRegnCd = ldongRegnCd,
-        ldongSignguCd = ldongSignguCd,
         incentives = incentives.map { it.toDomain() },
     )
 

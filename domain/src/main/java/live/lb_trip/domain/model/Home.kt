@@ -29,8 +29,6 @@ data class ProfileSlider(
 
 data class RegionIncentives(
     val regionName: String,
-    val ldongRegnCd: String,
-    val ldongSignguCd: String,
     val incentives: List<Incentive>,
 )
 

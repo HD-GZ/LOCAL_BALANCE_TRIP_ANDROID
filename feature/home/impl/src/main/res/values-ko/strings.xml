@@ -19,6 +19,19 @@
     <string name="home_mytype_retake">다시 진단</string>
     <string name="home_mytype_diagnosed_date_template">%1$s 진단</string>
 
+    <string name="home_notype_chip">진단 전</string>
+    <string name="home_notype_subtitle">성향을 알면 추천 코스가 훨씬 정확해져요</string>
+    <string name="home_notype_card_title">아직 진단을 하지 않았어요</string>
+    <string name="home_notype_card_description">6가지 질문에 답하면 나에게 맞는 지역과 코스를 추천해 드려요</string>
+    <string name="home_notype_step_time_value">1분</string>
+    <string name="home_notype_step_time_label">소요 시간</string>
+    <string name="home_notype_step_questions_value">6개</string>
+    <string name="home_notype_step_questions_label">질문</string>
+    <string name="home_notype_step_retake_value">언제든</string>
+    <string name="home_notype_step_retake_label">다시 진단</string>
+    <string name="home_notype_cta">취향 진단 시작하기</string>
+    <string name="home_notype_peek_more_template">외 %1$d가지</string>
+
     <string name="home_incentive_section_title">신청 가능한 여행 지원 정책</string>
     <string name="home_incentive_section_subtitle">마감이 가까운 순서로 보여드려요 · 신청은 각 기관 공식 채널에서 진행돼요</string>
     <string name="home_incentive_view_all">전체 보기</string>
