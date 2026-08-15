@@ -1,0 +1,5 @@
+<resources>
+    <string name="core_birth_field_month_placeholder">월</string>
+    <string name="core_birth_field_month_value_template">%1$d월</string>
+    <string name="core_birth_field_day_placeholder">일</string>
+</resources>

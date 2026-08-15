@@ -4,9 +4,27 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import live.lb_trip.data.datasource.local.TourRecordingSessionLocalDataSource
+import live.lb_trip.data.location.FusedLocationTracker
+import live.lb_trip.data.location.LocalFitnessDistanceRecorder
+import live.lb_trip.data.repository.AuthRepositoryImpl
+import live.lb_trip.data.repository.HomeRepositoryImpl
+import live.lb_trip.data.repository.PropensityRepositoryImpl
+import live.lb_trip.data.repository.RecommendationRepositoryImpl
+import live.lb_trip.data.repository.SavedCourseRepositoryImpl
+import live.lb_trip.data.repository.TermsRepositoryImpl
 import live.lb_trip.data.repository.UserRepositoryImpl
+import live.lb_trip.domain.repository.AuthRepository
+import live.lb_trip.domain.repository.DistanceRecorder
+import live.lb_trip.domain.repository.DistanceRecordingStore
+import live.lb_trip.domain.repository.HomeRepository
+import live.lb_trip.domain.repository.LocationTracker
+import live.lb_trip.domain.repository.PropensityRepository
+import live.lb_trip.domain.repository.RecommendationRepository
+import live.lb_trip.domain.repository.SavedCourseRepository
+import live.lb_trip.domain.repository.TermsRepository
 import live.lb_trip.domain.repository.UserRepository
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -14,4 +32,44 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindsUserRepository(userRepositoryImpl: UserRepositoryImpl): UserRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsAuthRepository(authRepositoryImpl: AuthRepositoryImpl): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsPropensityRepository(propensityRepositoryImpl: PropensityRepositoryImpl): PropensityRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsRecommendationRepository(
+        recommendationRepositoryImpl: RecommendationRepositoryImpl,
+    ): RecommendationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsSavedCourseRepository(savedCourseRepositoryImpl: SavedCourseRepositoryImpl): SavedCourseRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsTermsRepository(termsRepositoryImpl: TermsRepositoryImpl): TermsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsLocationTracker(fusedLocationTracker: FusedLocationTracker): LocationTracker
+
+    @Binds
+    @Singleton
+    abstract fun bindsDistanceRecorder(localFitnessDistanceRecorder: LocalFitnessDistanceRecorder): DistanceRecorder
+
+    @Binds
+    @Singleton
+    abstract fun bindsDistanceRecordingStore(
+        tourRecordingSessionLocalDataSource: TourRecordingSessionLocalDataSource,
+    ): DistanceRecordingStore
 }

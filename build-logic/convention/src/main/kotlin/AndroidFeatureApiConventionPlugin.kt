@@ -9,12 +9,11 @@ class AndroidFeatureApiConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("live.lb_trip.android.library")
-                apply("org.jetbrains.kotlin.plugin.parcelize")
             }
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
-                add("implementation", libs.findLibrary("circuit-runtime").get())
+                add("implementation", libs.findLibrary("kotlinx-serialization-json").get())
             }
         }
     }

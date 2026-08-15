@@ -14,6 +14,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = uri("https://repository.map.naver.com/archive/maven") }
+        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
     }
 }
 
@@ -21,10 +23,22 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 rootProject.name = "LocalBalanceTrip"
 include(":app")
+include(":core")
 include(":core:designsystem")
 include(":domain")
 include(":data")
 include(":feature:home:api")
 include(":feature:home:impl")
-include(":feature:settings:api")
 include(":feature:settings:impl")
+include(":feature:signup:api")
+include(":feature:signup:impl")
+include(":feature:signin:api")
+include(":feature:signin:impl")
+include(":feature:propensity:api")
+include(":feature:propensity:impl")
+include(":feature:recommendation:api")
+include(":feature:recommendation:impl")
+include(":feature:tour:api")
+include(":feature:tour:impl")
+include(":feature:savedcourses:api")
+include(":feature:savedcourses:impl")

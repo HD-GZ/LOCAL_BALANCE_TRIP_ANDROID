@@ -1,0 +1,5 @@
+<resources>
+    <string name="core_birth_field_month_placeholder">Month</string>
+    <string name="core_birth_field_month_value_template">%1$d</string>
+    <string name="core_birth_field_day_placeholder">Day</string>
+</resources>

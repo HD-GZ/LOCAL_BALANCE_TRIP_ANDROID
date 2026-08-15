@@ -1,0 +1,119 @@
+<resources>
+    <string name="savedcourses_title">Saved Courses</string>
+    <string name="savedcourses_count_template">%1$d</string>
+    <string name="savedcourses_error_load">Couldn\'t load courses. Please try again in a moment.</string>
+    <string name="savedcourses_empty">No saved courses.</string>
+    <string name="savedcourses_select_prompt">Select a course from the list on the left.</string>
+    <string name="savedcourses_action_retry">Retry</string>
+    <string name="savedcourses_back_content_description">Back</string>
+    <string name="sharedcourse_error_token_not_found">Share link not found.</string>
+    <string name="sharedcourse_error_token_expired">This share link has expired.</string>
+    <string name="sharedcourse_error_load">Couldn\'t load the course. Please try again in a moment.</string>
+    <string name="sharedcourse_title">Shared Course</string>
+    <string name="sharedcourse_back_content_description">Back</string>
+    <string name="sharedcourse_from_template">%1$s shared this course with you</string>
+    <string name="sharedcourse_meta_places_label">Places visited</string>
+    <string name="sharedcourse_meta_walk_label">Total walk</string>
+    <string name="sharedcourse_meta_audio_label">Audio guide</string>
+    <string name="sharedcourse_meta_places_value">%1$d places</string>
+    <string name="sharedcourse_meta_walk_value">%1$d min</string>
+    <string name="sharedcourse_meta_audio_value">%1$d</string>
+    <string name="sharedcourse_section_course_order">Course order</string>
+    <string name="sharedcourse_section_benefits">Benefits available for this course</string>
+    <string name="sharedcourse_audio_guide_label">Audio guide</string>
+    <string name="sharedcourse_walk_time_template">%1$s min walk to the next stop</string>
+    <string name="sharedcourse_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="sharedcourse_content_description_play">Play</string>
+    <string name="sharedcourse_content_description_pause">Pause</string>
+    <string name="sharedcourse_navigate_cta">Directions</string>
+    <string name="sharedcourse_map_app_unavailable">Couldn\'t open the map app.</string>
+    <string name="sharedcourse_readonly_note">Shared courses are read-only.</string>
+    <string name="savedcourses_status_before_trip">Upcoming</string>
+    <string name="savedcourses_status_traveling">In progress</string>
+    <string name="savedcourses_status_completed">Completed</string>
+
+    <string name="savedcourses_detail_tab_course">Course order</string>
+    <string name="savedcourses_detail_tab_receipt">Receipts</string>
+    <string name="savedcourses_detail_tab_report">Report</string>
+
+    <string name="savedcourses_detail_audio_guide_label">Audio guide</string>
+    <string name="savedcourses_detail_walk_time_template">%1$s min walk</string>
+    <string name="savedcourses_detail_benefits_title">Benefits available for this course</string>
+
+    <string name="savedcourses_detail_receipt_total_label">Total earned</string>
+    <string name="savedcourses_detail_receipt_amount_template">₩%1$,d</string>
+    <string name="savedcourses_detail_receipt_empty">No receipts registered yet.</string>
+
+    <string name="savedcourses_detail_report_meta_template">%1$s · Trip completed</string>
+    <string name="savedcourses_detail_report_places_label">Places visited</string>
+    <string name="savedcourses_detail_report_places_template">%1$d places</string>
+    <string name="savedcourses_detail_report_amount_label">Local spending</string>
+    <string name="savedcourses_detail_report_distance_label">Distance walked</string>
+    <string name="savedcourses_detail_report_distance_template">%1$,d</string>
+    <string name="savedcourses_detail_report_distance_unit">m</string>
+    <string name="savedcourses_detail_report_share_button">Share</string>
+    <string name="savedcourses_detail_report_not_available">You can view the report once the tour ends.</string>
+
+    <string name="savedcourses_detail_share_sheet_title">Where would you like to share?</string>
+    <string name="savedcourses_detail_share_save_image">Save\nimage</string>
+    <string name="savedcourses_detail_share_send">Share to\nother apps</string>
+    <string name="savedcourses_detail_share_kakaotalk">Share to\nKakaoTalk</string>
+    <string name="savedcourses_detail_share_story">Share to\nStory</string>
+    <string name="savedcourses_detail_share_saved_toast">Saved to gallery</string>
+    <string name="savedcourses_detail_share_failed">Couldn\'t save the image. Please try again.</string>
+    <string name="savedcourses_detail_kakao_share_failed">Couldn\'t share to KakaoTalk. Please try again.</string>
+    <string name="savedcourses_detail_share_description">Check out %1$s\'s trip record now!</string>
+
+    <string name="savedcources_detail_story_distance_label">Distance walked</string>
+    <string name="savedcources_detail_story_date_label">Trip date</string>
+    <string name="savedcources_detail_story_app_name">Local Balance Trip</string>
+
+    <string name="savedcourses_detail_cta_tour_start">Start tour</string>
+    <string name="savedcourses_detail_cta_register_receipt">Register receipt</string>
+
+    <string name="savedcourses_detail_error_load">Couldn\'t load the course. Please try again in a moment.</string>
+    <string name="savedcourses_detail_error_course_not_found">Course not found.</string>
+    <string name="savedcourses_detail_error_empty_places">No place information to display.</string>
+    <string name="savedcourses_detail_error_receipts">Couldn\'t load the receipt list.</string>
+    <string name="savedcourses_detail_error_report">Couldn\'t load the report.</string>
+    <string name="savedcourses_detail_action_retry">Retry</string>
+    <string name="savedcourses_detail_back_content_description">Back</string>
+
+    <string name="savedcourses_receipt_title">Register Receipt</string>
+    <string name="savedcourses_receipt_source_sheet_title">Add Receipt Photo</string>
+    <string name="savedcourses_receipt_source_gallery">Choose from gallery</string>
+    <string name="savedcourses_receipt_source_camera">Take a photo</string>
+    <string name="savedcourses_receipt_scanning">Scanning receipt…</string>
+    <string name="savedcourses_receipt_verify_title">Confirm Scan Result</string>
+    <string name="savedcourses_receipt_field_merchant">Merchant name</string>
+    <string name="savedcourses_receipt_field_amount">Payment amount</string>
+    <string name="savedcourses_receipt_field_date">Payment date (YYYY-MM-DD)</string>
+    <string name="savedcourses_receipt_submit">Submit receipt</string>
+    <string name="savedcourses_receipt_error_scan">Couldn\'t scan the receipt. Please try again.</string>
+    <string name="savedcourses_receipt_error_submit">Couldn\'t register the receipt. Please try again in a moment.</string>
+    <string name="savedcourses_receipt_error_invalid">Please fill in all fields correctly.</string>
+    <string name="savedcourses_receipt_back_content_description">Back</string>
+
+    <string name="savedcourses_receipt_detail_title">Receipt Details</string>
+    <string name="savedcourses_receipt_detail_edit_content_description">Edit</string>
+    <string name="savedcourses_receipt_detail_state_registered">Receipt registered</string>
+    <string name="savedcourses_receipt_detail_field_merchant">Merchant name</string>
+    <string name="savedcourses_receipt_detail_field_amount">Payment amount</string>
+    <string name="savedcourses_receipt_detail_field_date">Payment date</string>
+    <string name="savedcourses_receipt_detail_edit_hint">You can manually correct values the OCR read incorrectly.</string>
+    <string name="savedcourses_receipt_detail_save">Save changes</string>
+    <string name="savedcourses_receipt_detail_cancel">Cancel</string>
+    <string name="savedcourses_receipt_detail_download">Download original</string>
+    <string name="savedcourses_receipt_detail_delete">Delete receipt</string>
+    <string name="savedcourses_receipt_detail_updated">Receipt information updated.</string>
+    <string name="savedcourses_receipt_detail_error_load">Couldn\'t load receipt information.</string>
+    <string name="savedcourses_receipt_detail_error_update">Couldn\'t update receipt information. Please try again in a moment.</string>
+    <string name="savedcourses_receipt_detail_error_delete">Couldn\'t delete the receipt. Please try again in a moment.</string>
+    <string name="savedcourses_receipt_detail_error_invalid">Please fill in all fields correctly.</string>
+    <string name="savedcourses_receipt_detail_download_saved">Saved the original receipt to your gallery.</string>
+    <string name="savedcourses_receipt_detail_download_failed">Couldn\'t save the original. Please try again.</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_title">Delete this receipt?</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_body">Deleting will remove the original receipt and its scanned data together.</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_ok">Delete</string>
+    <string name="savedcourses_receipt_detail_delete_confirm_cancel">Cancel</string>
+</resources>

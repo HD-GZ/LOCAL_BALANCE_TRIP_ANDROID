@@ -16,6 +16,13 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.auth)
 
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.annotation.experimental)
+    implementation(libs.play.services.location)
+    implementation(libs.play.services.fitness)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

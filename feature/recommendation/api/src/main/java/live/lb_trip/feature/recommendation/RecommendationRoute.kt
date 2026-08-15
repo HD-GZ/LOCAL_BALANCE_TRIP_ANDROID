@@ -1,0 +1,6 @@
+package live.lb_trip.feature.recommendation
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+object RecommendationRoute

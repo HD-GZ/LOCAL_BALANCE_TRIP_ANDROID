@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.convention.android.feature.impl)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -8,6 +9,10 @@ android {
 
 dependencies {
     implementation(projects.feature.home.api)
-    implementation(projects.feature.settings.api)
+    implementation(projects.core.designsystem)
+    implementation(projects.core)
     implementation(projects.domain)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 }

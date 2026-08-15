@@ -1,0 +1,63 @@
+<resources>
+    <string name="propensity_title_preference">Travel Style Test</string>
+    <string name="propensity_title_value_consumption">Spending Style</string>
+    <string name="propensity_title_result">Course Recommendation</string>
+    <string name="propensity_back_content_description">Back</string>
+
+    <string name="propensity_header_preference_title">What kind of trip do you enjoy?</string>
+    <string name="propensity_header_preference_subtitle">For each scale, pick the point that\'s closer to you.</string>
+    <string name="propensity_header_value_consumption_title">Where do you save, and where do you splurge?</string>
+    <string name="propensity_header_value_consumption_subtitle">Adjust each item between Save and Splurge.</string>
+    <string name="propensity_header_result_title">Your travel profile is ready</string>
+    <string name="propensity_header_result_subtitle">This result combines your travel style and spending style.</string>
+
+    <string name="propensity_axis_locality_title">Destination style</string>
+    <string name="propensity_axis_locality_left">Hotspot</string>
+    <string name="propensity_axis_locality_left_sub">Famous &amp; popular spots</string>
+    <string name="propensity_axis_locality_right">Local</string>
+    <string name="propensity_axis_locality_right_sub">Backstreets &amp; local life</string>
+
+    <string name="propensity_axis_frugality_title">Spending standard</string>
+    <string name="propensity_axis_frugality_left">Luxury</string>
+    <string name="propensity_axis_frugality_left_sub">Premium &amp; upscale</string>
+    <string name="propensity_axis_frugality_right">Value</string>
+    <string name="propensity_axis_frugality_right_sub">Smart value for money</string>
+
+    <string name="propensity_axis_experientiality_title">Activity style</string>
+    <string name="propensity_axis_experientiality_left">Sightseeing</string>
+    <string name="propensity_axis_experientiality_left_sub">Watch &amp; enjoy</string>
+    <string name="propensity_axis_experientiality_right">Hands-on</string>
+    <string name="propensity_axis_experientiality_right_sub">Try it yourself</string>
+
+    <string name="propensity_axis_vitality_title">Travel pace</string>
+    <string name="propensity_axis_vitality_left">Relaxed</string>
+    <string name="propensity_axis_vitality_left_sub">Easygoing rest</string>
+    <string name="propensity_axis_vitality_right">Active</string>
+    <string name="propensity_axis_vitality_right_sub">Packed schedule</string>
+
+    <string name="propensity_axis_sociality_title">Travel companions</string>
+    <string name="propensity_axis_sociality_left">Solo</string>
+    <string name="propensity_axis_sociality_left_sub">Just me</string>
+    <string name="propensity_axis_sociality_right">Multi-generation</string>
+    <string name="propensity_axis_sociality_right_sub">Family &amp; generations</string>
+
+    <string name="propensity_item_accommodation">Accommodation</string>
+    <string name="propensity_item_food">Food</string>
+    <string name="propensity_item_experience">Experience</string>
+    <string name="propensity_item_transportation">Transportation</string>
+    <string name="propensity_item_cafe_exhibition">Cafe &amp; Exhibition</string>
+    <string name="propensity_save">Save</string>
+    <string name="propensity_save_en">SAVE</string>
+    <string name="propensity_spend">Splurge</string>
+    <string name="propensity_spend_en">SPEND</string>
+
+    <string name="propensity_cta_set_value_consumption">Set spending style</string>
+    <string name="propensity_cta_previous_step">Previous step</string>
+    <string name="propensity_cta_view_result">View result</string>
+    <string name="propensity_cta_restart">Start over</string>
+    <string name="propensity_cta_course_recommendation">Get course recommendations</string>
+
+    <string name="propensity_error_invalid_input">Please check your input again.</string>
+    <string name="propensity_error_generic">Couldn\'t get your test result. Please try again in a moment.</string>
+    <string name="propensity_error_unauthenticated">Sign in to see your test result. Please sign in and submit again.</string>
+</resources>

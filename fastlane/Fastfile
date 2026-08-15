@@ -1,0 +1,40 @@
+default_platform(:android)
+
+platform :android do
+  desc "Build and upload a release AAB to the Play Store"
+  lane :internal do
+    version_name = ENV["VERSION_NAME"] || UI.user_error!("VERSION_NAME env var is required")
+    json_key_data = ENV["PLAY_STORE_JSON_KEY"] || UI.user_error!("PLAY_STORE_JSON_KEY env var is required")
+
+    parts = version_name.split(".").map(&:to_i)
+    UI.user_error!("VERSION_NAME must be major.minor.patch, got #{version_name}") if parts.size != 3
+    major, minor, patch = parts
+
+    base_version_code = major * 1_000_000 + minor * 10_000 + patch * 100
+
+    existing_codes = google_play_track_version_codes(track: "internal", json_key_data: json_key_data)
+    same_release_codes = existing_codes.select { |code| (code / 100) * 100 == base_version_code }
+    build_number = same_release_codes.empty? ? 0 : (same_release_codes.max % 100) + 1
+    UI.user_error!("Exceeded max internal builds (99) for version #{version_name}") if build_number > 99
+
+    version_code = base_version_code + build_number
+
+    gradle(
+      task: "bundle",
+      build_type: "Release",
+      properties: {
+        "versionCode" => version_code,
+        "versionName" => version_name,
+      },
+    )
+
+    upload_to_play_store(
+      track: "internal",
+      json_key_data: json_key_data,
+      aab: "app/build/outputs/bundle/release/app-release.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+    )
+  end
+end

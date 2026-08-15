@@ -1,0 +1,44 @@
+<resources>
+    <string name="recommendation_title_region">Recommended Courses</string>
+    <string name="recommendation_title_course">%1$s Recommended Courses</string>
+    <string name="recommendation_title_detail">Course Details</string>
+    <string name="recommendation_back_content_description">Back</string>
+
+    <string name="recommendation_step_caption_region">Recommend</string>
+    <string name="recommendation_step_caption_course">Select</string>
+    <string name="recommendation_step_caption_detail">Course</string>
+
+    <string name="recommendation_header_region_title">Destinations matched to your style</string>
+    <string name="recommendation_header_region_subtitle">These destinations perfectly match your travel and spending style. Tap a region to see personalized course recommendations.</string>
+    <string name="recommendation_header_course_subtitle">These are the courses in %1$s that best match your profile. Tap a course to see the detailed route, audio guide, and benefits.</string>
+
+    <string name="recommendation_section_course_order">Course order</string>
+    <string name="recommendation_section_incentives">Benefits available for this course</string>
+
+    <string name="recommendation_audio_guide_label">Audio guide</string>
+    <string name="recommendation_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="recommendation_walk_time_template">%1$s min walk</string>
+
+    <string name="recommendation_cta_save">Save</string>
+    <string name="recommendation_cta_saved">Saved</string>
+
+    <string name="recommendation_snackbar_save_confirmation">Course saved. You can find it again under My Info &gt; Saved Courses.</string>
+    <string name="recommendation_snackbar_save_error">Couldn\'t save the course. Please try again in a moment.</string>
+
+    <string name="recommendation_content_description_play">Play</string>
+    <string name="recommendation_content_description_pause">Pause</string>
+
+    <string name="recommendation_action_retry">Retry</string>
+    <string name="recommendation_action_view_saved_courses">View saved courses</string>
+
+    <string name="recommendation_error_propensity_not_found">No travel style test result found. Please complete the test first.</string>
+    <string name="recommendation_error_tour_api_unavailable">Couldn\'t get tour information. Please try again in a moment.</string>
+    <string name="recommendation_error_region_not_found">Recommended destination not found.</string>
+    <string name="recommendation_error_course_not_found">Course not found.</string>
+    <string name="recommendation_error_empty_regions">Couldn\'t find recommended destinations. Please try again in a moment.</string>
+    <string name="recommendation_error_empty_courses">Couldn\'t find recommended courses. Please try again in a moment.</string>
+    <string name="recommendation_error_empty_places">No place information to display.</string>
+    <string name="recommendation_error_generic_region">Couldn\'t load recommended destinations. Please try again in a moment.</string>
+    <string name="recommendation_error_generic_course">Couldn\'t load recommended courses. Please try again in a moment.</string>
+    <string name="recommendation_error_generic_detail">Couldn\'t load course information. Please try again in a moment.</string>
+</resources>

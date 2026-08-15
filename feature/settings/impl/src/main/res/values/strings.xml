@@ -1,0 +1,79 @@
+<resources>
+    <string name="settings_edit_info">Edit Info</string>
+    <string name="settings_pane_title">My Info</string>
+    <string name="settings_select_prompt">Select an item from the list on the left.</string>
+
+    <string name="settings_stat_saved_courses">Saved Courses</string>
+    <string name="settings_stat_count_template">%1$d</string>
+
+    <string name="settings_group_label">Settings</string>
+    <string name="settings_menu_retake_diagnosis">Travel Profile · Retake Test</string>
+    <string name="settings_menu_licenses">Open Source Licenses</string>
+    <string name="settings_menu_terms">Terms of Service</string>
+    <string name="settings_menu_privacy">Privacy Policy</string>
+    <string name="settings_menu_contact">Contact Us</string>
+    <string name="settings_menu_version">Version Info</string>
+
+    <string name="settings_logout">Log out</string>
+
+    <string name="settings_guest_title">Sign in required</string>
+    <string name="settings_guest_description">See your saved courses and earned rewards</string>
+    <string name="settings_guest_login_cta">Sign in</string>
+
+    <string name="settings_auth_prompt_title">Sign in required</string>
+    <string name="settings_auth_prompt_body">This feature requires signing in.\nYou can still browse support programs without signing in.</string>
+    <string name="settings_auth_prompt_confirm">Sign in</string>
+    <string name="settings_auth_prompt_dismiss">Later</string>
+
+    <string name="settings_error_load">Couldn\'t load your info. Please try again in a moment.</string>
+    <string name="settings_action_retry">Retry</string>
+    <string name="settings_profile_updated">Your info has been updated.</string>
+
+    <string name="edit_profile_title">Edit Info</string>
+    <string name="edit_profile_back_cd">Back</string>
+    <string name="edit_profile_error_load">Couldn\'t load your info. Please try again in a moment.</string>
+
+    <string name="edit_profile_email_label">Email</string>
+    <string name="edit_profile_email_hint">Your account email can\'t be changed.</string>
+
+    <string name="edit_profile_name_label">Name</string>
+    <string name="edit_profile_name_placeholder">Jane Doe</string>
+
+    <string name="edit_profile_password_label">Change password (optional)</string>
+    <string name="edit_profile_password_placeholder">8+ characters, letters &amp; numbers</string>
+    <string name="edit_profile_password_hint">8+ characters including letters and numbers</string>
+    <string name="edit_profile_password_visibility_cd">Show password</string>
+
+    <string name="edit_profile_password_confirm_label">Confirm password (optional)</string>
+    <string name="edit_profile_password_confirm_placeholder">Enter your password again</string>
+    <string name="edit_profile_password_mismatch">Passwords don\'t match.</string>
+
+    <string name="edit_profile_birth_date_label">Date of birth</string>
+
+    <string name="edit_profile_gender_label">Gender</string>
+    <string name="edit_profile_gender_male">Male</string>
+    <string name="edit_profile_gender_female">Female</string>
+    <string name="edit_profile_gender_not_specified">Prefer not to say</string>
+
+    <string name="edit_profile_withdraw_link">Want to leave? Delete account ›</string>
+    <string name="edit_profile_withdraw_dialog_title">Delete your account?</string>
+    <string name="edit_profile_withdraw_dialog_body">Deleting your account will remove all your data. Are you sure you want to continue?</string>
+    <string name="edit_profile_withdraw_cancel">Cancel</string>
+    <string name="edit_profile_withdraw_confirm">Delete account</string>
+
+    <string name="edit_profile_submit">Save changes</string>
+
+    <string name="edit_profile_error_invalid_input">Please check your input again.</string>
+    <string name="edit_profile_error_save_failed">Couldn\'t update your info. Please try again in a moment.</string>
+    <string name="edit_profile_error_already_withdrawn">This account has already been deleted.</string>
+    <string name="edit_profile_error_user_not_found">User information not found.</string>
+    <string name="edit_profile_error_withdraw_failed">Couldn\'t delete your account. Please try again in a moment.</string>
+
+    <string name="licenses_title">Open Source Licenses</string>
+    <string name="licenses_back_cd">Back</string>
+
+    <string name="terms_back_cd">Back</string>
+    <string name="terms_revision_template">Effective %1$s · Version %2$s</string>
+    <string name="terms_error_load">Couldn\'t load the terms. Please try again in a moment.</string>
+    <string name="terms_action_retry">Retry</string>
+</resources>

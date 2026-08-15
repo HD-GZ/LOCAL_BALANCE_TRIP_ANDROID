@@ -1,0 +1,71 @@
+<resources>
+    <string name="home_hero_eyebrow">Bringing regions and travelers closer</string>
+    <string name="home_hero_title">"Find a local trip\nthat fits your taste"</string>
+    <string name="home_hero_description">Based on your travel style, schedule, and budget, we recommend the right region for you and connect you with government and local benefits you can receive.</string>
+    <string name="home_hero_cta_diagnosis">Take my travel style test</string>
+    <string name="home_hero_cta_diagnosis_guest">Sign in to start the test</string>
+    <string name="home_hero_cta_policies">Browse support benefits</string>
+    <string name="home_hero_pick_template">This month\'s pick · %1$s</string>
+
+    <string name="home_guest_note_title">You can browse without signing in</string>
+    <string name="home_guest_note_description">Check support programs freely — sign in to take the travel style test and save courses.</string>
+    <string name="home_guest_note_cta">Sign in</string>
+
+    <string name="home_type_section_title">What kind of traveler am I?</string>
+    <string name="home_type_section_cta">Start test</string>
+    <string name="home_type_section_cta_guest">Sign in to start</string>
+
+    <string name="home_mytype_section_title">My travel style</string>
+    <string name="home_mytype_retake">Retake test</string>
+    <string name="home_mytype_diagnosed_date_template">Tested on %1$s</string>
+
+    <string name="home_incentive_section_title">Travel support programs you can apply for</string>
+    <string name="home_incentive_section_subtitle">Sorted by closest deadline · Apply through each organization\'s official channel</string>
+    <string name="home_incentive_view_all">View all</string>
+    <string name="home_incentive_dday_ongoing">Ongoing</string>
+    <string name="home_incentive_dday_closed">Closed</string>
+    <string name="home_incentive_dday_today">Closes today</string>
+    <string name="home_incentive_dday_template">D-%1$d</string>
+    <string name="home_error_incentives_load">Couldn\'t load support programs. Please try again in a moment.</string>
+
+    <string name="home_policy_list_title">Travel support programs</string>
+    <string name="home_policy_list_back_content_description">Back</string>
+    <string name="home_policy_list_empty">No support programs available to apply for.</string>
+
+    <string name="home_feed_section_title">My saved courses</string>
+    <string name="home_feed_section_subtitle_guest">Sign in to see your saved courses and taste-based recommendations</string>
+    <string name="home_feed_view_all">View all</string>
+    <string name="home_feed_flag_saved">Saved</string>
+    <string name="home_feed_flag_recommended">Recommended for you</string>
+    <string name="home_status_before_trip">Upcoming</string>
+    <string name="home_status_traveling">In progress</string>
+    <string name="home_status_completed">Completed</string>
+    <string name="home_feed_login_title">No saved courses yet</string>
+    <string name="home_feed_login_desc">Sign in to test your travel style and save courses.</string>
+    <string name="home_feed_login_cta">Sign in to save</string>
+
+    <string name="home_popular_section_title">Popular courses right now</string>
+
+    <string name="home_error_courses_load">Couldn\'t load courses. Please try again in a moment.</string>
+    <string name="home_action_retry">Retry</string>
+
+    <string name="home_course_detail_back_content_description">Back</string>
+    <string name="home_course_detail_section_course_order">Course order</string>
+    <string name="home_course_detail_section_benefits">Benefits available for this course</string>
+    <string name="home_course_detail_meta_places_label">Places visited</string>
+    <string name="home_course_detail_meta_walk_label">Total walk</string>
+    <string name="home_course_detail_meta_audio_label">Audio guide</string>
+    <string name="home_course_detail_meta_places_value">%1$d places</string>
+    <string name="home_course_detail_meta_walk_value">%1$d min</string>
+    <string name="home_course_detail_meta_audio_value">%1$d</string>
+    <string name="home_course_detail_audio_guide_label">Audio guide</string>
+    <string name="home_course_detail_audio_time_placeholder">0:00 / 2:14</string>
+    <string name="home_course_detail_walk_time_template">%1$s min walk to the next stop</string>
+    <string name="home_course_detail_content_description_play">Play</string>
+    <string name="home_course_detail_content_description_pause">Pause</string>
+    <string name="home_course_detail_navigate_cta">Directions</string>
+    <string name="home_course_detail_map_app_unavailable">Couldn\'t open the map app.</string>
+    <string name="home_course_detail_error_course_not_found">Course not found.</string>
+    <string name="home_course_detail_error_empty_places">No place information to display.</string>
+    <string name="home_course_detail_error_generic">Couldn\'t load course information. Please try again in a moment.</string>
+</resources>

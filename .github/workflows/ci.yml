@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+    types: [opened, reopened, synchronize]
+  push:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Lint & Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/gradle-setup
+
+      - name: Export Keystore
+        run: |
+          echo "$KEYSTORE" | base64 -di > ./keystore.jks
+        shell: bash
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+
+      - name: Write local.properties
+        run: |
+          cat <<EOF > local.properties
+          NCP_KEY_ID=$NCP_KEY_ID
+          KAKAO_KEY=$KAKAO_KEY
+          FACEBOOK_APP_ID=$FACEBOOK_APP_ID
+          KEYSTORE_FILE=$KEYSTORE_FILE
+          KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD
+          KEY_ALIAS=$KEY_ALIAS
+          KEY_PASSWORD=$KEY_PASSWORD
+          EOF
+        shell: bash
+        env:
+          NCP_KEY_ID: ${{ secrets.NCP_KEY_ID }}
+          KAKAO_KEY: ${{ secrets.KAKAO_KEY }}
+          FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+          KEYSTORE_FILE: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+      - name: ktlint
+        run: ./gradlew ktlintCheck
+
+      - name: detekt
+        run: ./gradlew detekt
+
+      - name: Android Lint
+        run: ./gradlew lintDebug
+
+      - name: Upload ktlint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-report
+          path: '**/build/reports/ktlint/**'
+          retention-days: 7
+
+      - name: Upload detekt report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-report
+          path: '**/build/reports/detekt/**'
+          retention-days: 7
+
+      - name: Upload Android Lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-lint-report
+          path: '**/build/reports/lint-results-debug.xml'
+          retention-days: 7

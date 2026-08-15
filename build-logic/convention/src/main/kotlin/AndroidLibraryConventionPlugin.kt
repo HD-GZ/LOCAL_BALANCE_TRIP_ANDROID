@@ -12,6 +12,8 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.library")
+                apply("live.lb_trip.ktlint")
+                apply("live.lb_trip.detekt")
             }
 
             extensions.configure<LibraryExtension> {

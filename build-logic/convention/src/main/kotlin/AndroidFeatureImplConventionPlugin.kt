@@ -15,10 +15,12 @@ class AndroidFeatureImplConventionPlugin : Plugin<Project> {
 
             val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
             dependencies {
-                add("implementation", libs.findLibrary("circuit-foundation").get())
-                add("implementation", libs.findLibrary("circuit-runtime").get())
-                add("implementation", libs.findLibrary("circuit-overlay").get())
-
+                add("implementation", libs.findLibrary("androidx-navigation-compose").get())
+                add("implementation", libs.findLibrary("androidx-activity-compose").get())
+                add("implementation", libs.findLibrary("hilt-lifecycle-viewmodel-compose").get())
+                add("implementation", libs.findLibrary("androidx-lifecycle-runtime-ktx").get())
+                add("implementation", libs.findLibrary("androidx-lifecycle-runtime-compose").get())
+                add("implementation", libs.findLibrary("kotlinx-serialization-json").get())
                 add("implementation", libs.findLibrary("kotlinx-coroutines-core").get())
                 add("implementation", libs.findLibrary("kotlinx-coroutines-android").get())
             }
