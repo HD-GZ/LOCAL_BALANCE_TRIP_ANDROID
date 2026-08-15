@@ -260,7 +260,7 @@ private fun CoursePlace.toSavedCourseStop(): SavedCourseStop = SavedCourseStop(
     order = order,
     name = name,
     hasAudioGuide = hasAudio,
-    walkDuration = walkMinutes?.let { "${it}분" },
+    walkDuration = walkMinutes?.toString(),
     description = description,
     audioUrl = audioUrl,
 )

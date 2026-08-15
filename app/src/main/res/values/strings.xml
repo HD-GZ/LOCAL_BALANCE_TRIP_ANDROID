@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">로컬 밸런스 트립</string>
-    <string name="main_session_expired">로그인이 만료됐어요. 다시 로그인해 주세요.</string>
+    <string name="app_name">Local Balance Trip</string>
+    <string name="main_session_expired">Your session has expired. Please sign in again.</string>
 
-    <string name="main_brand_prefix">로컬</string>
-    <string name="main_brand_highlight">밸런스</string>
-    <string name="main_brand_suffix">" 트립"</string>
-    <string name="main_tab_main">메인</string>
-    <string name="main_tab_my_info">나의 정보</string>
+    <string name="main_brand_prefix">Local</string>
+    <string name="main_brand_highlight">Balance</string>
+    <string name="main_brand_suffix">" Trip"</string>
+    <string name="main_tab_main">Home</string>
+    <string name="main_tab_my_info">My Info</string>
 </resources>

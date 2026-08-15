@@ -1,9 +1,11 @@
 package live.lb_trip.feature.propensity
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
@@ -15,6 +17,7 @@ import live.lb_trip.domain.usecase.SubmitPropensityUseCase
 
 @HiltViewModel
 class PropensityViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
     private val submitPropensityUseCase: SubmitPropensityUseCase,
     private val getPropensityResultUseCase: GetPropensityResultUseCase,
@@ -100,12 +103,12 @@ class PropensityViewModel @Inject constructor(
                 postSideEffect(PropensitySideEffect.NavigateToResult)
             }.onFailure { throwable ->
                 if (throwable is LbTripPropensityException.UnauthenticatedException) {
-                    updateState { it.copy(errorMessage = "로그인 후 진단 결과를 받아볼 수 있어요. 로그인하고 다시 제출해 주세요.") }
+                    updateState { it.copy(errorMessage = context.getString(R.string.propensity_error_unauthenticated)) }
                     postSideEffect(PropensitySideEffect.NavigateToSignin)
                 } else {
                     val message = when (throwable) {
-                        is LbTripPropensityException.InvalidInputException -> "입력값을 다시 확인해 주세요."
-                        else -> "진단 결과를 가져오지 못했어요. 잠시 후 다시 시도해 주세요."
+                        is LbTripPropensityException.InvalidInputException -> context.getString(R.string.propensity_error_invalid_input)
+                        else -> context.getString(R.string.propensity_error_generic)
                     }
                     updateState { it.copy(errorMessage = message) }
                 }

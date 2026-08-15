@@ -1,7 +1,9 @@
 package live.lb_trip.feature.signin
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import live.lb_trip.core.viewmodel.BaseViewModel
@@ -10,6 +12,7 @@ import live.lb_trip.domain.usecase.LoginUseCase
 
 @HiltViewModel
 class SigninViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val loginUseCase: LoginUseCase,
 ) : BaseViewModel<SigninUiState, SigninIntent, SigninSideEffect>(SigninUiState()) {
 
@@ -31,14 +34,14 @@ class SigninViewModel @Inject constructor(
                 .onFailure { throwable ->
                     val message = when (throwable) {
                         is LbTripAuthException.InvalidCredentialsException ->
-                            "이메일 또는 비밀번호가 올바르지 않아요."
+                            context.getString(R.string.signin_error_invalid_credentials)
                         is LbTripAuthException.EmailNotVerifiedException ->
-                            "이메일 인증이 필요해요. 가입 시 받은 인증 메일을 확인해 주세요."
+                            context.getString(R.string.signin_error_email_not_verified)
                         is LbTripAuthException.UserNotFoundException ->
-                            "가입되지 않은 이메일이에요."
+                            context.getString(R.string.signin_error_user_not_found)
                         is LbTripAuthException.UnauthorizedException ->
-                            "인증이 만료됐어요. 다시 로그인해 주세요."
-                        else -> "로그인에 실패했어요. 잠시 후 다시 시도해 주세요."
+                            context.getString(R.string.signin_error_unauthorized)
+                        else -> context.getString(R.string.signin_error_login_failed)
                     }
                     updateState { it.copy(errorMessage = message) }
                 }

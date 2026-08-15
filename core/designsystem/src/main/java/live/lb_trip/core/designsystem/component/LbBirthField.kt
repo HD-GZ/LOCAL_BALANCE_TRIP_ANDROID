@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
+import live.lb_trip.core.designsystem.R
 
 @Composable
 fun LbBirthField(
@@ -128,7 +130,11 @@ fun LbBirthField(
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     Text(
-                        text = if (month == 0) "월" else "${month}월",
+                        text = if (month == 0) {
+                            stringResource(R.string.core_birth_field_month_placeholder)
+                        } else {
+                            stringResource(R.string.core_birth_field_month_value_template, month)
+                        },
                         color = if (month == 0) LbColors.Ink4 else LbColors.Ink,
                         fontSize = 15.5.sp,
                     )
@@ -139,7 +145,7 @@ fun LbBirthField(
                 ) {
                     for (selectedMonth in 1..12) {
                         DropdownMenuItem(
-                            text = { Text("${selectedMonth}월") },
+                            text = { Text(stringResource(R.string.core_birth_field_month_value_template, selectedMonth)) },
                             onClick = {
                                 onMonthChange(selectedMonth)
                                 monthMenuExpanded = false
@@ -170,7 +176,7 @@ fun LbBirthField(
                         contentAlignment = Alignment.CenterStart,
                     ) {
                         if (day.isEmpty()) {
-                            Text(text = "일", color = LbColors.Ink4, fontSize = 15.5.sp)
+                            Text(text = stringResource(R.string.core_birth_field_day_placeholder), color = LbColors.Ink4, fontSize = 15.5.sp)
                         }
                         innerTextField()
                     }

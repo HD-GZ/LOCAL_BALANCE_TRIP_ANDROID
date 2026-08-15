@@ -1,12 +1,14 @@
 package live.lb_trip.feature.settings
 
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import live.lb_trip.core.util.sharedInvalidFieldMessage
 import live.lb_trip.core.viewmodel.BaseViewModel
-import live.lb_trip.domain.exception.sharedInvalidFieldMessage
 import live.lb_trip.domain.exception.user.LbTripUserException
 import live.lb_trip.domain.usecase.ClearDistanceRecordingUseCase
 import live.lb_trip.domain.usecase.ClearSessionUseCase
@@ -17,6 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val updateUserProfileUseCase: UpdateUserProfileUseCase,
     private val withdrawUserUseCase: WithdrawUserUseCase,
@@ -115,14 +118,14 @@ class EditProfileViewModel @Inject constructor(
 
     private fun saveFailureMessage(throwable: Throwable): String = when (throwable) {
         is LbTripUserException.InvalidInputValueException ->
-            throwable.fields.firstNotNullOfOrNull { field -> sharedInvalidFieldMessage(field) }
-                ?: "입력값을 다시 확인해 주세요."
-        else -> "정보 수정에 실패했어요. 잠시 후 다시 시도해 주세요."
+            throwable.fields.firstNotNullOfOrNull { field -> sharedInvalidFieldMessage(context, field) }
+                ?: context.getString(R.string.edit_profile_error_invalid_input)
+        else -> context.getString(R.string.edit_profile_error_save_failed)
     }
 
     private fun withdrawFailureMessage(throwable: Throwable): String = when (throwable) {
-        is LbTripUserException.UserWithdrawnException -> "이미 탈퇴한 계정이에요."
-        is LbTripUserException.UserNotFoundException -> "사용자 정보를 찾을 수 없어요."
-        else -> "회원 탈퇴에 실패했어요. 잠시 후 다시 시도해 주세요."
+        is LbTripUserException.UserWithdrawnException -> context.getString(R.string.edit_profile_error_already_withdrawn)
+        is LbTripUserException.UserNotFoundException -> context.getString(R.string.edit_profile_error_user_not_found)
+        else -> context.getString(R.string.edit_profile_error_withdraw_failed)
     }
 }
