@@ -7,12 +7,9 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -332,51 +329,54 @@ private fun TourTwoPaneContent(
     var actionBarHeightPx by remember { mutableIntStateOf(0) }
     val actionBarHeight = with(density) { actionBarHeightPx.toDp() }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        topBar = { TourTopBar(state = state, onBackClick = onBack) },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        containerColor = LbColors.Paper,
-    ) { innerPadding ->
-        NavigableSupportingPaneScaffold(
-            navigator = navigator,
-            modifier = Modifier
-                .padding(innerPadding)
-                .consumeWindowInsets(innerPadding),
-            mainPane = {
-                AnimatedPane {
-                    TourMapContent(
-                        state = state,
-                        hasLocationPermission = hasLocationPermission,
-                        onIntent = onIntent,
-                        mapContentPadding = PaddingValues(),
-                    )
-                }
-            },
-            supportingPane = {
-                AnimatedPane {
-                    Box(modifier = Modifier.fillMaxHeight().background(LbColors.Paper)) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .verticalScroll(rememberScrollState())
-                                .padding(bottom = actionBarHeight),
-                        ) {
-                            TourStopsContent(state = state, onIntent = onIntent)
-                        }
+    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+        val paneMaxHeight = maxHeight
 
-                        TourActionBar(
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = { TourTopBar(state = state, onBackClick = onBack) },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            containerColor = LbColors.Paper,
+        ) { innerPadding ->
+            NavigableSupportingPaneScaffold(
+                navigator = navigator,
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .consumeWindowInsets(innerPadding),
+                mainPane = {
+                    AnimatedPane {
+                        TourMapContent(
                             state = state,
-                            onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
-                            onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .onSizeChanged { actionBarHeightPx = it.height },
+                            hasLocationPermission = hasLocationPermission,
+                            onIntent = onIntent,
+                            mapContentPadding = PaddingValues(),
                         )
                     }
-                }
-            },
-        )
+                },
+                supportingPane = {
+                    AnimatedPane {
+                        Box(modifier = Modifier.heightIn(max = paneMaxHeight).background(LbColors.Paper)) {
+                            Column(
+                                modifier = Modifier
+                                    .heightIn(max = paneMaxHeight)
+                                    .padding(bottom = actionBarHeight),
+                            ) {
+                                TourStopsContent(state = state, onIntent = onIntent)
+                            }
+
+                            TourActionBar(
+                                state = state,
+                                onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
+                                onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .onSizeChanged { actionBarHeightPx = it.height },
+                            )
+                        }
+                    }
+                },
+            )
+        }
     }
 }
 
