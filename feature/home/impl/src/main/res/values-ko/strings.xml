@@ -60,7 +60,7 @@
     <string name="home_course_detail_meta_audio_value">%1$d개</string>
     <string name="home_course_detail_audio_guide_label">오디오 가이드</string>
     <string name="home_course_detail_audio_time_placeholder">0:00 / 2:14</string>
-    <string name="home_course_detail_walk_time_template">다음 장소까지 도보 %1$s</string>
+    <string name="home_course_detail_walk_time_template">다음 장소까지 도보 %1$s분</string>
     <string name="home_course_detail_content_description_play">재생</string>
     <string name="home_course_detail_content_description_pause">일시정지</string>
     <string name="home_course_detail_navigate_cta">길찾기</string>

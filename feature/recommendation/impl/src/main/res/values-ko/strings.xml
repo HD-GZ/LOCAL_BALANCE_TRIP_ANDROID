@@ -17,7 +17,7 @@
 
     <string name="recommendation_audio_guide_label">오디오 가이드</string>
     <string name="recommendation_audio_time_placeholder">0:00 / 2:14</string>
-    <string name="recommendation_walk_time_template">도보 %1$s</string>
+    <string name="recommendation_walk_time_template">도보 %1$s분</string>
 
     <string name="recommendation_cta_save">저장</string>
     <string name="recommendation_cta_saved">저장됨</string>

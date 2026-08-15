@@ -21,7 +21,7 @@
     <string name="sharedcourse_section_course_order">코스 순서</string>
     <string name="sharedcourse_section_benefits">이 코스 적용 가능 혜택</string>
     <string name="sharedcourse_audio_guide_label">오디오 가이드</string>
-    <string name="sharedcourse_walk_time_template">다음 장소까지 도보 %1$s</string>
+    <string name="sharedcourse_walk_time_template">다음 장소까지 도보 %1$s분</string>
     <string name="sharedcourse_audio_time_placeholder">0:00 / 2:14</string>
     <string name="sharedcourse_content_description_play">재생</string>
     <string name="sharedcourse_content_description_pause">일시정지</string>
@@ -37,7 +37,7 @@
     <string name="savedcourses_detail_tab_report">리포트</string>
 
     <string name="savedcourses_detail_audio_guide_label">오디오 가이드</string>
-    <string name="savedcourses_detail_walk_time_template">도보 %1$s</string>
+    <string name="savedcourses_detail_walk_time_template">도보 %1$s분</string>
     <string name="savedcourses_detail_benefits_title">이 코스 적용 가능 혜택</string>
 
     <string name="savedcourses_detail_receipt_total_label">적립 완료 금액</string>
