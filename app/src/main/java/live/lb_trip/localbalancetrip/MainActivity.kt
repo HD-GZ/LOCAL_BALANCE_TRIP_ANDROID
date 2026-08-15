@@ -209,7 +209,11 @@ private fun MainNavGraph(
         signupScreen(
             navController = navController,
             onBack = navController::popBackStack,
-            onNavigateToSignin = { navController.navigate(SigninRoute) },
+            onNavigateToSignin = {
+                navController.navigate(SigninRoute) {
+                    popUpTo(HomeRoute) { inclusive = false }
+                }
+            },
         )
     }
 }
