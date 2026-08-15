@@ -40,12 +40,12 @@ class SettingsViewModel @Inject constructor(
     override fun onIntent(intent: SettingsIntent) {
         when (intent) {
             SettingsIntent.Retry -> viewModelScope.launch { load(currentState.isLoggedIn) }
-            is SettingsIntent.MenuItemClick -> postSideEffect(SettingsSideEffect.ShowUnavailableMessage(intent.label))
             SettingsIntent.EditProfileClick -> handleAuthGatedClick(SettingsSideEffect.NavigateToEditProfile)
             SettingsIntent.RetakeDiagnosisClick -> handleAuthGatedClick(SettingsSideEffect.NavigateToDiagnosis)
             SettingsIntent.LicensesClick -> postSideEffect(SettingsSideEffect.NavigateToLicenses)
             SettingsIntent.TermsClick -> postSideEffect(SettingsSideEffect.NavigateToTerms)
             SettingsIntent.PrivacyClick -> postSideEffect(SettingsSideEffect.NavigateToPrivacy)
+            SettingsIntent.ContactClick -> postSideEffect(SettingsSideEffect.OpenContactEmail)
             SettingsIntent.ProfileUpdated -> viewModelScope.launch {
                 load(currentState.isLoggedIn)
                 postSideEffect(SettingsSideEffect.ShowProfileUpdated)

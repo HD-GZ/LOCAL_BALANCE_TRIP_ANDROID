@@ -13,7 +13,6 @@
     <string name="settings_menu_privacy">개인정보 처리방침</string>
     <string name="settings_menu_contact">문의하기</string>
     <string name="settings_menu_version">버전 정보</string>
-    <string name="settings_menu_unavailable_template">%1$s 화면은 기능 완성 후 추가될 예정이에요.</string>
 
     <string name="settings_logout">로그아웃</string>
 

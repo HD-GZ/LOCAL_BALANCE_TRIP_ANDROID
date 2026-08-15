@@ -13,7 +13,6 @@
     <string name="settings_menu_privacy">Privacy Policy</string>
     <string name="settings_menu_contact">Contact Us</string>
     <string name="settings_menu_version">Version Info</string>
-    <string name="settings_menu_unavailable_template">The %1$s screen will be added once it\'s ready.</string>
 
     <string name="settings_logout">Log out</string>
 
