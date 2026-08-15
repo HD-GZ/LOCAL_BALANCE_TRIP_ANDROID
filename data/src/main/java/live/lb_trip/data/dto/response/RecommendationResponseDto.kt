@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class RegionResponseDto(
     val regionId: Long,
     val regionName: String,
+    val imageUrl: String? = null,
     val reason: String,
 )
 

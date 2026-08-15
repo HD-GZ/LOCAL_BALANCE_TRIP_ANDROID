@@ -10,7 +10,7 @@ import live.lb_trip.domain.model.RecommendedCourse
 import live.lb_trip.domain.model.RecommendedRegion
 
 fun RegionResponseDto.toDomain(): RecommendedRegion =
-    RecommendedRegion(id = regionId, name = regionName, reason = reason)
+    RecommendedRegion(id = regionId, name = regionName, reason = reason, imageUrl = imageUrl)
 
 fun CourseResponseDto.toDomain(): RecommendedCourse =
     RecommendedCourse(id = courseId, title = title, reason = reason, imageUrl = imageUrl)

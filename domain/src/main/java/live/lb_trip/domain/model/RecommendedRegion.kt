@@ -4,4 +4,5 @@ data class RecommendedRegion(
     val id: Long,
     val name: String,
     val reason: String,
+    val imageUrl: String?,
 )
