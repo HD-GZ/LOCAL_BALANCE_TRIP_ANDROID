@@ -7,10 +7,10 @@ import org.junit.Test
 class TourViewModelHelpersTest {
 
     @Test
-    fun `방문 기록이 없으면 첫 번째 정류장부터 시작한다`() {
+    fun `방문 기록이 없으면 아직 아무 지점도 방문하지 않은 상태로 복원한다`() {
         val index = restoredStopIndex(visitsByOrder = emptyMap(), lastIndex = 3)
 
-        assertEquals(0, index)
+        assertEquals(-1, index)
     }
 
     @Test
@@ -41,13 +41,13 @@ class TourViewModelHelpersTest {
     }
 
     @Test
-    fun `복원된 인덱스는 유효 범위를 벗어나지 않는다`() {
+    fun `방문 기록은 있지만 전부 미방문이면 아직 시작 전으로 복원한다`() {
         val visits = listOf(
             TourPlaceVisit(placeId = 1, order = 1, visited = false),
         ).associateBy { it.order }
 
         val index = restoredStopIndex(visitsByOrder = visits, lastIndex = 3)
 
-        assertEquals(0, index)
+        assertEquals(-1, index)
     }
 }

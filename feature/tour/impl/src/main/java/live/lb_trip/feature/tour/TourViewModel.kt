@@ -143,16 +143,14 @@ class TourViewModel @Inject constructor(
                         )
                     }
                     arrivalDetector.reset()
-                    if (detail.places.isEmpty()) {
-                        postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.EmptyPlaces))
-                    } else {
-                        if (startData != null) {
+                    when {
+                        detail.places.isEmpty() ->
+                            postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.EmptyPlaces))
+                        startData != null -> {
                             distanceRecording.onTourStarted(savedCourseId)
                             startElapsedTicker(startData.tourStartedAt)
-                        } else {
-                            postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.TourStartFailed))
                         }
-                        checkInStop(initialIndex)
+                        else -> postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.TourStartFailed))
                     }
                 }
                 .onFailure { throwable ->
@@ -260,8 +258,12 @@ class TourViewModel @Inject constructor(
     }
 }
 
+/**
+ * -1 means "아직 아무 지점도 방문 처리되지 않음" — 다음 목표는 인덱스 0(첫 지점)이 된다.
+ * 그 외에는 실제로 방문 처리된 마지막 지점의 인덱스.
+ */
 internal fun restoredStopIndex(visitsByOrder: Map<Int, TourPlaceVisit>, lastIndex: Int): Int {
-    if (visitsByOrder.isEmpty()) return 0
+    if (visitsByOrder.values.none { it.visited }) return -1
     val firstUnvisitedOrder = visitsByOrder.values.filterNot { it.visited }.minOfOrNull { it.order }
     val index = firstUnvisitedOrder?.let { it - 1 } ?: lastIndex
     return index.coerceIn(0, lastIndex)
