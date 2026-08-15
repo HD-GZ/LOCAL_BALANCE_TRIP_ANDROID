@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,8 +53,8 @@ fun MyInfoTabContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val loadErrorMessage = stringResource(R.string.settings_error_load)
     val retryActionLabel = stringResource(R.string.settings_action_retry)
-    val unavailableTemplate = stringResource(R.string.settings_menu_unavailable_template)
     val profileUpdatedMessage = stringResource(R.string.settings_profile_updated)
+    val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -65,16 +66,13 @@ fun MyInfoTabContent(
                     }
                 }
 
-                is SettingsSideEffect.ShowUnavailableMessage -> launch {
-                    snackbarHostState.showSnackbar(message = String.format(unavailableTemplate, effect.label))
-                }
-
                 SettingsSideEffect.NavigateToDiagnosis -> onNavigateToDiagnosis()
                 SettingsSideEffect.NavigateToEditProfile -> onNavigateToEditProfile()
                 SettingsSideEffect.NavigateToLicenses -> onNavigateToLicenses()
                 SettingsSideEffect.NavigateToTerms -> onNavigateToTerms()
                 SettingsSideEffect.NavigateToPrivacy -> onNavigateToPrivacy()
                 SettingsSideEffect.NavigateToSignin -> onNavigateToSignin()
+                SettingsSideEffect.OpenContactEmail -> uriHandler.openUri("mailto:$CONTACT_EMAIL")
                 SettingsSideEffect.ShowProfileUpdated -> launch { snackbarHostState.showSnackbar(profileUpdatedMessage) }
             }
         }
@@ -167,7 +165,7 @@ private fun MyInfoTabContentBody(
                     SettingsMenuItem(licensesLabel) { onIntent(SettingsIntent.LicensesClick) },
                     SettingsMenuItem(termsLabel) { onIntent(SettingsIntent.TermsClick) },
                     SettingsMenuItem(privacyLabel) { onIntent(SettingsIntent.PrivacyClick) },
-                    SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.MenuItemClick(contactLabel)) },
+                    SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.ContactClick) },
                 ),
                 versionName = versionName,
                 modifier = Modifier.padding(top = 10.dp),
@@ -182,6 +180,8 @@ private fun MyInfoTabContentBody(
         }
     }
 }
+
+private const val CONTACT_EMAIL = "hdgz@lb-trip.live"
 
 @Preview(showBackground = true)
 @Composable
