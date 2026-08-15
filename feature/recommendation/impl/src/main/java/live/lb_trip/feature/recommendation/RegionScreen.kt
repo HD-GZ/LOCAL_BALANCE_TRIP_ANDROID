@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +38,8 @@ import androidx.compose.ui.util.fastForEachIndexed
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.ImageLoader
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import kotlinx.collections.immutable.persistentListOf
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
 import live.lb_trip.domain.model.RecommendedRegion
@@ -114,6 +117,11 @@ private fun RegionScreenContent(
         }
     }
 
+    val context = LocalContext.current
+    val imageLoader = remember(context) {
+        ImageLoader.Builder(context).components { add(OkHttpNetworkFetcherFactory()) }.build()
+    }
+
     Box(modifier = modifier.fillMaxSize().background(Paper)) {
         Column(modifier = Modifier.fillMaxSize()) {
             RecommendationBrandBar(
@@ -158,6 +166,8 @@ private fun RegionScreenContent(
                                 title = region.name,
                                 reason = region.reason,
                                 isBest = index == 0,
+                                imageUrl = region.imageUrl,
+                                imageLoader = imageLoader,
                                 onClick = { onRegionSelected(region.id, region.name) },
                             )
                         }
@@ -181,7 +191,7 @@ private fun RegionScreenPreview() {
         state = RegionUiState(
             isLoading = false,
             regions = persistentListOf(
-                RecommendedRegion(id = 1, name = "전라남도 담양군", reason = "로컬 미식 상권이 풍부해요."),
+                RecommendedRegion(id = 1, name = "전라남도 담양군", reason = "로컬 미식 상권이 풍부해요.", imageUrl = null),
             ),
         ),
         snackbarHost = {},
