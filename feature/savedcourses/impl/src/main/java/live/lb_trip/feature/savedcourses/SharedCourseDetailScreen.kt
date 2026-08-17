@@ -80,6 +80,7 @@ internal fun SharedCourseDetailScreen(
     val loadErrorMessage = stringResource(R.string.sharedcourse_error_load)
     val retryActionLabel = stringResource(R.string.savedcourses_action_retry)
     val mapAppUnavailableMessage = stringResource(R.string.sharedcourse_map_app_unavailable)
+    val openUrlFailedMessage = stringResource(R.string.savedcourses_detail_error_open_url_failed)
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
@@ -90,7 +91,10 @@ internal fun SharedCourseDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is SharedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
+                is SharedCourseDetailSideEffect.OpenBenefitUrl -> {
+                    runCatching { uriHandler.openUri(effect.url) }
+                        .onFailure { snackbarHostState.showSnackbar(openUrlFailedMessage) }
+                }
                 is SharedCourseDetailSideEffect.OpenMap -> {
                     val uri = Uri.parse(
                         "geo:${effect.latitude},${effect.longitude}" +

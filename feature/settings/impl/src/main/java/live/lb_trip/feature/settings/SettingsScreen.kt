@@ -54,6 +54,7 @@ fun MyInfoTabContent(
     val loadErrorMessage = stringResource(R.string.settings_error_load)
     val retryActionLabel = stringResource(R.string.settings_action_retry)
     val profileUpdatedMessage = stringResource(R.string.settings_profile_updated)
+    val noEmailAppMessage = stringResource(R.string.settings_error_no_email_app)
     val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
@@ -72,7 +73,10 @@ fun MyInfoTabContent(
                 SettingsSideEffect.NavigateToTerms -> onNavigateToTerms()
                 SettingsSideEffect.NavigateToPrivacy -> onNavigateToPrivacy()
                 SettingsSideEffect.NavigateToSignin -> onNavigateToSignin()
-                SettingsSideEffect.OpenContactEmail -> uriHandler.openUri("mailto:$CONTACT_EMAIL")
+                SettingsSideEffect.OpenContactEmail -> {
+                    runCatching { uriHandler.openUri("mailto:$CONTACT_EMAIL") }
+                        .onFailure { launch { snackbarHostState.showSnackbar(noEmailAppMessage) } }
+                }
                 SettingsSideEffect.ShowProfileUpdated -> launch { snackbarHostState.showSnackbar(profileUpdatedMessage) }
             }
         }

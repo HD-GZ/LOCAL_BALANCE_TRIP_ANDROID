@@ -27,6 +27,7 @@
     <string name="settings_error_load">Couldn\'t load your info. Please try again in a moment.</string>
     <string name="settings_action_retry">Retry</string>
     <string name="settings_profile_updated">Your info has been updated.</string>
+    <string name="settings_error_no_email_app">No email app is installed. Please install one and try again.</string>
 
     <string name="edit_profile_title">Edit Info</string>
     <string name="edit_profile_back_cd">Back</string>

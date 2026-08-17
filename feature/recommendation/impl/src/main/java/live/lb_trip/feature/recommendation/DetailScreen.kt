@@ -79,6 +79,7 @@ internal fun DetailScreen(
     val genericLoadErrorMessage = stringResource(R.string.recommendation_error_generic_detail)
     val playContentDescription = stringResource(R.string.recommendation_content_description_play)
     val pauseContentDescription = stringResource(R.string.recommendation_content_description_pause)
+    val openUrlFailedMessage = stringResource(R.string.recommendation_error_open_url_failed)
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
@@ -110,7 +111,10 @@ internal fun DetailScreen(
                     }
                 }
                 RecommendationDetailSideEffect.ShowSaveError -> snackbarHostState.showSnackbar(saveErrorMessage)
-                is RecommendationDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
+                is RecommendationDetailSideEffect.OpenBenefitUrl -> {
+                    runCatching { uriHandler.openUri(effect.url) }
+                        .onFailure { snackbarHostState.showSnackbar(openUrlFailedMessage) }
+                }
             }
         }
     }

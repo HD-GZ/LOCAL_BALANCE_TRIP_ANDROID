@@ -43,4 +43,5 @@
     <string name="recommendation_error_generic_region">Couldn\'t load recommended destinations. Please try again in a moment.</string>
     <string name="recommendation_error_generic_course">Couldn\'t load recommended courses. Please try again in a moment.</string>
     <string name="recommendation_error_generic_detail">Couldn\'t load course information. Please try again in a moment.</string>
+    <string name="recommendation_error_open_url_failed">No app was found to open this.</string>
 </resources>

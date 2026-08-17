@@ -88,6 +88,7 @@ fun HomeTabContent(
     val uriHandler = LocalUriHandler.current
     val loadErrorMessage = stringResource(R.string.home_error_courses_load)
     val retryActionLabel = stringResource(R.string.home_action_retry)
+    val openUrlFailedMessage = stringResource(R.string.home_error_open_url_failed)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -98,7 +99,10 @@ fun HomeTabContent(
                         onIntent(HomeIntent.Retry)
                     }
                 }
-                is HomeSideEffect.OpenUrl -> uriHandler.openUri(effect.url)
+                is HomeSideEffect.OpenUrl -> {
+                    runCatching { uriHandler.openUri(effect.url) }
+                        .onFailure { snackbarHostState.showSnackbar(openUrlFailedMessage) }
+                }
                 is HomeSideEffect.NavigateToRecommendedRegion ->
                     onNavigateToRecommendedRegion(effect.regionId, effect.regionName)
             }

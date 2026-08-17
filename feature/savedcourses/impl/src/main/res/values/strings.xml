@@ -77,6 +77,9 @@
     <string name="savedcourses_detail_error_empty_places">No place information to display.</string>
     <string name="savedcourses_detail_error_receipts">Couldn\'t load the receipt list.</string>
     <string name="savedcourses_detail_error_report">Couldn\'t load the report.</string>
+    <string name="savedcourses_detail_error_open_url_failed">No app was found to open this.</string>
+    <string name="savedcourses_detail_camera_unavailable">No camera app is available.</string>
+    <string name="savedcourses_detail_instagram_unavailable">Instagram app not found.</string>
     <string name="savedcourses_detail_action_retry">Retry</string>
     <string name="savedcourses_detail_back_content_description">Back</string>
 

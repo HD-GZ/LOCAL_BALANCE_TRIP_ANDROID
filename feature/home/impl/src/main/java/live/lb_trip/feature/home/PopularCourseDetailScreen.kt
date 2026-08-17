@@ -83,6 +83,7 @@ internal fun PopularCourseDetailScreen(
     val emptyPlacesMessage = stringResource(R.string.home_course_detail_error_empty_places)
     val genericLoadErrorMessage = stringResource(R.string.home_course_detail_error_generic)
     val mapAppUnavailableMessage = stringResource(R.string.home_course_detail_map_app_unavailable)
+    val openUrlFailedMessage = stringResource(R.string.home_error_open_url_failed)
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
@@ -104,7 +105,10 @@ internal fun PopularCourseDetailScreen(
                         onIntent(PopularCourseDetailIntent.Retry)
                     }
                 }
-                is PopularCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
+                is PopularCourseDetailSideEffect.OpenBenefitUrl -> {
+                    runCatching { uriHandler.openUri(effect.url) }
+                        .onFailure { snackbarHostState.showSnackbar(openUrlFailedMessage) }
+                }
                 is PopularCourseDetailSideEffect.OpenMap -> {
                     val uri = Uri.parse(
                         "geo:${effect.latitude},${effect.longitude}" +

@@ -44,11 +44,15 @@ internal fun PolicyListScreen(
     val uriHandler = LocalUriHandler.current
     val loadErrorMessage = stringResource(R.string.home_error_incentives_load)
     val retryActionLabel = stringResource(R.string.home_action_retry)
+    val openUrlFailedMessage = stringResource(R.string.home_error_open_url_failed)
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is PolicyListSideEffect.OpenUrl -> uriHandler.openUri(effect.url)
+                is PolicyListSideEffect.OpenUrl -> {
+                    runCatching { uriHandler.openUri(effect.url) }
+                        .onFailure { snackbarHostState.showSnackbar(openUrlFailedMessage) }
+                }
                 PolicyListSideEffect.ShowLoadError -> {
                     val result = snackbarHostState.showSnackbar(message = loadErrorMessage, actionLabel = retryActionLabel)
                     if (result == SnackbarResult.ActionPerformed) {

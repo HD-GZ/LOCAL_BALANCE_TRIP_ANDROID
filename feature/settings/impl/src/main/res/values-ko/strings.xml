@@ -27,6 +27,7 @@
     <string name="settings_error_load">내 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="settings_action_retry">재시도</string>
     <string name="settings_profile_updated">정보가 수정되었어요.</string>
+    <string name="settings_error_no_email_app">설치된 메일 앱이 없어요. 메일 앱을 설치한 후 다시 시도해 주세요.</string>
 
     <string name="edit_profile_title">정보 변경</string>
     <string name="edit_profile_back_cd">뒤로</string>
