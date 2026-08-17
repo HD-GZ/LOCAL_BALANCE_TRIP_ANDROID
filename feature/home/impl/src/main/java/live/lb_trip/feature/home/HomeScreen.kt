@@ -162,12 +162,16 @@ private fun HomeTabContentBody(
         if (state.isDiagnosed && state.profileSummary != null) {
             HomeMyTypeSection(summary = state.profileSummary, imageLoader = imageLoader, onRetakeClick = onDiagnosisClick)
         } else if (!state.isTypeSectionLoading) {
-            HomeTypeStripSection(
-                types = state.profileTypes,
-                imageLoader = imageLoader,
-                isLoggedIn = state.isLoggedIn,
-                onStartClick = onDiagnosisClick,
-            )
+            if (state.isLoggedIn) {
+                HomeNoTypeCard(types = state.profileTypes, imageLoader = imageLoader, onStartClick = onDiagnosisClick)
+            } else {
+                HomeTypeStripSection(
+                    types = state.profileTypes,
+                    imageLoader = imageLoader,
+                    isLoggedIn = state.isLoggedIn,
+                    onStartClick = onDiagnosisClick,
+                )
+            }
         }
 
         HomeIncentiveSection(
