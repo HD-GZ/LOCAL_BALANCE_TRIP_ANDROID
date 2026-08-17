@@ -7,10 +7,6 @@
     <string name="home_hero_cta_policies">Browse support benefits</string>
     <string name="home_hero_pick_template">This month\'s pick · %1$s</string>
 
-    <string name="home_guest_note_title">You can browse without signing in</string>
-    <string name="home_guest_note_description">Check support programs freely — sign in to take the travel style test and save courses.</string>
-    <string name="home_guest_note_cta">Sign in</string>
-
     <string name="home_type_section_title">What kind of traveler am I?</string>
     <string name="home_type_section_cta">Start test</string>
     <string name="home_type_section_cta_guest">Sign in to start</string>
@@ -40,9 +36,6 @@
     <string name="home_status_before_trip">Upcoming</string>
     <string name="home_status_traveling">In progress</string>
     <string name="home_status_completed">Completed</string>
-    <string name="home_feed_login_title">No saved courses yet</string>
-    <string name="home_feed_login_desc">Sign in to test your travel style and save courses.</string>
-    <string name="home_feed_login_cta">Sign in to save</string>
 
     <string name="home_popular_section_title">Popular courses right now</string>
 

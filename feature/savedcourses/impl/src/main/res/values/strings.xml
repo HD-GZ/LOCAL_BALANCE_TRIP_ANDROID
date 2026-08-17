@@ -27,7 +27,6 @@
     <string name="sharedcourse_content_description_pause">Pause</string>
     <string name="sharedcourse_navigate_cta">Directions</string>
     <string name="sharedcourse_map_app_unavailable">Couldn\'t open the map app.</string>
-    <string name="sharedcourse_readonly_note">Shared courses are read-only.</string>
     <string name="savedcourses_status_before_trip">Upcoming</string>
     <string name="savedcourses_status_traveling">In progress</string>
     <string name="savedcourses_status_completed">Completed</string>

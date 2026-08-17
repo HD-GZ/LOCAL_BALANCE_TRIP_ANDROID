@@ -152,10 +152,6 @@ private fun HomeTabContentBody(
             onPolicyAllClick = onPolicyAllClick,
         )
 
-        if (!state.isLoggedIn) {
-            HomeGuestNote(onLoginClick = onNavigateToSignin)
-        }
-
         if (state.isDiagnosed && state.profileSummary != null) {
             HomeMyTypeSection(summary = state.profileSummary, imageLoader = imageLoader, onRetakeClick = onDiagnosisClick)
         } else if (!state.isTypeSectionLoading) {
@@ -179,7 +175,6 @@ private fun HomeTabContentBody(
             imageLoader = imageLoader,
             onSavedAllClick = onSavedAllClick,
             onFeedItemClick = onFeedItemClick,
-            onNavigateToSignin = onNavigateToSignin,
             onPopularCourseClick = onPopularCourseClick,
         )
     }

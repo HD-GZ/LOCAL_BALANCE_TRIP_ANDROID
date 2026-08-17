@@ -299,7 +299,6 @@ private fun TourCompactContent(
 private fun TourTopBar(state: TourUiState, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         TourHeader(
-            regionName = state.regionName,
             title = state.title,
             onBackClick = onBackClick,
         )

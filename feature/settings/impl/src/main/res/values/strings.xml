@@ -6,7 +6,6 @@
     <string name="settings_stat_saved_courses">Saved Courses</string>
     <string name="settings_stat_count_template">%1$d</string>
 
-    <string name="settings_group_label">Settings</string>
     <string name="settings_menu_retake_diagnosis">Travel Profile · Retake Test</string>
     <string name="settings_menu_licenses">Open Source Licenses</string>
     <string name="settings_menu_terms">Terms of Service</string>
@@ -55,7 +54,7 @@
     <string name="edit_profile_gender_female">Female</string>
     <string name="edit_profile_gender_not_specified">Prefer not to say</string>
 
-    <string name="edit_profile_withdraw_link">Want to leave? Delete account ›</string>
+    <string name="edit_profile_withdraw_link">Want to leave?</string>
     <string name="edit_profile_withdraw_dialog_title">Delete your account?</string>
     <string name="edit_profile_withdraw_dialog_body">Deleting your account will remove all your data. Are you sure you want to continue?</string>
     <string name="edit_profile_withdraw_cancel">Cancel</string>

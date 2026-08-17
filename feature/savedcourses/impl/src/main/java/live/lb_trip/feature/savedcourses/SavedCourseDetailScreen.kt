@@ -290,7 +290,6 @@ private fun SavedCourseDetailScreenContent(
         modifier = modifier,
         topBar = {
             SavedCourseDetailAppBar(
-                regionName = state.regionName,
                 title = state.title,
                 onBackClick = onBack,
                 showBackButton = showBackButton,

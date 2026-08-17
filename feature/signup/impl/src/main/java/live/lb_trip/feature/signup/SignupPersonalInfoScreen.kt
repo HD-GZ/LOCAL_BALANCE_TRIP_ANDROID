@@ -38,6 +38,7 @@ import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbInputField
 import live.lb_trip.core.designsystem.component.LbStepBar
 import live.lb_trip.core.designsystem.component.LbTopBar
+import live.lb_trip.domain.model.TermsType
 import live.lb_trip.feature.signup.components.AgreeBlock
 import live.lb_trip.feature.signup.components.GenderSegmented
 
@@ -46,6 +47,7 @@ internal fun SignupPersonalInfoScreen(
     state: SignupUiState,
     onBack: () -> Unit,
     onIntent: (SignupIntent) -> Unit,
+    onNavigateToTerms: (TermsType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val birthYearFocusRequester = remember { FocusRequester() }
@@ -79,13 +81,6 @@ internal fun SignupPersonalInfoScreen(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.SemiBold,
                 letterSpacing = (-0.528).sp,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.signup_personal_description),
-                color = LbColors.Ink2,
-                fontSize = 14.sp,
-                lineHeight = 22.4.sp,
             )
             Spacer(modifier = Modifier.height(22.dp))
 
@@ -139,6 +134,8 @@ internal fun SignupPersonalInfoScreen(
                 onTogglePrivacy = { onIntent(SignupIntent.TogglePrivacy) },
                 onToggleMarketing = { onIntent(SignupIntent.ToggleMarketing) },
                 onToggleAll = { onIntent(SignupIntent.ToggleAllTerms) },
+                onTermsLabelClick = { onNavigateToTerms(TermsType.SERVICE) },
+                onPrivacyLabelClick = { onNavigateToTerms(TermsType.PRIVACY) },
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -168,5 +165,6 @@ private fun SignupPersonalInfoPreview() {
         state = SignupUiState(),
         onBack = {},
         onIntent = {},
+        onNavigateToTerms = {},
     )
 }

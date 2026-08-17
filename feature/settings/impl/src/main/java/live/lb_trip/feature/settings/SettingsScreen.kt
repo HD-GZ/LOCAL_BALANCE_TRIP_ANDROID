@@ -143,7 +143,6 @@ private fun MyInfoTabContentBody(
                 SettingsProfileHeader(
                     name = state.name,
                     email = state.email,
-                    onEditInfoClick = { onIntent(SettingsIntent.EditProfileClick) },
                     modifier = Modifier.padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 6.dp),
                 )
                 SettingsSavedCoursesRow(
@@ -158,7 +157,6 @@ private fun MyInfoTabContentBody(
             }
 
             SettingsMenuGroup(
-                label = stringResource(R.string.settings_group_label),
                 items = listOf(
                     SettingsMenuItem(editInfoLabel) { onIntent(SettingsIntent.EditProfileClick) },
                     SettingsMenuItem(retakeDiagnosisLabel) { onIntent(SettingsIntent.RetakeDiagnosisClick) },

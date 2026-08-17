@@ -6,7 +6,6 @@
     <string name="settings_stat_saved_courses">저장한 코스</string>
     <string name="settings_stat_count_template">%1$d개</string>
 
-    <string name="settings_group_label">설정</string>
     <string name="settings_menu_retake_diagnosis">여행 프로필 · 재진단</string>
     <string name="settings_menu_licenses">오픈소스 라이선스</string>
     <string name="settings_menu_terms">이용약관 확인</string>
@@ -55,7 +54,7 @@
     <string name="edit_profile_gender_female">여성</string>
     <string name="edit_profile_gender_not_specified">선택 안 함</string>
 
-    <string name="edit_profile_withdraw_link">탈퇴를 원하시나요? 회원탈퇴 ›</string>
+    <string name="edit_profile_withdraw_link">탈퇴를 원하시나요?</string>
     <string name="edit_profile_withdraw_dialog_title">탈퇴하시겠어요?</string>
     <string name="edit_profile_withdraw_dialog_body">탈퇴하면 모든 데이터가 삭제돼요. 정말 탈퇴하시겠어요?</string>
     <string name="edit_profile_withdraw_cancel">취소</string>

@@ -22,19 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
@@ -42,7 +37,6 @@ import coil3.compose.AsyncImage
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.R as DesignSystemR
-import live.lb_trip.core.designsystem.component.LbButton
 import live.lb_trip.domain.model.HomeFeedItem
 import live.lb_trip.domain.model.PopularCourse
 import live.lb_trip.domain.model.TravelStatus
@@ -53,7 +47,6 @@ internal fun HomeFeedSection(
     imageLoader: ImageLoader,
     onSavedAllClick: () -> Unit,
     onFeedItemClick: (HomeFeedItem) -> Unit,
-    onNavigateToSignin: () -> Unit,
     onPopularCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -74,7 +67,6 @@ internal fun HomeFeedSection(
                 lineHeight = 16.sp,
                 modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 6.dp, bottom = 12.dp),
             )
-            HomeLoginPromptCard(onLoginClick = onNavigateToSignin)
             if (state.popularCourses.isNotEmpty()) {
                 Column(modifier = Modifier.padding(top = 26.dp)) {
                     HomeSectionHeader(title = stringResource(R.string.home_popular_section_title))
@@ -117,64 +109,6 @@ internal fun HomeFeedSection(
                     modifier = Modifier.width(230.dp),
                 )
             }
-        }
-    }
-}
-
-private fun Modifier.dashedBorder(color: Color, cornerRadius: Dp, strokeWidth: Dp = 1.dp): Modifier = drawBehind {
-    drawRoundRect(
-        color = color,
-        style = Stroke(
-            width = strokeWidth.toPx(),
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(8f, 6f), 0f),
-        ),
-        cornerRadius = CornerRadius(cornerRadius.toPx()),
-    )
-}
-
-@Composable
-private fun HomeLoginPromptCard(onLoginClick: () -> Unit, modifier: Modifier = Modifier) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .padding(horizontal = 20.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(LbColors.Paper)
-            .dashedBorder(LbColors.Line2, 16.dp)
-            .padding(vertical = 22.dp, horizontal = 20.dp),
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(38.dp)
-                .clip(RoundedCornerShape(11.dp))
-                .background(LbColors.GreenTint)
-                .border(1.dp, LbColors.GreenLine, RoundedCornerShape(11.dp)),
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_route),
-                contentDescription = null,
-                tint = LbColors.Green,
-                modifier = Modifier.size(18.dp),
-            )
-        }
-        Text(
-            text = stringResource(R.string.home_feed_login_title),
-            color = LbColors.Ink,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 12.dp),
-        )
-        Text(
-            text = stringResource(R.string.home_feed_login_desc),
-            color = LbColors.Ink3,
-            fontSize = 12.sp,
-            lineHeight = 18.sp,
-            modifier = Modifier.padding(top = 6.dp, bottom = 15.dp),
-        )
-        LbButton(onClick = onLoginClick, modifier = Modifier.fillMaxWidth().height(44.dp)) {
-            Text(text = stringResource(R.string.home_feed_login_cta), fontSize = 13.5.sp, fontWeight = FontWeight.Bold)
         }
     }
 }

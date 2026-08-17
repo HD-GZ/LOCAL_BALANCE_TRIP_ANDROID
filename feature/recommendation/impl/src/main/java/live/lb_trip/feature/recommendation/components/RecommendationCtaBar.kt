@@ -2,13 +2,8 @@ package live.lb_trip.feature.recommendation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -30,18 +25,6 @@ internal fun RecommendationCtaBar(isSaved: Boolean, onSaveClick: () -> Unit, mod
             colors = if (isSaved) SavedButtonColors else LbButtonDefaults.greenColors(),
             border = if (isSaved) BorderStroke(width = 1.dp, color = GreenLine) else null,
             modifier = Modifier.fillMaxWidth(),
-            leadingIcon = if (isSaved) {
-                {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = Green,
-                        modifier = Modifier.size(15.dp).padding(end = 6.dp),
-                    )
-                }
-            } else {
-                null
-            },
         )
     }
 }

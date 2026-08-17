@@ -60,7 +60,6 @@ import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.core.designsystem.component.LbTopBar
 import live.lb_trip.core.util.formatAudioPosition
-import live.lb_trip.domain.model.TravelStatus
 
 @Composable
 internal fun SharedCourseDetailScreen(
@@ -160,7 +159,6 @@ private fun SharedCourseDetailScreenContent(
                 ) {
                     SharedCourseFromRow(
                         sharedByName = state.sharedByName,
-                        status = state.status,
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
 
@@ -174,17 +172,6 @@ private fun SharedCourseDetailScreenContent(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 16.dp)) {
-                        Icon(
-                            imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_pin),
-                            contentDescription = null,
-                            tint = LbColors.Ink3,
-                            modifier = Modifier.size(13.dp),
-                        )
-                        Spacer(modifier = Modifier.width(5.dp))
-                        Text(text = state.regionName, color = LbColors.Ink2, fontSize = 11.5.sp)
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
                     Text(
                         text = state.title,
                         color = LbColors.Ink,
@@ -288,14 +275,6 @@ private fun SharedCourseDetailScreenContent(
                             }
                         }
                     }
-
-                    Text(
-                        text = stringResource(R.string.sharedcourse_readonly_note),
-                        color = LbColors.Ink2,
-                        fontSize = 11.5.sp,
-                        lineHeight = 17.sp,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 20.dp),
-                    )
                 }
             }
 
@@ -307,7 +286,7 @@ private fun SharedCourseDetailScreenContent(
 }
 
 @Composable
-private fun SharedCourseFromRow(sharedByName: String, status: TravelStatus, modifier: Modifier = Modifier) {
+private fun SharedCourseFromRow(sharedByName: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -327,29 +306,8 @@ private fun SharedCourseFromRow(sharedByName: String, status: TravelStatus, modi
             text = stringResource(R.string.sharedcourse_from_template, sharedByName),
             color = LbColors.Ink2,
             fontSize = 12.5.sp,
-            modifier = Modifier.weight(1f),
         )
-        SharedCourseStatusBadge(status = status)
     }
-}
-
-@Composable
-private fun SharedCourseStatusBadge(status: TravelStatus, modifier: Modifier = Modifier) {
-    val label = when (status) {
-        TravelStatus.BEFORE_TRIP -> stringResource(R.string.savedcourses_status_before_trip)
-        TravelStatus.TRAVELING -> stringResource(R.string.savedcourses_status_traveling)
-        TravelStatus.COMPLETED -> stringResource(R.string.savedcourses_status_completed)
-    }
-    Text(
-        text = label,
-        color = LbColors.Green,
-        fontSize = 10.sp,
-        fontWeight = FontWeight.Bold,
-        modifier = modifier
-            .clip(RoundedCornerShape(6.dp))
-            .background(LbColors.GreenTint2)
-            .padding(horizontal = 8.dp, vertical = 3.dp),
-    )
 }
 
 @Composable

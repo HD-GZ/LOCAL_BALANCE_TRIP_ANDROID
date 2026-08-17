@@ -146,7 +146,6 @@ private fun PopularCourseDetailScreenContent(
                 onBackClick = onBack,
                 backContentDescription = stringResource(R.string.home_course_detail_back_content_description),
                 title = state.title.ifBlank { null },
-                subtitle = state.regionName.ifBlank { null },
             )
         },
         snackbarHost = snackbarHost,
