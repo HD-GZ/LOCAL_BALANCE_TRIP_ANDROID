@@ -6,6 +6,8 @@ data class CourseStop(
     val hasAudioGuide: Boolean,
     val walkDuration: String?,
     val description: String?,
+    val latitude: Double,
+    val longitude: Double,
     val audioUrl: String? = null,
 )
 

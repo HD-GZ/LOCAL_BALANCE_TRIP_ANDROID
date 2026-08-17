@@ -1,5 +1,6 @@
 <resources>
     <string name="recommendation_title_region">Recommended Courses</string>
+    <string name="recommendation_loading_label">Preparing your recommended courses</string>
     <string name="recommendation_title_course">%1$s Recommended Courses</string>
     <string name="recommendation_title_detail">Course Details</string>
     <string name="recommendation_back_content_description">Back</string>
@@ -14,6 +15,7 @@
 
     <string name="recommendation_section_course_order">Course order</string>
     <string name="recommendation_section_incentives">Benefits available for this course</string>
+    <string name="recommendation_incentives_empty">There are no benefits available for this course yet.</string>
 
     <string name="recommendation_audio_guide_label">Audio guide</string>
     <string name="recommendation_audio_time_placeholder">0:00 / 2:14</string>

@@ -179,7 +179,7 @@ private fun CourseScreenContent(
         snackbarHost()
 
         if (state.isLoading) {
-            LbLoadingOverlay()
+            LbLoadingOverlay(label = stringResource(R.string.recommendation_loading_label))
         }
     }
 }

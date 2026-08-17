@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHost
@@ -27,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
@@ -47,12 +49,13 @@ import live.lb_trip.core.designsystem.component.LbTimeline
 import live.lb_trip.core.designsystem.component.LbTimelineStop
 import live.lb_trip.core.util.formatAudioPosition
 import live.lb_trip.feature.recommendation.components.Ink
+import live.lb_trip.feature.recommendation.components.Ink3
 import live.lb_trip.feature.recommendation.components.LineSoft
 import live.lb_trip.feature.recommendation.components.Paper
 import live.lb_trip.feature.recommendation.components.RecommendationBrandBar
+import live.lb_trip.feature.recommendation.components.RecommendationCourseMap
 import live.lb_trip.feature.recommendation.components.RecommendationCtaBar
 import live.lb_trip.feature.recommendation.components.RecommendationFlowStepper
-import live.lb_trip.feature.recommendation.components.RecommendationTimelineMapPlaceholder
 import live.lb_trip.feature.recommendation.components.ScreenBg
 
 @Composable
@@ -174,6 +177,17 @@ private fun DetailScreenContent(
                     Text(text = state.title, color = Ink, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(18.dp))
 
+                    if (state.stops.isNotEmpty()) {
+                        RecommendationCourseMap(
+                            stops = state.stops,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(160.dp)
+                                .clip(RoundedCornerShape(14.dp)),
+                        )
+                        Spacer(modifier = Modifier.height(18.dp))
+                    }
+
                     Text(
                         text = stringResource(R.string.recommendation_section_course_order),
                         color = Ink,
@@ -199,7 +213,6 @@ private fun DetailScreenContent(
                         stringResource(R.string.recommendation_walk_time_template, walkDuration)
                     },
                     onToggle = { onIntent(RecommendationDetailIntent.StopToggled(it)) },
-                    detailHeader = { RecommendationTimelineMapPlaceholder() },
                     audioContent = { index ->
                         LbAudioPlayer(
                             isPlaying = state.playingStopIndex == index && state.isAudioPlaying,
@@ -216,22 +229,22 @@ private fun DetailScreenContent(
                     detailBottomPadding = 7.dp,
                 )
 
+                HorizontalDivider(
+                    color = LineSoft,
+                    thickness = 1.dp,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
+                )
+
+                Text(
+                    text = stringResource(R.string.recommendation_section_incentives),
+                    color = Ink,
+                    fontSize = 13.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+
                 if (state.benefits.isNotEmpty()) {
-                    HorizontalDivider(
-                        color = LineSoft,
-                        thickness = 1.dp,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 18.dp),
-                    )
-
-                    Text(
-                        text = stringResource(R.string.recommendation_section_incentives),
-                        color = Ink,
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-
                     Column {
                         state.benefits.fastForEachIndexed { index, benefit ->
                             if (index > 0) HorizontalDivider(color = LineSoft, thickness = 1.dp)
@@ -243,6 +256,13 @@ private fun DetailScreenContent(
                             )
                         }
                     }
+                } else {
+                    Text(
+                        text = stringResource(R.string.recommendation_incentives_empty),
+                        color = Ink3,
+                        fontSize = 12.5.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                    )
                 }
             }
 
