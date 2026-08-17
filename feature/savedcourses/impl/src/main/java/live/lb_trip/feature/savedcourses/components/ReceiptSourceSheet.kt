@@ -44,7 +44,7 @@ internal fun ReceiptSourceSheet(
             Text(
                 text = stringResource(R.string.savedcourses_receipt_source_sheet_title),
                 color = LbColors.Ink,
-                fontSize = 15.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(horizontal = 20.dp, vertical = 12.dp)
@@ -73,6 +73,6 @@ private fun ReceiptSourceRow(label: String, onClick: () -> Unit, modifier: Modif
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = label, color = LbColors.Ink, fontSize = 14.sp, fontWeight = FontWeight.SemiBold)
+        Text(text = label, color = LbColors.Ink2, fontSize = 14.sp, fontWeight = FontWeight.Normal)
     }
 }

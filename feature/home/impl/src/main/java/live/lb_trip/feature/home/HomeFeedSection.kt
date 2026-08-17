@@ -126,10 +126,16 @@ private fun String.toTravelStatusLabelOrNull(): String? {
 @Composable
 private fun HomeFeedCard(item: HomeFeedItem, imageLoader: ImageLoader, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val isRecommended = item is HomeFeedItem.RecommendedRegionItem
+    val status = item.subtitle?.let { runCatching { TravelStatus.valueOf(it) }.getOrNull() }
     val flagLabel = if (isRecommended) {
         stringResource(R.string.home_feed_flag_recommended)
     } else {
         item.subtitle?.toTravelStatusLabelOrNull() ?: stringResource(R.string.home_feed_flag_saved)
+    }
+    val flagBackground = when {
+        isRecommended -> Color(0xF0FFFFFF)
+        status == TravelStatus.COMPLETED -> Color(0xEB2F6F4F)
+        else -> Color(0xEB5B7488)
     }
 
     Column(
@@ -171,7 +177,7 @@ private fun HomeFeedCard(item: HomeFeedItem, imageLoader: ImageLoader, onClick: 
                     .align(Alignment.TopStart)
                     .padding(10.dp)
                     .clip(RoundedCornerShape(100.dp))
-                    .background(if (isRecommended) Color(0xF0FFFFFF) else Color(0xEB5B7488))
+                    .background(flagBackground)
                     .padding(horizontal = 9.dp, vertical = 4.dp),
             )
         }

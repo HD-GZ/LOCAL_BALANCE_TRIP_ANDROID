@@ -72,6 +72,7 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseReportTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
 import live.lb_trip.feature.savedcourses.components.createReceiptImageUri
+import live.lb_trip.feature.savedcourses.components.rememberReportCarbonSavingLabel
 import live.lb_trip.feature.savedcourses.components.rememberReportDistanceValueLabel
 import live.lb_trip.feature.savedcourses.components.rememberReportMetaLabel
 
@@ -278,6 +279,7 @@ private fun SavedCourseDetailScreenContent(
         if (pagerState.currentPage != targetPage) {
             pagerState.animateScrollToPage(targetPage)
         }
+    val reportCarbonSavingLabel = rememberReportCarbonSavingLabel(state.reportDistanceWalkedMeters)
     }
     LaunchedEffect(pagerState.settledPage) {
         val pageTab = SavedCourseDetailTab.entries[pagerState.settledPage]
@@ -355,6 +357,7 @@ private fun SavedCourseDetailScreenContent(
     val dateLabel = stringResource(R.string.savedcources_detail_story_date_label)
     val appName = stringResource(R.string.savedcources_detail_story_app_name)
     val shareDescription = stringResource(R.string.savedcourses_detail_share_description, state.username)
+                            carbonSavingLabel = reportCarbonSavingLabel,
 
     if (showShareSheet) {
         SavedCourseShareSheet(

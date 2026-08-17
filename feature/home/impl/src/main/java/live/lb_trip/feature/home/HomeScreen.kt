@@ -5,18 +5,21 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
@@ -325,19 +328,24 @@ internal fun HomeSectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp),
     ) {
-        Text(text = title, color = LbColors.Ink, fontSize = 15.5.sp, fontWeight = FontWeight.Bold)
+        Text(text = title, color = LbColors.Ink, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         Box(modifier = Modifier.weight(1f))
         if (trailingLabel != null && onTrailingClick != null) {
-            Text(
-                text = trailingLabel,
-                color = LbColors.Green,
-                fontSize = 12.5.sp,
-                fontWeight = FontWeight.SemiBold,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
                     .clickable(onClick = onTrailingClick)
                     .padding(4.dp),
-            )
+            ) {
+                Text(text = trailingLabel, color = LbColors.Ink3, fontSize = 12.sp)
+                Icon(
+                    imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_chevron_right),
+                    contentDescription = null,
+                    tint = LbColors.Ink3,
+                    modifier = Modifier.padding(start = 2.dp).size(13.dp),
+                )
+            }
         }
     }
 }
@@ -397,7 +405,7 @@ private fun HomeTypeCard(type: ProfileType, imageLoader: ImageLoader, onClick: (
             text = type.nickname,
             color = LbColors.Ink,
             fontSize = 13.5.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.SemiBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(top = 4.dp),
@@ -473,23 +481,44 @@ private fun HomeMyTypeSection(
     }
 }
 
+private val SliderDotSize = 13.dp
+
 @Composable
 private fun HomeSliderBar(score: Int, modifier: Modifier = Modifier) {
     val fraction = ((score - 1).coerceIn(0, 4) / 4f)
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(5.dp)
-            .clip(RoundedCornerShape(100.dp))
-            .background(LbColors.SurfaceSoft),
-    ) {
+    BoxWithConstraints(modifier = modifier.fillMaxWidth().height(SliderDotSize)) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(fraction)
+                .align(Alignment.CenterStart)
+                .fillMaxWidth()
                 .height(5.dp)
                 .clip(RoundedCornerShape(100.dp))
-                .background(LbColors.Green),
+                .background(LbColors.SurfaceSoft),
         )
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .offset(x = (maxWidth - SliderDotSize) * fraction)
+                .size(SliderDotSize)
+                .clip(CircleShape)
+                .background(LbColors.GreenLine),
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(1.dp)
+                    .fillMaxSize()
+                    .clip(CircleShape)
+                    .background(LbColors.Paper),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(2.5.dp)
+                        .fillMaxSize()
+                        .clip(CircleShape)
+                        .background(LbColors.Green),
+                )
+            }
+        }
     }
 }
 

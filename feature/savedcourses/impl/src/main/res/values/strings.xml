@@ -39,7 +39,7 @@
     <string name="savedcourses_detail_walk_time_template">%1$s min walk</string>
     <string name="savedcourses_detail_benefits_title">Benefits available for this course</string>
 
-    <string name="savedcourses_detail_receipt_total_label">Total earned</string>
+    <string name="savedcourses_detail_receipt_total_label">Local spending amount</string>
     <string name="savedcourses_detail_receipt_amount_template">₩%1$,d</string>
     <string name="savedcourses_detail_receipt_empty">No receipts registered yet.</string>
 
@@ -50,6 +50,8 @@
     <string name="savedcourses_detail_report_distance_label">Distance walked</string>
     <string name="savedcourses_detail_report_distance_template">%1$,d</string>
     <string name="savedcourses_detail_report_distance_unit">m</string>
+    <string name="savedcourses_detail_report_carbon_label">Carbon saved</string>
+    <string name="savedcourses_detail_report_carbon_template">%1$.1fkg</string>
     <string name="savedcourses_detail_report_share_button">Share</string>
     <string name="savedcourses_detail_report_not_available">You can view the report once the tour ends.</string>
 
