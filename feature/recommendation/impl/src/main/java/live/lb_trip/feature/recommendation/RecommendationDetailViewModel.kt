@@ -53,7 +53,7 @@ class RecommendationDetailViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         title = detail.title,
-                        stops = detail.places.map(CoursePlace::toCourseStop).toPersistentList(),
+                        stops = detail.places.toCourseStops().toPersistentList(),
                         benefits = detail.benefits.map(CourseBenefit::toRecommendationBenefit).toPersistentList(),
                     )
                 }
@@ -148,14 +148,18 @@ class RecommendationDetailViewModel @Inject constructor(
 
 }
 
-private fun CoursePlace.toCourseStop(): CourseStop = CourseStop(
-    order = order,
-    name = name,
-    hasAudioGuide = hasAudio,
-    walkDuration = walkMinutes?.toString(),
-    description = description,
-    audioUrl = audioUrl,
-)
+private fun List<CoursePlace>.toCourseStops(): List<CourseStop> = mapIndexed { index, place ->
+    CourseStop(
+        order = place.order,
+        name = place.name,
+        hasAudioGuide = place.hasAudio,
+        walkDuration = getOrNull(index + 1)?.walkMinutes?.toString(),
+        description = place.description,
+        latitude = place.latitude,
+        longitude = place.longitude,
+        audioUrl = place.audioUrl,
+    )
+}
 
 private fun CourseBenefit.toRecommendationBenefit(): RecommendationBenefit =
     RecommendationBenefit(title = title, description = description, url = url)

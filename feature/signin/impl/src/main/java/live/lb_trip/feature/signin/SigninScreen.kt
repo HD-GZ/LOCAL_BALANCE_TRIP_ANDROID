@@ -132,6 +132,9 @@ private fun SigninScreenContent(
             LbTopBar(
                 onBackClick = onBack,
                 backContentDescription = stringResource(R.string.signin_back),
+                title = stringResource(R.string.signin_brand_prefix) +
+                    stringResource(R.string.signin_brand_highlight) +
+                    stringResource(R.string.signin_brand_suffix),
                 containerColor = Color.Transparent,
                 windowInsets = WindowInsets(0, 0, 0, 0),
             )
@@ -198,14 +201,6 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
             letterSpacing = (-0.345).sp,
         )
         Spacer(modifier = Modifier.height(22.dp))
-        Text(
-            text = stringResource(R.string.signin_title),
-            color = LbColors.Green,
-            fontSize = 11.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = 1.54.sp,
-        )
-        Spacer(modifier = Modifier.height(11.dp))
         Text(
             text = stringResource(R.string.signin_welcome),
             color = LbColors.Ink,

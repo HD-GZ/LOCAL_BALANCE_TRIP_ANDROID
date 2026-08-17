@@ -16,7 +16,6 @@
     <string name="signup_existing_account">"Already have an account? "</string>
     <string name="signup_signin">Sign in</string>
     <string name="signup_personal_heading">Enter your basic info</string>
-    <string name="signup_personal_description">Your date of birth is used to determine youth benefits.</string>
     <string name="signup_name">Name</string>
     <string name="signup_name_placeholder">Jane Doe</string>
     <string name="signup_birth_date">Date of birth</string>

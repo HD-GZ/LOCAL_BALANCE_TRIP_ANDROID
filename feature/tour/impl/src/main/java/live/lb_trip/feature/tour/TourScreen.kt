@@ -251,7 +251,7 @@ private fun TourCompactContent(
     var topBarHeightPx by remember { mutableIntStateOf(0) }
     val topBarHeight = with(density) { topBarHeightPx.toDp() }
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize().background(LbColors.Paper)) {
         val sheetMaxHeight = (maxHeight - topBarHeight - actionBarHeight).coerceAtLeast(0.dp)
 
         BottomSheetScaffold(
@@ -268,6 +268,7 @@ private fun TourCompactContent(
             },
             sheetPeekHeight = SheetPeekHeight,
             sheetContainerColor = LbColors.Paper,
+            sheetShadowElevation = 0.dp,
             sheetContent = {
                 Box(modifier = Modifier.heightIn(max = sheetMaxHeight)) {
                     TourStopsContent(state = state, onIntent = onIntent)
@@ -299,7 +300,6 @@ private fun TourCompactContent(
 private fun TourTopBar(state: TourUiState, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         TourHeader(
-            regionName = state.regionName,
             title = state.title,
             onBackClick = onBackClick,
         )

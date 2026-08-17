@@ -13,7 +13,6 @@ import live.lb_trip.feature.savedcourses.SavedCourseDetailTab
 
 @Composable
 internal fun SavedCourseDetailAppBar(
-    regionName: String,
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -21,7 +20,6 @@ internal fun SavedCourseDetailAppBar(
 ) {
     LbTopBar(
         title = title,
-        subtitle = regionName.ifEmpty { null },
         onBackClick = onBackClick,
         backContentDescription = stringResource(R.string.savedcourses_detail_back_content_description),
         modifier = modifier,

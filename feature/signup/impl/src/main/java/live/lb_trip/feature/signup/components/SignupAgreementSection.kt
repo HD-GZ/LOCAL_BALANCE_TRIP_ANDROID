@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
@@ -38,6 +39,8 @@ internal fun AgreeBlock(
     onTogglePrivacy: () -> Unit,
     onToggleMarketing: () -> Unit,
     onToggleAll: () -> Unit,
+    onTermsLabelClick: () -> Unit,
+    onPrivacyLabelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val allAgreed = termsAgreed && privacyAgreed && marketingAgreed
@@ -78,12 +81,14 @@ internal fun AgreeBlock(
             label = stringResource(R.string.signup_terms),
             required = true,
             onClick = onToggleTos,
+            onLabelClick = onTermsLabelClick,
         )
         AgreeRow(
             checked = privacyAgreed,
             label = stringResource(R.string.signup_privacy),
             required = true,
             onClick = onTogglePrivacy,
+            onLabelClick = onPrivacyLabelClick,
         )
         AgreeRow(
             checked = marketingAgreed,
@@ -100,6 +105,7 @@ private fun AgreeRow(
     label: String,
     required: Boolean,
     onClick: () -> Unit,
+    onLabelClick: (() -> Unit)? = null,
 ) {
     Row(
         modifier = Modifier
@@ -121,6 +127,8 @@ private fun AgreeRow(
                 text = label,
                 color = LbColors.Ink2,
                 fontSize = 13.5.sp,
+                textDecoration = if (onLabelClick != null) TextDecoration.Underline else null,
+                modifier = if (onLabelClick != null) Modifier.clickable(onClick = onLabelClick) else Modifier,
             )
         }
     }

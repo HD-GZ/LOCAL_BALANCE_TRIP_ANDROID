@@ -27,7 +27,6 @@
     <string name="sharedcourse_content_description_pause">Pause</string>
     <string name="sharedcourse_navigate_cta">Directions</string>
     <string name="sharedcourse_map_app_unavailable">Couldn\'t open the map app.</string>
-    <string name="sharedcourse_readonly_note">Shared courses are read-only.</string>
     <string name="savedcourses_status_before_trip">Upcoming</string>
     <string name="savedcourses_status_traveling">In progress</string>
     <string name="savedcourses_status_completed">Completed</string>
@@ -40,7 +39,7 @@
     <string name="savedcourses_detail_walk_time_template">%1$s min walk</string>
     <string name="savedcourses_detail_benefits_title">Benefits available for this course</string>
 
-    <string name="savedcourses_detail_receipt_total_label">Total earned</string>
+    <string name="savedcourses_detail_receipt_total_label">Local spending amount</string>
     <string name="savedcourses_detail_receipt_amount_template">₩%1$,d</string>
     <string name="savedcourses_detail_receipt_empty">No receipts registered yet.</string>
 
@@ -51,6 +50,8 @@
     <string name="savedcourses_detail_report_distance_label">Distance walked</string>
     <string name="savedcourses_detail_report_distance_template">%1$,d</string>
     <string name="savedcourses_detail_report_distance_unit">m</string>
+    <string name="savedcourses_detail_report_carbon_label">Carbon saved</string>
+    <string name="savedcourses_detail_report_carbon_template">%1$.1fkg</string>
     <string name="savedcourses_detail_report_share_button">Share</string>
     <string name="savedcourses_detail_report_not_available">You can view the report once the tour ends.</string>
 
@@ -76,6 +77,9 @@
     <string name="savedcourses_detail_error_empty_places">No place information to display.</string>
     <string name="savedcourses_detail_error_receipts">Couldn\'t load the receipt list.</string>
     <string name="savedcourses_detail_error_report">Couldn\'t load the report.</string>
+    <string name="savedcourses_detail_error_open_url_failed">No app was found to open this.</string>
+    <string name="savedcourses_detail_camera_unavailable">No camera app is available.</string>
+    <string name="savedcourses_detail_instagram_unavailable">Instagram app not found.</string>
     <string name="savedcourses_detail_action_retry">Retry</string>
     <string name="savedcourses_detail_back_content_description">Back</string>
 

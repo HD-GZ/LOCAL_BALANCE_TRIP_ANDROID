@@ -46,6 +46,8 @@ import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.receiptDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
 import live.lb_trip.feature.savedcourses.sharedCourseDetailScreen
+import live.lb_trip.feature.settings.TermsRoute
+import live.lb_trip.feature.settings.termsScreen
 import live.lb_trip.feature.signin.SigninRoute
 import live.lb_trip.feature.signin.signinScreen
 import live.lb_trip.feature.signup.SignupRoute
@@ -214,6 +216,8 @@ private fun MainNavGraph(
                     popUpTo(HomeRoute) { inclusive = false }
                 }
             },
+            onNavigateToTerms = { type -> navController.navigate(TermsRoute(type.name)) },
         )
+        termsScreen(navController = navController)
     }
 }
