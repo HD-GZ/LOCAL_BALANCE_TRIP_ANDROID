@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -119,13 +118,11 @@ private fun ResultStepContent(
                 onClick = { onIntent(PropensityIntent.RestartDiagnosis) },
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
-                modifier = Modifier.weight(1f).fillMaxHeight(),
             )
             LbBottomActionButton(
                 text = stringResource(R.string.propensity_cta_course_recommendation),
                 onClick = { onIntent(PropensityIntent.CourseRecommendationClicked) },
                 maxLines = 3,
-                modifier = Modifier.weight(1f).fillMaxHeight(),
             )
         }
     }

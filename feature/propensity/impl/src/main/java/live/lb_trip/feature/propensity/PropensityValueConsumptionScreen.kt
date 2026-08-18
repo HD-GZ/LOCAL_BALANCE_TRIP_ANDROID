@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -128,12 +127,10 @@ private fun ValueConsumptionStepContent(
                 onClick = onBack,
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
-                modifier = Modifier.weight(1f).fillMaxHeight(),
             )
             LbBottomActionButton(
                 text = stringResource(R.string.propensity_cta_view_result),
                 onClick = { onIntent(PropensityIntent.SubmitAndViewResult) },
-                modifier = Modifier.weight(1f).fillMaxHeight(),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,

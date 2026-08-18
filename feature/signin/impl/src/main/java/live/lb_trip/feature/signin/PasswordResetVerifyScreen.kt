@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -134,13 +133,11 @@ internal fun PasswordResetVerifyScreen(
                     enabled = !state.isLoading,
                     colors = LbButtonDefaults.whiteColors(),
                     border = BorderStroke(1.dp, LbColors.Line2),
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.password_reset_next),
                     onClick = { onIntent(PasswordResetIntent.ConfirmCodeClicked) },
                     enabled = isCodeComplete && !state.isLoading,
-                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
             }
         }
