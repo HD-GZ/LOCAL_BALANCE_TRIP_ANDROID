@@ -349,7 +349,7 @@ internal fun HomeSectionHeader(
             color = LbColors.Ink,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )

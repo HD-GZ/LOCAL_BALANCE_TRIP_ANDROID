@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -127,13 +128,13 @@ internal fun SignupEmailVerifyScreen(
                     enabled = !state.isLoading,
                     colors = LbButtonDefaults.whiteColors(),
                     border = BorderStroke(1.dp, LbColors.Line2),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.signup_confirm_code),
                     onClick = { onIntent(SignupIntent.ConfirmCodeClicked) },
                     enabled = isCodeComplete && !state.isLoading,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
             }
         }

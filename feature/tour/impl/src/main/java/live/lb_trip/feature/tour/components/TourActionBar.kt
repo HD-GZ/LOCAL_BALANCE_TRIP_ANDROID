@@ -1,5 +1,6 @@
 package live.lb_trip.feature.tour.components
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,12 +30,12 @@ internal fun TourActionBar(
                     text = stringResource(R.string.tour_action_view_detail),
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.whiteColors(),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.tour_action_view_report),
                     onClick = onFinishAcknowledged,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).fillMaxHeight(),
                 )
             }
         } else {
