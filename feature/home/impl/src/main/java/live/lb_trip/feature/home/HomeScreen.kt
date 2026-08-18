@@ -344,8 +344,15 @@ internal fun HomeSectionHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.fillMaxWidth().padding(horizontal = 20.dp),
     ) {
-        Text(text = title, color = LbColors.Ink, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-        Box(modifier = Modifier.weight(1f))
+        Text(
+            text = title,
+            color = LbColors.Ink,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
         if (trailingLabel != null && onTrailingClick != null) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -354,7 +361,7 @@ internal fun HomeSectionHeader(
                     .clickable(onClick = onTrailingClick)
                     .padding(4.dp),
             ) {
-                Text(text = trailingLabel, color = LbColors.Ink3, fontSize = 12.sp)
+                Text(text = trailingLabel, color = LbColors.Ink3, fontSize = 12.sp, maxLines = 1, softWrap = false)
                 Icon(
                     imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_chevron_right),
                     contentDescription = null,

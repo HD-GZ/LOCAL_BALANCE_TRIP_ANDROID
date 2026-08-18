@@ -84,6 +84,7 @@ fun LbBottomActionButton(
     colors: ButtonColors = LbButtonDefaults.greenColors(),
     elevation: ButtonElevation? = LbButtonDefaults.buttonElevation(),
     border: BorderStroke? = null,
+    maxLines: Int = 2,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
 ) {
@@ -105,7 +106,7 @@ fun LbBottomActionButton(
             fontSize = 15.5.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
-            maxLines = 2,
+            maxLines = maxLines,
             overflow = TextOverflow.Ellipsis,
         )
         trailingIcon?.invoke()

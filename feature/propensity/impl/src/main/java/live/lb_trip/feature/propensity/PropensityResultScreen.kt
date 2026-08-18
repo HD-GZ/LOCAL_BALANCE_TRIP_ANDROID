@@ -123,6 +123,7 @@ private fun ResultStepContent(
             LbBottomActionButton(
                 text = stringResource(R.string.propensity_cta_course_recommendation),
                 onClick = { onIntent(PropensityIntent.CourseRecommendationClicked) },
+                maxLines = 3,
                 modifier = Modifier.weight(1f),
             )
         }
