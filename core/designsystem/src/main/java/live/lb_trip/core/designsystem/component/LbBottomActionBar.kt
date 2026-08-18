@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -95,10 +97,17 @@ fun LbBottomActionButton(
         colors = colors,
         elevation = elevation,
         border = border,
-        modifier = modifier.height(LbBottomActionBarDefaults.ButtonHeight),
+        modifier = modifier.heightIn(min = LbBottomActionBarDefaults.ButtonHeight),
     ) {
         leadingIcon?.invoke()
-        Text(text = text, fontSize = 15.5.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = text,
+            fontSize = 15.5.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
         trailingIcon?.invoke()
     }
 }

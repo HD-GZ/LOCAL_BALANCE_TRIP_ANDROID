@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,6 +44,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -261,7 +263,7 @@ private fun HomeHero(
                 colors = LbButtonDefaults.whiteColors(),
                 shape = RoundedCornerShape(13.dp),
                 elevation = null,
-                modifier = Modifier.fillMaxWidth().height(50.dp),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
             ) {
                 Text(
                     text = stringResource(
@@ -270,6 +272,9 @@ private fun HomeHero(
                     color = LbColors.GreenForest,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_chevron_right),
@@ -286,12 +291,15 @@ private fun HomeHero(
                 ),
                 shape = RoundedCornerShape(13.dp),
                 elevation = null,
-                modifier = Modifier.fillMaxWidth().height(48.dp).padding(top = 9.dp),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).padding(top = 9.dp),
             ) {
                 Text(
                     text = stringResource(R.string.home_hero_cta_policies),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
             if (heroItem != null) {

@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,7 +30,9 @@ fun LbMainBottomBar(items: List<LbBottomTabItem>, modifier: Modifier = Modifier)
                     selected = item.selected,
                     onClick = item.onClick,
                     icon = { Icon(imageVector = item.icon, contentDescription = item.label) },
-                    label = { Text(text = item.label, fontSize = 11.sp) },
+                    label = {
+                        Text(text = item.label, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
                     colors = LbBottomTabItemColors,
                 )
             }
