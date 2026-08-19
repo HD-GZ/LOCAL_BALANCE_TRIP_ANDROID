@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
@@ -124,14 +127,17 @@ internal fun HomeNoTypeCard(
                     NoTypeStep(
                         value = stringResource(R.string.home_notype_step_time_value),
                         label = stringResource(R.string.home_notype_step_time_label),
+                        modifier = Modifier.weight(1f),
                     )
                     NoTypeStep(
                         value = stringResource(R.string.home_notype_step_questions_value),
                         label = stringResource(R.string.home_notype_step_questions_label),
+                        modifier = Modifier.weight(1f),
                     )
                     NoTypeStep(
                         value = stringResource(R.string.home_notype_step_retake_value),
                         label = stringResource(R.string.home_notype_step_retake_label),
+                        modifier = Modifier.weight(1f),
                     )
                 }
                 HorizontalDivider(color = LbColors.LineSoft, thickness = 1.dp)
@@ -141,13 +147,16 @@ internal fun HomeNoTypeCard(
                 colors = LbButtonDefaults.greenColors(),
                 shape = RoundedCornerShape(13.dp),
                 elevation = null,
-                modifier = Modifier.fillMaxWidth().height(46.dp),
+                modifier = Modifier.fillMaxWidth().heightIn(min = 46.dp),
             ) {
                 Text(
                     text = stringResource(R.string.home_notype_cta),
                     color = LbColors.Paper,
                     fontSize = 14.5.sp,
                     fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 Icon(
                     imageVector = ImageVector.vectorResource(DesignSystemR.drawable.ic_chevron_right),
@@ -184,8 +193,21 @@ internal fun HomeNoTypeCard(
 @Composable
 private fun NoTypeStep(value: String, label: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
-        Text(text = value, color = LbColors.Ink, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-        Text(text = label, color = LbColors.Ink3, fontSize = 11.sp)
+        Text(
+            text = value,
+            color = LbColors.Ink,
+            fontSize = 15.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = label,
+            color = LbColors.Ink3,
+            fontSize = 11.sp,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 

@@ -32,6 +32,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.ImageLoader
@@ -208,8 +209,18 @@ internal fun receiptDetailDangerColors() = ButtonDefaults.buttonColors(
 
 @Composable
 private fun ReceiptDetailRow(label: String, value: String, modifier: Modifier = Modifier) {
-    Row(modifier = modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 13.dp)) {
-        Text(text = label, color = LbColors.Ink3, fontSize = 12.sp, modifier = Modifier.width(72.dp))
+    Row(
+        verticalAlignment = Alignment.Top,
+        modifier = modifier.fillMaxWidth().padding(horizontal = 15.dp, vertical = 13.dp),
+    ) {
+        Text(
+            text = label,
+            color = LbColors.Ink3,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.width(100.dp),
+        )
         Text(text = value, color = LbColors.Ink, fontSize = 13.sp, modifier = Modifier.weight(1f))
     }
 }

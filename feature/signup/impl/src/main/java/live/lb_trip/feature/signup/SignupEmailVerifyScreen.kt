@@ -127,13 +127,11 @@ internal fun SignupEmailVerifyScreen(
                     enabled = !state.isLoading,
                     colors = LbButtonDefaults.whiteColors(),
                     border = BorderStroke(1.dp, LbColors.Line2),
-                    modifier = Modifier.weight(1f),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.signup_confirm_code),
                     onClick = { onIntent(SignupIntent.ConfirmCodeClicked) },
                     enabled = isCodeComplete && !state.isLoading,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }

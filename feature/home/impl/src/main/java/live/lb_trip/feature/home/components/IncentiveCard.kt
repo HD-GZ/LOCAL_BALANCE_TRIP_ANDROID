@@ -40,13 +40,16 @@ fun IncentiveCard(card: HomeIncentiveCard, onClick: () -> Unit, modifier: Modifi
             .clickable(onClick = onClick)
             .padding(16.dp),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(7.dp), modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = card.regionName,
                 color = LbColors.GreenDk,
                 fontSize = 10.5.sp,
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
+                    .weight(1f, fill = false)
                     .clip(RoundedCornerShape(6.dp))
                     .background(LbColors.GreenTint)
                     .border(1.dp, LbColors.GreenLine, RoundedCornerShape(6.dp))
@@ -57,6 +60,8 @@ fun IncentiveCard(card: HomeIncentiveCard, onClick: () -> Unit, modifier: Modifi
                 color = stateColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .clip(RoundedCornerShape(100.dp))
                     .background(stateBackground)

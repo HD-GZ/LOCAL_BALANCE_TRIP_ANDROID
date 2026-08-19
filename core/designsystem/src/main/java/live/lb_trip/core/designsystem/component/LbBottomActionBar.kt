@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -20,8 +18,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -59,18 +61,45 @@ fun LbBottomActionBar(
     )
 }
 
-/** A row of evenly-spaced buttons for bars with more than one action (e.g. resend + confirm). */
+/**
+ * A row of evenly-spaced, equal-width buttons for bars with more than one action (e.g.
+ * resend + confirm). Every child is stretched to the tallest one's real measured height,
+ * so a sibling whose text wraps onto extra lines doesn't leave the others looking short.
+ * (`Modifier.height(IntrinsicSize.Max)` doesn't reliably reach through Material3's
+ * `Button`/`Surface` internals, so this measures children twice via [SubcomposeLayout]
+ * instead of relying on intrinsics.)
+ */
 @Composable
 fun LbBottomActionButtonRow(
     modifier: Modifier = Modifier,
-    content: @Composable RowScope.() -> Unit,
+    content: @Composable () -> Unit,
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(LbBottomActionBarDefaults.ButtonSpacing),
-        content = content,
-    )
+    SubcomposeLayout(modifier = modifier.fillMaxWidth()) { constraints ->
+        val spacingPx = LbBottomActionBarDefaults.ButtonSpacing.roundToPx()
+
+        val probeMeasurables = subcompose(LbBottomActionRowSlot.Probe, content)
+        if (probeMeasurables.isEmpty()) {
+            return@SubcomposeLayout layout(constraints.maxWidth, 0) {}
+        }
+        val childWidth = ((constraints.maxWidth - spacingPx * (probeMeasurables.size - 1)) / probeMeasurables.size)
+            .coerceAtLeast(0)
+        val childConstraints = Constraints(minWidth = childWidth, maxWidth = childWidth)
+        val maxHeight = probeMeasurables.maxOf { it.measure(childConstraints).height }
+
+        val placeables = subcompose(LbBottomActionRowSlot.Final, content).map {
+            it.measure(childConstraints.copy(minHeight = maxHeight, maxHeight = maxHeight))
+        }
+        layout(constraints.maxWidth, maxHeight) {
+            var x = 0
+            placeables.forEach { placeable ->
+                placeable.placeRelative(x, 0)
+                x += childWidth + spacingPx
+            }
+        }
+    }
 }
+
+private enum class LbBottomActionRowSlot { Probe, Final }
 
 /** A single button sized/styled to match every other bottom action bar's primary CTA. */
 @Composable
@@ -82,6 +111,7 @@ fun LbBottomActionButton(
     colors: ButtonColors = LbButtonDefaults.greenColors(),
     elevation: ButtonElevation? = LbButtonDefaults.buttonElevation(),
     border: BorderStroke? = null,
+    maxLines: Int = 2,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
 ) {
@@ -95,10 +125,17 @@ fun LbBottomActionButton(
         colors = colors,
         elevation = elevation,
         border = border,
-        modifier = modifier.height(LbBottomActionBarDefaults.ButtonHeight),
+        modifier = modifier.heightIn(min = LbBottomActionBarDefaults.ButtonHeight),
     ) {
         leadingIcon?.invoke()
-        Text(text = text, fontSize = 15.5.sp, fontWeight = FontWeight.SemiBold)
+        Text(
+            text = text,
+            fontSize = 15.5.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            maxLines = maxLines,
+            overflow = TextOverflow.Ellipsis,
+        )
         trailingIcon?.invoke()
     }
 }

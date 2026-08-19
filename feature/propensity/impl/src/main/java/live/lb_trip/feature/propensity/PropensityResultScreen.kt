@@ -118,12 +118,11 @@ private fun ResultStepContent(
                 onClick = { onIntent(PropensityIntent.RestartDiagnosis) },
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
-                modifier = Modifier.weight(1f),
             )
             LbBottomActionButton(
                 text = stringResource(R.string.propensity_cta_course_recommendation),
                 onClick = { onIntent(PropensityIntent.CourseRecommendationClicked) },
-                modifier = Modifier.weight(1f),
+                maxLines = 3,
             )
         }
     }

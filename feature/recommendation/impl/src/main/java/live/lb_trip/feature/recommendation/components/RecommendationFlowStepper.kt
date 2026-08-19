@@ -24,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import live.lb_trip.feature.recommendation.R
@@ -52,7 +54,7 @@ internal fun RecommendationFlowStepper(currentStep: Int, modifier: Modifier = Mo
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.width(48.dp),
+                modifier = Modifier.width(64.dp),
             ) {
                 FlowStepCircle(step = step, currentStep = currentStep)
                 Spacer(modifier = Modifier.height(7.dp))
@@ -61,6 +63,9 @@ internal fun RecommendationFlowStepper(currentStep: Int, modifier: Modifier = Mo
                     fontSize = 10.5.sp,
                     fontWeight = if (step == currentStep) FontWeight.SemiBold else FontWeight.Medium,
                     color = if (step <= currentStep) Green else Ink3,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
                 )
             }
         }

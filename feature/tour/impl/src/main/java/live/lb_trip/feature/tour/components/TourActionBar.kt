@@ -29,12 +29,10 @@ internal fun TourActionBar(
                     text = stringResource(R.string.tour_action_view_detail),
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.whiteColors(),
-                    modifier = Modifier.weight(1f),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.tour_action_view_report),
                     onClick = onFinishAcknowledged,
-                    modifier = Modifier.weight(1f),
                 )
             }
         } else {

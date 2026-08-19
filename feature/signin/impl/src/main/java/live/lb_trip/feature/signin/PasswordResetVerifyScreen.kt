@@ -133,13 +133,11 @@ internal fun PasswordResetVerifyScreen(
                     enabled = !state.isLoading,
                     colors = LbButtonDefaults.whiteColors(),
                     border = BorderStroke(1.dp, LbColors.Line2),
-                    modifier = Modifier.weight(1f),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.password_reset_next),
                     onClick = { onIntent(PasswordResetIntent.ConfirmCodeClicked) },
                     enabled = isCodeComplete && !state.isLoading,
-                    modifier = Modifier.weight(1f),
                 )
             }
         }

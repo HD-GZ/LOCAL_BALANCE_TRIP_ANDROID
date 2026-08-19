@@ -127,12 +127,10 @@ private fun ValueConsumptionStepContent(
                 onClick = onBack,
                 colors = LbButtonDefaults.whiteColors(),
                 border = BorderStroke(width = 1.dp, color = OutlineBorder),
-                modifier = Modifier.weight(1f),
             )
             LbBottomActionButton(
                 text = stringResource(R.string.propensity_cta_view_result),
                 onClick = { onIntent(PropensityIntent.SubmitAndViewResult) },
-                modifier = Modifier.weight(1f),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
