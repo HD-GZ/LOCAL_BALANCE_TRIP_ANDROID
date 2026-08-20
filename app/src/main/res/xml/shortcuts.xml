@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <shortcut
+        android:shortcutId="saved_courses"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_courses"
+        android:shortcutShortLabel="@string/shortcut_saved_courses_short_label"
+        android:shortcutLongLabel="@string/shortcut_saved_courses_long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="live.lb_trip.localbalancetrip"
+            android:targetClass="live.lb_trip.localbalancetrip.MainActivity">
+            <extra
+                android:name="shortcut_route"
+                android:value="saved_courses" />
+        </intent>
+    </shortcut>
+
+    <shortcut
+        android:shortcutId="policy_list"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_benefits"
+        android:shortcutShortLabel="@string/shortcut_policy_list_short_label"
+        android:shortcutLongLabel="@string/shortcut_policy_list_long_label">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="live.lb_trip.localbalancetrip"
+            android:targetClass="live.lb_trip.localbalancetrip.MainActivity">
+            <extra
+                android:name="shortcut_route"
+                android:value="policy_list" />
+        </intent>
+    </shortcut>
+
+</shortcuts>

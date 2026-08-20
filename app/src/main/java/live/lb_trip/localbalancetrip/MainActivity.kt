@@ -60,6 +60,7 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
     private val pendingShareToken = mutableStateOf<String?>(null)
+    private val pendingShortcutRoute = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
@@ -68,6 +69,7 @@ class MainActivity : ComponentActivity() {
 
         splashScreen.setKeepOnScreenCondition { viewModel.uiState.value.isLoggedIn == null }
         pendingShareToken.value = intent.extractShareToken()
+        pendingShortcutRoute.value = intent.extractShortcutRoute()
 
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -95,6 +97,8 @@ class MainActivity : ComponentActivity() {
                             isLoggedIn = isLoggedIn,
                             pendingShareToken = pendingShareToken.value,
                             onShareTokenConsumed = { pendingShareToken.value = null },
+                            pendingShortcutRoute = pendingShortcutRoute.value,
+                            onShortcutRouteConsumed = { pendingShortcutRoute.value = null },
                         )
                     }
                 }
@@ -106,8 +110,13 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         pendingShareToken.value = intent.extractShareToken()
+        pendingShortcutRoute.value = intent.extractShortcutRoute()
     }
 }
+
+private const val EXTRA_SHORTCUT_ROUTE = "shortcut_route"
+private const val SHORTCUT_ROUTE_SAVED_COURSES = "saved_courses"
+private const val SHORTCUT_ROUTE_POLICY_LIST = "policy_list"
 
 private fun Intent.extractShareToken(): String? {
     val uri = data ?: return null
@@ -115,11 +124,15 @@ private fun Intent.extractShareToken(): String? {
     return uri.getQueryParameter("token")
 }
 
+private fun Intent.extractShortcutRoute(): String? = getStringExtra(EXTRA_SHORTCUT_ROUTE)
+
 @Composable
 private fun MainNavGraph(
     isLoggedIn: Boolean,
     pendingShareToken: String? = null,
     onShareTokenConsumed: () -> Unit = {},
+    pendingShortcutRoute: String? = null,
+    onShortcutRouteConsumed: () -> Unit = {},
 ) {
     val navController = rememberNavController()
 
@@ -127,6 +140,16 @@ private fun MainNavGraph(
         if (pendingShareToken != null) {
             navController.navigate(SharedCourseRoute(pendingShareToken))
             onShareTokenConsumed()
+        }
+    }
+
+    LaunchedEffect(pendingShortcutRoute) {
+        when (pendingShortcutRoute) {
+            SHORTCUT_ROUTE_SAVED_COURSES -> navController.navigate(SavedCoursesRoute())
+            SHORTCUT_ROUTE_POLICY_LIST -> navController.navigate(PolicyListRoute)
+        }
+        if (pendingShortcutRoute != null) {
+            onShortcutRouteConsumed()
         }
     }
 

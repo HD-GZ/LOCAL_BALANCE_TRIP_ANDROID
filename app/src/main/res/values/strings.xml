@@ -7,4 +7,9 @@
     <string name="main_brand_suffix">" Trip"</string>
     <string name="main_tab_main">Home</string>
     <string name="main_tab_my_info">My Info</string>
+
+    <string name="shortcut_saved_courses_short_label">Courses</string>
+    <string name="shortcut_saved_courses_long_label">Saved courses</string>
+    <string name="shortcut_policy_list_short_label">Benefits</string>
+    <string name="shortcut_policy_list_long_label">Traveler benefits</string>
 </resources>

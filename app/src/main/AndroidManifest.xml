@@ -39,6 +39,10 @@
                 <data android:host="kakaolink"
                     android:scheme="kakao${KAKAO_KEY}" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <provider
