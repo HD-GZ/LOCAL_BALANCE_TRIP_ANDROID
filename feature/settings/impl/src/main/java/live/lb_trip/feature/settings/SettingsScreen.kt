@@ -161,14 +161,16 @@ private fun MyInfoTabContentBody(
             }
 
             SettingsMenuGroup(
-                items = listOf(
-                    SettingsMenuItem(editInfoLabel) { onIntent(SettingsIntent.EditProfileClick) },
-                    SettingsMenuItem(retakeDiagnosisLabel) { onIntent(SettingsIntent.RetakeDiagnosisClick) },
-                    SettingsMenuItem(licensesLabel) { onIntent(SettingsIntent.LicensesClick) },
-                    SettingsMenuItem(termsLabel) { onIntent(SettingsIntent.TermsClick) },
-                    SettingsMenuItem(privacyLabel) { onIntent(SettingsIntent.PrivacyClick) },
-                    SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.ContactClick) },
-                ),
+                items = buildList {
+                    if (state.isLoggedIn) {
+                        add(SettingsMenuItem(editInfoLabel) { onIntent(SettingsIntent.EditProfileClick) })
+                        add(SettingsMenuItem(retakeDiagnosisLabel) { onIntent(SettingsIntent.RetakeDiagnosisClick) })
+                    }
+                    add(SettingsMenuItem(licensesLabel) { onIntent(SettingsIntent.LicensesClick) })
+                    add(SettingsMenuItem(termsLabel) { onIntent(SettingsIntent.TermsClick) })
+                    add(SettingsMenuItem(privacyLabel) { onIntent(SettingsIntent.PrivacyClick) })
+                    add(SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.ContactClick) })
+                },
                 versionName = versionName,
                 modifier = Modifier.padding(top = 10.dp),
             )

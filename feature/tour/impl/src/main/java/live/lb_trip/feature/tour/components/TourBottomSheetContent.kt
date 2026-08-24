@@ -6,15 +6,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.collections.immutable.ImmutableList
@@ -58,7 +54,6 @@ internal fun TourBottomSheetContent(
     onPlaybackToggle: () -> Unit,
     onBenefitClick: (String) -> Unit,
     modifier: Modifier = Modifier,
-    bottomSpacerHeight: Dp = 24.dp,
 ) {
     val stop = stops.getOrNull(currentStopIndex) ?: return
     val lastIndex = stops.lastIndex
@@ -69,8 +64,7 @@ internal fun TourBottomSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(LbColors.Paper)
-            .windowInsetsPadding(WindowInsets.navigationBars),
+            .background(LbColors.Paper),
     ) {
         Column(
             modifier = Modifier
@@ -100,8 +94,6 @@ internal fun TourBottomSheetContent(
                 onPlaybackToggle = onPlaybackToggle,
                 onBenefitClick = onBenefitClick,
             )
-
-            Spacer(modifier = Modifier.height(bottomSpacerHeight))
         }
     }
 }
@@ -162,8 +154,12 @@ private fun TourSheetHeaderRow(
         Column(horizontalAlignment = Alignment.End) {
             when {
                 isVisited -> {
-                    Text(stringResource(R.string.tour_sheet_recorded), color = LbColors.GreenForest, fontSize = 15.sp, fontWeight = FontWeight.Bold)
-                    Text(stringResource(R.string.tour_sheet_order_label, displayOrder), color = LbColors.Ink2, fontSize = 9.5.sp)
+                    Text(
+                        stringResource(R.string.tour_sheet_order_label, displayOrder),
+                        color = LbColors.GreenForest,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
                 }
                 stop.walkMinutesToNext != null -> {
                     Text(

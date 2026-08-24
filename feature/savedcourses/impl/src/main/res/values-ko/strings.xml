@@ -1,6 +1,5 @@
 <resources>
     <string name="savedcourses_title">저장한 코스</string>
-    <string name="savedcourses_count_template">%1$d</string>
     <string name="savedcourses_error_load">코스를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</string>
     <string name="savedcourses_empty">저장한 코스가 없어요.</string>
     <string name="savedcourses_select_prompt">왼쪽 목록에서 코스를 선택해 주세요.</string>
@@ -100,11 +99,10 @@
 
     <string name="savedcourses_receipt_detail_title">증빙 상세</string>
     <string name="savedcourses_receipt_detail_edit_content_description">수정</string>
-    <string name="savedcourses_receipt_detail_state_registered">환급 증빙 등록 완료</string>
     <string name="savedcourses_receipt_detail_field_merchant">가맹점명</string>
     <string name="savedcourses_receipt_detail_field_amount">결제 금액</string>
     <string name="savedcourses_receipt_detail_field_date">결제 일자</string>
-    <string name="savedcourses_receipt_detail_edit_hint">OCR이 잘못 읽은 값을 직접 고칠 수 있어요.</string>
+    <string name="savedcourses_receipt_detail_edit_hint">잘못 기입된 값을 직접 고칠 수 있어요.</string>
     <string name="savedcourses_receipt_detail_save">수정 내용 저장</string>
     <string name="savedcourses_receipt_detail_cancel">취소</string>
     <string name="savedcourses_receipt_detail_download">원본 다운로드</string>

@@ -61,7 +61,7 @@ import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 @Composable
 internal fun TourScreen(
     onBack: () -> Unit,
-    onTourFinished: () -> Unit,
+    onTourFinished: (showReport: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TourViewModel = hiltViewModel(),
     onIntent: (TourIntent) -> Unit = viewModel::onIntent,
@@ -163,7 +163,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
     scaffoldState: BottomSheetScaffoldState,
     messages: TourSideEffectMessages,
     onIntent: (TourIntent) -> Unit,
-    onTourFinished: () -> Unit,
+    onTourFinished: (showReport: Boolean) -> Unit,
     onOpenBenefitUrl: (String) -> Unit,
 ) {
     when (effect) {
@@ -191,7 +191,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
         }
 
         is TourSideEffect.OpenBenefitUrl -> onOpenBenefitUrl(effect.url)
-        TourSideEffect.NavigateBack -> onTourFinished()
+        is TourSideEffect.NavigateBack -> onTourFinished(effect.showReport)
         TourSideEffect.CollapseSheet -> if (!isTwoPane) {
             launch { scaffoldState.bottomSheetState.partialExpand() }
         }
@@ -289,6 +289,7 @@ private fun TourCompactContent(
             state = state,
             onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
             onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
+            onViewReportClick = { onIntent(TourIntent.ViewReportClicked) },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .onSizeChanged { actionBarHeightPx = it.height },
@@ -368,6 +369,7 @@ private fun TourTwoPaneContent(
                                 state = state,
                                 onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
                                 onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
+                                onViewReportClick = { onIntent(TourIntent.ViewReportClicked) },
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .onSizeChanged { actionBarHeightPx = it.height },

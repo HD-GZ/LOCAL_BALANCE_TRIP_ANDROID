@@ -83,7 +83,7 @@ private fun TourRouteRow(
                 )
             }
         }
-        Column(modifier = Modifier.padding(start = 12.dp, bottom = 14.dp)) {
+        Column(modifier = Modifier.padding(start = 12.dp, bottom = if (showConnector) 14.dp else 0.dp)) {
             Text(
                 text = stop.name,
                 color = if (status == TourStopStatus.Upcoming) LbColors.Ink3 else LbColors.Ink,

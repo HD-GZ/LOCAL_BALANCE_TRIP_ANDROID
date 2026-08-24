@@ -41,7 +41,6 @@ import live.lb_trip.core.designsystem.R as DesignSystemR
 internal fun RCard(
     title: String,
     reason: String,
-    isBest: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     imageUrl: String? = null,
@@ -53,11 +52,7 @@ internal fun RCard(
             .height(IntrinsicSize.Min)
             .clip(RoundedCornerShape(15.dp))
             .background(Paper)
-            .border(
-                width = if (isBest) 1.5.dp else 1.dp,
-                color = if (isBest) GreenLine else Line,
-                shape = RoundedCornerShape(15.dp),
-            )
+            .border(width = 1.dp, color = Line, shape = RoundedCornerShape(15.dp))
             .clickable(onClick = onClick),
     ) {
         val imageModifier = Modifier.fillMaxHeight().defaultMinSize(minHeight = 118.dp)

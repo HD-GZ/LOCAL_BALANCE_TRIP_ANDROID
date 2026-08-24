@@ -86,6 +86,7 @@ internal fun SavedCourseDetailScreen(
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
     tourEnded: Boolean,
+    tourEndedShowReport: Boolean,
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
@@ -159,9 +160,11 @@ internal fun SavedCourseDetailScreen(
         }
     }
 
-    LaunchedEffect(tourEnded) {
+    LaunchedEffect(tourEnded, tourEndedShowReport) {
         if (tourEnded) {
             onIntent(SavedCourseDetailIntent.Retry)
+            val targetTab = if (tourEndedShowReport) SavedCourseDetailTab.REPORT else SavedCourseDetailTab.COURSE
+            onIntent(SavedCourseDetailIntent.TabSelected(targetTab))
             onTourEndedConsumed()
         }
     }

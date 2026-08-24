@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,6 +67,7 @@ internal fun PasswordResetVerifyScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -125,7 +130,7 @@ internal fun PasswordResetVerifyScreen(
         }
 
         val isCodeComplete = state.code.length == 6
-        LbBottomActionBar {
+        LbBottomActionBar(windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime)) {
             LbBottomActionButtonRow {
                 LbBottomActionButton(
                     text = stringResource(R.string.password_reset_resend_code),
