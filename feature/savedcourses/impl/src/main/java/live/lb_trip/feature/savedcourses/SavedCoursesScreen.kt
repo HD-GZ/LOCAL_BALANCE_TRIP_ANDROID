@@ -123,15 +123,6 @@ private fun SavedCoursesScreenContent(
                 onBackClick = onBack,
                 backContentDescription = stringResource(R.string.savedcourses_back_content_description),
                 title = stringResource(R.string.savedcourses_title),
-                titleTrailing = {
-                    Text(
-                        text = stringResource(R.string.savedcourses_count_template, state.courses.size),
-                        color = LbColors.Green,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 6.dp),
-                    )
-                },
             )
         },
         snackbarHost = snackbarHost,

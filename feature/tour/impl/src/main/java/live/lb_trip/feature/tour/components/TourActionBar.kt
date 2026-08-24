@@ -1,9 +1,12 @@
 package live.lb_trip.feature.tour.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import live.lb_trip.core.designsystem.LbColors
 import live.lb_trip.core.designsystem.component.LbBottomActionBar
 import live.lb_trip.core.designsystem.component.LbBottomActionButton
 import live.lb_trip.core.designsystem.component.LbBottomActionButtonRow
@@ -16,6 +19,7 @@ internal fun TourActionBar(
     state: TourUiState,
     onNextStopClick: () -> Unit,
     onFinishAcknowledged: () -> Unit,
+    onViewReportClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lastIndex = state.stops.lastIndex
@@ -29,10 +33,11 @@ internal fun TourActionBar(
                     text = stringResource(R.string.tour_action_view_detail),
                     onClick = onFinishAcknowledged,
                     colors = LbButtonDefaults.whiteColors(),
+                    border = BorderStroke(1.dp, LbColors.Line2),
                 )
                 LbBottomActionButton(
                     text = stringResource(R.string.tour_action_view_report),
-                    onClick = onFinishAcknowledged,
+                    onClick = onViewReportClick,
                 )
             }
         } else {

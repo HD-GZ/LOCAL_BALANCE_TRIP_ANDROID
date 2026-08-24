@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastForEach
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -161,11 +161,10 @@ private fun CourseScreenContent(
                     )
                     Spacer(modifier = Modifier.height(15.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        state.courses.fastForEachIndexed { index, course ->
+                        state.courses.fastForEach { course ->
                             RCard(
                                 title = course.title,
                                 reason = course.reason,
-                                isBest = index == 0,
                                 imageUrl = course.imageUrl,
                                 imageLoader = imageLoader,
                                 onClick = { onCourseSelected(course.id) },

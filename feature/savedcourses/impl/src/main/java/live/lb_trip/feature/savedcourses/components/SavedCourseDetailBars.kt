@@ -1,6 +1,10 @@
 package live.lb_trip.feature.savedcourses.components
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,12 +42,17 @@ internal fun SavedCourseDetailCtaBar(
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    if (tab == SavedCourseDetailTab.COURSE && status == TravelStatus.COMPLETED) {
+        Spacer(modifier = modifier.windowInsetsPadding(WindowInsets.navigationBars))
+        return
+    }
+
     LbBottomActionBar(modifier = modifier) {
         when (tab) {
             SavedCourseDetailTab.COURSE -> LbBottomActionButton(
                 text = stringResource(R.string.savedcourses_detail_cta_tour_start),
                 onClick = onTourStartClick,
-                enabled = hasStops && status != TravelStatus.COMPLETED,
+                enabled = hasStops,
                 modifier = Modifier.fillMaxWidth(),
             )
             SavedCourseDetailTab.RECEIPT -> LbBottomActionButton(

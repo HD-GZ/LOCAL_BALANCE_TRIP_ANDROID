@@ -23,7 +23,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -70,7 +69,6 @@ import live.lb_trip.feature.home.components.IncentiveCard
 private val HeroScrimTop = Color(0xE6122A20)
 private val HeroScrimBottom = Color(0x33163524)
 private val HeroChipBackground = Color(0x33FFFFFF)
-private val HeroGhostBackground = Color(0x21FFFFFF)
 
 @Composable
 fun HomeTabContent(
@@ -158,7 +156,6 @@ private fun HomeTabContentBody(
             imageLoader = imageLoader,
             isLoggedIn = state.isLoggedIn,
             onDiagnosisClick = onDiagnosisClick,
-            onPolicyAllClick = onPolicyAllClick,
         )
 
         if (state.isDiagnosed && state.profileSummary != null) {
@@ -199,7 +196,6 @@ private fun HomeHero(
     imageLoader: ImageLoader,
     isLoggedIn: Boolean,
     onDiagnosisClick: () -> Unit,
-    onPolicyAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val heroItem = heroItems.firstOrNull()
@@ -281,25 +277,6 @@ private fun HomeHero(
                     contentDescription = null,
                     tint = LbColors.GreenForest,
                     modifier = Modifier.padding(start = 8.dp).size(18.dp),
-                )
-            }
-            LbButton(
-                onClick = onPolicyAllClick,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = HeroGhostBackground,
-                    contentColor = Color.White,
-                ),
-                shape = RoundedCornerShape(13.dp),
-                elevation = null,
-                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).padding(top = 9.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.home_hero_cta_policies),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
                 )
             }
             if (heroItem != null) {

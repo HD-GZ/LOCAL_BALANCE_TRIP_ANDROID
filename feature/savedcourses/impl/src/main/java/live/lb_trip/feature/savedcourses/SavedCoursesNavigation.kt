@@ -22,6 +22,9 @@ fun NavGraphBuilder.savedCoursesScreen(
         val tourEnded by backStackEntry.savedStateHandle
             .getStateFlow(TOUR_ENDED_RESULT_KEY, false)
             .collectAsStateWithLifecycle()
+        val tourEndedShowReport by backStackEntry.savedStateHandle
+            .getStateFlow(TOUR_ENDED_SHOW_REPORT_RESULT_KEY, false)
+            .collectAsStateWithLifecycle()
         SavedCoursesPaneHost(
             onBack = onBack,
             onNavigateToTour = onNavigateToTour,
@@ -32,8 +35,10 @@ fun NavGraphBuilder.savedCoursesScreen(
                 backStackEntry.savedStateHandle[RECEIPT_REGISTERED_RESULT_KEY] = false
             },
             tourEnded = tourEnded,
+            tourEndedShowReport = tourEndedShowReport,
             onTourEndedConsumed = {
                 backStackEntry.savedStateHandle[TOUR_ENDED_RESULT_KEY] = false
+                backStackEntry.savedStateHandle[TOUR_ENDED_SHOW_REPORT_RESULT_KEY] = false
             },
             initialSavedCourseId = route.initialSavedCourseId,
         )

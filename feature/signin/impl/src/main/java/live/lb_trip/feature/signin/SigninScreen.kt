@@ -45,8 +45,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -189,18 +187,6 @@ private fun SigninHeader(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
-        Text(
-            text = buildAnnotatedString {
-                append(stringResource(R.string.signin_brand_prefix))
-                withStyle(SpanStyle(color = LbColors.Green)) { append(stringResource(R.string.signin_brand_highlight)) }
-                append(stringResource(R.string.signin_brand_suffix))
-            },
-            color = LbColors.Ink,
-            fontSize = 23.sp,
-            fontWeight = FontWeight.SemiBold,
-            letterSpacing = (-0.345).sp,
-        )
-        Spacer(modifier = Modifier.height(22.dp))
         Text(
             text = stringResource(R.string.signin_welcome),
             color = LbColors.Ink,

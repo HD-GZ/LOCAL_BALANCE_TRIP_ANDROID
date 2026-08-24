@@ -8,15 +8,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -115,6 +121,7 @@ private fun ReceiptCaptureScreenContent(
         },
         snackbarHost = snackbarHost,
         containerColor = LbColors.Paper,
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             when (state.step) {
@@ -156,7 +163,11 @@ private fun ReceiptVerifyStep(
 
     Column(modifier = modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(16.dp),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
             Text(
@@ -180,6 +191,7 @@ private fun ReceiptVerifyStep(
                 label = stringResource(R.string.savedcourses_receipt_field_amount),
                 placeholder = "0",
                 required = true,
+                visualTransformation = ThousandsSeparatorVisualTransformation,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Next),
                 keyboardActions = KeyboardActions(onNext = { paidDateFocusRequester.requestFocus() }),
                 textFieldModifier = Modifier.focusRequester(amountFocusRequester),
@@ -199,7 +211,7 @@ private fun ReceiptVerifyStep(
                 textFieldModifier = Modifier.focusRequester(paidDateFocusRequester),
             )
         }
-        LbBottomActionBar {
+        LbBottomActionBar(windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime)) {
             LbBottomActionButton(
                 text = stringResource(R.string.savedcourses_receipt_submit),
                 onClick = { onIntent(ReceiptCaptureIntent.SubmitClicked) },

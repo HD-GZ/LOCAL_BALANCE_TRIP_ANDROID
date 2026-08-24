@@ -59,16 +59,8 @@ internal fun HomeFeedSection(
 
     Column(modifier = modifier.fillMaxWidth()) {
         if (!state.isLoggedIn) {
-            HomeSectionHeader(title = stringResource(R.string.home_feed_section_title))
-            Text(
-                text = stringResource(R.string.home_feed_section_subtitle_guest),
-                color = LbColors.Ink3,
-                fontSize = 11.5.sp,
-                lineHeight = 16.sp,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 6.dp, bottom = 12.dp),
-            )
             if (state.popularCourses.isNotEmpty()) {
-                Column(modifier = Modifier.padding(top = 26.dp)) {
+                Column {
                     HomeSectionHeader(title = stringResource(R.string.home_popular_section_title))
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(14.dp),
@@ -221,14 +213,6 @@ private fun HomePopularCourseCard(course: PopularCourse, imageLoader: ImageLoade
             verticalArrangement = Arrangement.spacedBy(3.dp),
             modifier = Modifier.padding(start = 13.dp, top = 11.dp, end = 13.dp, bottom = 13.dp),
         ) {
-            Text(
-                text = course.regionName,
-                color = LbColors.Ink3,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
             Text(
                 text = course.title,
                 color = LbColors.Ink,

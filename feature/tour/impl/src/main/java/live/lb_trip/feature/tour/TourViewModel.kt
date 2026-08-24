@@ -70,7 +70,8 @@ class TourViewModel @Inject constructor(
             is TourIntent.StopSelected -> selectStop(intent.index)
             TourIntent.PlaybackToggled -> toggleAudioPlayback()
             is TourIntent.BenefitClicked -> postSideEffect(TourSideEffect.OpenBenefitUrl(intent.url))
-            TourIntent.FinishAcknowledged -> postSideEffect(TourSideEffect.NavigateBack)
+            TourIntent.FinishAcknowledged -> postSideEffect(TourSideEffect.NavigateBack(showReport = false))
+            TourIntent.ViewReportClicked -> postSideEffect(TourSideEffect.NavigateBack(showReport = true))
             TourIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
             TourIntent.LocationTrackingStarted -> setLocationTracking(active = true)
             TourIntent.LocationTrackingStopped -> setLocationTracking(active = false)

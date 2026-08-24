@@ -1,6 +1,5 @@
 <resources>
     <string name="savedcourses_title">Saved Courses</string>
-    <string name="savedcourses_count_template">%1$d</string>
     <string name="savedcourses_error_load">Couldn\'t load courses. Please try again in a moment.</string>
     <string name="savedcourses_empty">No saved courses.</string>
     <string name="savedcourses_select_prompt">Select a course from the list on the left.</string>
@@ -100,11 +99,10 @@
 
     <string name="savedcourses_receipt_detail_title">Receipt Details</string>
     <string name="savedcourses_receipt_detail_edit_content_description">Edit</string>
-    <string name="savedcourses_receipt_detail_state_registered">Receipt registered</string>
     <string name="savedcourses_receipt_detail_field_merchant">Merchant name</string>
     <string name="savedcourses_receipt_detail_field_amount">Payment amount</string>
     <string name="savedcourses_receipt_detail_field_date">Payment date</string>
-    <string name="savedcourses_receipt_detail_edit_hint">You can manually correct values the OCR read incorrectly.</string>
+    <string name="savedcourses_receipt_detail_edit_hint">You can manually correct values that were entered incorrectly.</string>
     <string name="savedcourses_receipt_detail_save">Save changes</string>
     <string name="savedcourses_receipt_detail_cancel">Cancel</string>
     <string name="savedcourses_receipt_detail_download">Download original</string>

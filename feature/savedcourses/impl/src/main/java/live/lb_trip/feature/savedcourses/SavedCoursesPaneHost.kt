@@ -27,6 +27,7 @@ internal fun SavedCoursesPaneHost(
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
     tourEnded: Boolean,
+    tourEndedShowReport: Boolean,
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     initialSavedCourseId: Long? = null,
@@ -76,6 +77,7 @@ internal fun SavedCoursesPaneHost(
                         receiptRegistered = receiptRegistered,
                         onReceiptRegisteredConsumed = onReceiptRegisteredConsumed,
                         tourEnded = tourEnded,
+                        tourEndedShowReport = tourEndedShowReport,
                         onTourEndedConsumed = onTourEndedConsumed,
                         showBackButton = !isTwoPane,
                     )
