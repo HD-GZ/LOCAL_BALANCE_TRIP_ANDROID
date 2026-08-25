@@ -85,9 +85,10 @@ internal fun SavedCourseDetailScreen(
     onNavigateToReceiptDetail: (Long, Long) -> Unit,
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
+    tourStarted: Boolean,
     tourEnded: Boolean,
     tourEndedShowReport: Boolean,
-    onTourEndedConsumed: () -> Unit,
+    onTourResultConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
     viewModel: SavedCourseDetailViewModel = hiltViewModel(
@@ -160,12 +161,16 @@ internal fun SavedCourseDetailScreen(
         }
     }
 
-    LaunchedEffect(tourEnded, tourEndedShowReport) {
-        if (tourEnded) {
+    // 여행 시작 신호는 여행 화면을 덮고 있는 동안 남겨지므로, 여행을 끝내고 돌아오면
+    // tourStarted 와 tourEnded 가 함께 참이 된다. 하나의 effect 로 합쳐 재조회를 한 번만 실행한다.
+    LaunchedEffect(tourStarted, tourEnded, tourEndedShowReport) {
+        if (tourStarted || tourEnded) {
             onIntent(SavedCourseDetailIntent.Retry)
-            val targetTab = if (tourEndedShowReport) SavedCourseDetailTab.REPORT else SavedCourseDetailTab.COURSE
-            onIntent(SavedCourseDetailIntent.TabSelected(targetTab))
-            onTourEndedConsumed()
+            if (tourEnded) {
+                val targetTab = if (tourEndedShowReport) SavedCourseDetailTab.REPORT else SavedCourseDetailTab.COURSE
+                onIntent(SavedCourseDetailIntent.TabSelected(targetTab))
+            }
+            onTourResultConsumed()
         }
     }
 

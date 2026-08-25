@@ -100,6 +100,7 @@ class PropensityViewModel @Inject constructor(
                         resultImageUrl = result.imageUrl,
                     )
                 }
+                postSideEffect(PropensitySideEffect.DiagnosisSubmitted)
                 postSideEffect(PropensitySideEffect.NavigateToResult)
             }.onFailure { throwable ->
                 if (throwable is LbTripPropensityException.UnauthenticatedException) {

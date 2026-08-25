@@ -81,6 +81,8 @@ fun HomeTabContent(
     onNavigateToRecommendedRegion: (Long, String) -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
+    needsRefresh: Boolean = false,
+    onRefreshConsumed: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel(),
     onIntent: (HomeIntent) -> Unit = viewModel::onIntent,
 ) {
@@ -89,6 +91,13 @@ fun HomeTabContent(
     val loadErrorMessage = stringResource(R.string.home_error_courses_load)
     val retryActionLabel = stringResource(R.string.home_action_retry)
     val openUrlFailedMessage = stringResource(R.string.home_error_open_url_failed)
+
+    LaunchedEffect(needsRefresh) {
+        if (needsRefresh) {
+            onIntent(HomeIntent.Refresh)
+            onRefreshConsumed()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->

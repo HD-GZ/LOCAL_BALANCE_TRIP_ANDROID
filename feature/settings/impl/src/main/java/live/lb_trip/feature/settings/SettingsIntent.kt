@@ -2,6 +2,7 @@ package live.lb_trip.feature.settings
 
 sealed interface SettingsIntent {
     data object Retry : SettingsIntent
+    data object Refresh : SettingsIntent
     data object EditProfileClick : SettingsIntent
     data object LicensesClick : SettingsIntent
     data object TermsClick : SettingsIntent

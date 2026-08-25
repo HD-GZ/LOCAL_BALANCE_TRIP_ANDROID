@@ -48,9 +48,20 @@ class HomeViewModel @Inject constructor(
     override fun onIntent(intent: HomeIntent) {
         when (intent) {
             HomeIntent.Retry -> viewModelScope.launch { loadFeedSection(currentState.isLoggedIn) }
+            HomeIntent.Refresh -> refresh()
             is HomeIntent.IncentiveClicked -> postSideEffect(HomeSideEffect.OpenUrl(intent.card.url))
             is HomeIntent.FeedItemClicked -> handleFeedItemClicked(intent.item)
         }
+    }
+
+    /**
+     * 진단/코스 저장처럼 홈 밖에서 사용자 상태를 바꾸고 돌아왔을 때 호출한다.
+     * 히어로/혜택은 사용자 상태와 무관하므로 다시 불러오지 않는다.
+     */
+    private fun refresh() {
+        val loggedIn = currentState.isLoggedIn
+        viewModelScope.launch { loadTypeSection(loggedIn) }
+        viewModelScope.launch { loadFeedSection(loggedIn) }
     }
 
     private fun handleFeedItemClicked(item: HomeFeedItem) {

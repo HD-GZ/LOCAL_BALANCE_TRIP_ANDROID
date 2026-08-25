@@ -62,6 +62,8 @@ internal fun SavedCoursesScreen(
     onBack: () -> Unit,
     onCourseClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    needsRefresh: Boolean = false,
+    onRefreshConsumed: () -> Unit = {},
     viewModel: SavedCoursesViewModel = hiltViewModel(),
     onIntent: (SavedCoursesIntent) -> Unit = viewModel::onIntent,
 ) {
@@ -69,6 +71,13 @@ internal fun SavedCoursesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val loadErrorMessage = stringResource(R.string.savedcourses_error_load)
     val retryActionLabel = stringResource(R.string.savedcourses_action_retry)
+
+    LaunchedEffect(needsRefresh) {
+        if (needsRefresh) {
+            onIntent(SavedCoursesIntent.Refresh)
+            onRefreshConsumed()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->

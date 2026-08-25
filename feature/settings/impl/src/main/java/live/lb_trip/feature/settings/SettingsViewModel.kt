@@ -39,7 +39,9 @@ class SettingsViewModel @Inject constructor(
 
     override fun onIntent(intent: SettingsIntent) {
         when (intent) {
-            SettingsIntent.Retry -> viewModelScope.launch { load(currentState.isLoggedIn) }
+            SettingsIntent.Retry,
+            SettingsIntent.Refresh,
+            -> viewModelScope.launch { load(currentState.isLoggedIn) }
             SettingsIntent.EditProfileClick -> handleAuthGatedClick(SettingsSideEffect.NavigateToEditProfile)
             SettingsIntent.RetakeDiagnosisClick -> handleAuthGatedClick(SettingsSideEffect.NavigateToDiagnosis)
             SettingsIntent.LicensesClick -> postSideEffect(SettingsSideEffect.NavigateToLicenses)

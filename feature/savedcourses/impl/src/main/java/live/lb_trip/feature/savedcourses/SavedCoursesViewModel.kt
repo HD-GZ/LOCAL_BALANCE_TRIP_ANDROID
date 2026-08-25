@@ -19,7 +19,9 @@ class SavedCoursesViewModel @Inject constructor(
 
     override fun onIntent(intent: SavedCoursesIntent) {
         when (intent) {
-            SavedCoursesIntent.Retry -> viewModelScope.launch { loadCourses() }
+            SavedCoursesIntent.Retry,
+            SavedCoursesIntent.Refresh,
+            -> viewModelScope.launch { loadCourses() }
         }
     }
 

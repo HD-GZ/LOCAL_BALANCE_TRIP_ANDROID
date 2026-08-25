@@ -62,6 +62,7 @@ import live.lb_trip.feature.recommendation.components.ScreenBg
 internal fun DetailScreen(
     onBack: () -> Unit,
     onNavigateToSavedCourses: () -> Unit,
+    onCourseSaved: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RecommendationDetailViewModel = hiltViewModel(),
     onIntent: (RecommendationDetailIntent) -> Unit = viewModel::onIntent,
@@ -102,6 +103,9 @@ internal fun DetailScreen(
                     }
                 }
                 RecommendationDetailSideEffect.ShowSaveConfirmation -> {
+                    // showSnackbar 가 닫힐 때까지 정지하므로, 홈 갱신 신호는 먼저 남긴다.
+                    // 스낵바를 보는 도중 뒤로 가면 이 collector 가 취소되기 때문.
+                    onCourseSaved()
                     val result = snackbarHostState.showSnackbar(
                         message = saveConfirmationMessage,
                         actionLabel = viewSavedCoursesActionLabel,
