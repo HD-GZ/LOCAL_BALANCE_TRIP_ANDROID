@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -28,18 +30,20 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import live.lb_trip.core.designsystem.component.LbLoadingOverlay
+import live.lb_trip.domain.model.TermsType
 
 fun NavGraphBuilder.signupScreen(
     navController: NavController,
     onBack: () -> Unit,
     onNavigateToSignin: () -> Unit,
+    onNavigateToTerms: (TermsType) -> Unit,
 ) {
     navigation<SignupRoute>(startDestination = AccountInfoRoute) {
         composable<AccountInfoRoute> { entry ->
             AccountInfoStepDestination(navController, entry, onBack, onNavigateToSignin)
         }
         composable<PersonalInfoRoute> { entry ->
-            PersonalInfoStepDestination(navController, entry, onNavigateToSignin)
+            PersonalInfoStepDestination(navController, entry, onNavigateToSignin, onNavigateToTerms)
         }
         composable<EmailVerifyRoute> { entry ->
             EmailVerifyStepDestination(navController, entry, onNavigateToSignin)
@@ -76,6 +80,7 @@ private fun PersonalInfoStepDestination(
     navController: NavController,
     entry: NavBackStackEntry,
     onNavigateToSignin: () -> Unit,
+    onNavigateToTerms: (TermsType) -> Unit,
 ) {
     val viewModel = signupSharedViewModel(navController, entry)
     SignupStepScaffold(
@@ -87,6 +92,7 @@ private fun PersonalInfoStepDestination(
             state = state,
             onBack = navController::popBackStack,
             onIntent = viewModel::onIntent,
+            onNavigateToTerms = onNavigateToTerms,
         )
     }
 }
@@ -189,7 +195,7 @@ private fun SignupStepScaffold(
             hostState = snackbarHostState,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
+                .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime)),
         )
 
         if (state.isLoading) {

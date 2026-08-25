@@ -20,6 +20,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.flow.firstOrNull
 import live.lb_trip.data.datasource.local.TokenDataStore
 import live.lb_trip.data.di.qualifier.BaseUrl
+import live.lb_trip.data.di.qualifier.Language
 import live.lb_trip.data.di.qualifier.NoAuth
 import live.lb_trip.data.dto.request.TokenRefreshRequestDto
 import live.lb_trip.data.dto.response.ApiResponse
@@ -35,10 +36,11 @@ object AuthTokenModule {
     @AuthQualifier
     fun provideAuthHttpClient(
         @BaseUrl baseUrl: String,
+        @Language language: String,
         @NoAuth noAuthClient: HttpClient,
         tokenDataStore: TokenDataStore,
     ): HttpClient = HttpClient(OkHttp) {
-        installCommon(baseUrl)
+        installCommon(baseUrl, language)
         install(Auth) {
             bearer {
                 // DataStore is the single source of truth for tokens; without this, Ktor caches

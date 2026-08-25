@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastForEachIndexed
+import androidx.compose.ui.util.fastForEach
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -161,11 +161,10 @@ private fun RegionScreenContent(
                     )
                     Spacer(modifier = Modifier.height(15.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        state.regions.fastForEachIndexed { index, region ->
+                        state.regions.fastForEach { region ->
                             RCard(
                                 title = region.name,
                                 reason = region.reason,
-                                isBest = index == 0,
                                 imageUrl = region.imageUrl,
                                 imageLoader = imageLoader,
                                 onClick = { onRegionSelected(region.id, region.name) },
@@ -179,7 +178,7 @@ private fun RegionScreenContent(
         snackbarHost()
 
         if (state.isLoading) {
-            LbLoadingOverlay()
+            LbLoadingOverlay(label = stringResource(R.string.recommendation_loading_label))
         }
     }
 }

@@ -54,6 +54,7 @@ fun MyInfoTabContent(
     val loadErrorMessage = stringResource(R.string.settings_error_load)
     val retryActionLabel = stringResource(R.string.settings_action_retry)
     val profileUpdatedMessage = stringResource(R.string.settings_profile_updated)
+    val noEmailAppMessage = stringResource(R.string.settings_error_no_email_app)
     val uriHandler = LocalUriHandler.current
 
     LaunchedEffect(Unit) {
@@ -72,7 +73,10 @@ fun MyInfoTabContent(
                 SettingsSideEffect.NavigateToTerms -> onNavigateToTerms()
                 SettingsSideEffect.NavigateToPrivacy -> onNavigateToPrivacy()
                 SettingsSideEffect.NavigateToSignin -> onNavigateToSignin()
-                SettingsSideEffect.OpenContactEmail -> uriHandler.openUri("mailto:$CONTACT_EMAIL")
+                SettingsSideEffect.OpenContactEmail -> {
+                    runCatching { uriHandler.openUri("mailto:$CONTACT_EMAIL") }
+                        .onFailure { launch { snackbarHostState.showSnackbar(noEmailAppMessage) } }
+                }
                 SettingsSideEffect.ShowProfileUpdated -> launch { snackbarHostState.showSnackbar(profileUpdatedMessage) }
             }
         }
@@ -143,7 +147,6 @@ private fun MyInfoTabContentBody(
                 SettingsProfileHeader(
                     name = state.name,
                     email = state.email,
-                    onEditInfoClick = { onIntent(SettingsIntent.EditProfileClick) },
                     modifier = Modifier.padding(start = 20.dp, top = 16.dp, end = 20.dp, bottom = 6.dp),
                 )
                 SettingsSavedCoursesRow(
@@ -158,15 +161,16 @@ private fun MyInfoTabContentBody(
             }
 
             SettingsMenuGroup(
-                label = stringResource(R.string.settings_group_label),
-                items = listOf(
-                    SettingsMenuItem(editInfoLabel) { onIntent(SettingsIntent.EditProfileClick) },
-                    SettingsMenuItem(retakeDiagnosisLabel) { onIntent(SettingsIntent.RetakeDiagnosisClick) },
-                    SettingsMenuItem(licensesLabel) { onIntent(SettingsIntent.LicensesClick) },
-                    SettingsMenuItem(termsLabel) { onIntent(SettingsIntent.TermsClick) },
-                    SettingsMenuItem(privacyLabel) { onIntent(SettingsIntent.PrivacyClick) },
-                    SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.ContactClick) },
-                ),
+                items = buildList {
+                    if (state.isLoggedIn) {
+                        add(SettingsMenuItem(editInfoLabel) { onIntent(SettingsIntent.EditProfileClick) })
+                        add(SettingsMenuItem(retakeDiagnosisLabel) { onIntent(SettingsIntent.RetakeDiagnosisClick) })
+                    }
+                    add(SettingsMenuItem(licensesLabel) { onIntent(SettingsIntent.LicensesClick) })
+                    add(SettingsMenuItem(termsLabel) { onIntent(SettingsIntent.TermsClick) })
+                    add(SettingsMenuItem(privacyLabel) { onIntent(SettingsIntent.PrivacyClick) })
+                    add(SettingsMenuItem(contactLabel) { onIntent(SettingsIntent.ContactClick) })
+                },
                 versionName = versionName,
                 modifier = Modifier.padding(top = 10.dp),
             )

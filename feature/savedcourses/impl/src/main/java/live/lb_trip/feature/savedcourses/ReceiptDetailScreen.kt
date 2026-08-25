@@ -4,14 +4,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -23,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -160,6 +164,7 @@ private fun ReceiptDetailScreenContent(
         },
         snackbarHost = snackbarHost,
         containerColor = LbColors.Paper,
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
     ) { innerPadding ->
         if (state.isLoading) {
             Box(modifier = Modifier.zIndex(2f).padding(innerPadding).fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -173,7 +178,7 @@ private fun ReceiptDetailScreenContent(
                 imageLoader = imageLoader,
                 directive = directive,
                 onIntent = onIntent,
-                modifier = Modifier.padding(innerPadding).consumeWindowInsets(innerPadding),
+                modifier = Modifier.padding(innerPadding),
             )
         } else {
             ReceiptDetailCompactBody(
@@ -203,10 +208,10 @@ private fun ReceiptDetailCompactBody(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
             .verticalScroll(rememberScrollState())
             .padding(16.dp),
     ) {
-        ReceiptStatusBadge()
         ReceiptImage(
             imageUrl = state.imageUrl,
             imageLoader = imageLoader,
@@ -234,8 +239,12 @@ private fun ReceiptDetailTwoPaneBody(
         modifier = modifier,
         mainPane = {
             AnimatedPane {
-                Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                    ReceiptStatusBadge()
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .windowInsetsPadding(WindowInsets.navigationBars)
+                        .padding(16.dp),
+                ) {
                     ReceiptImage(
                         imageUrl = state.imageUrl,
                         imageLoader = imageLoader,
@@ -249,6 +258,7 @@ private fun ReceiptDetailTwoPaneBody(
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
+                        .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime))
                         .verticalScroll(rememberScrollState())
                         .padding(16.dp),
                 ) {

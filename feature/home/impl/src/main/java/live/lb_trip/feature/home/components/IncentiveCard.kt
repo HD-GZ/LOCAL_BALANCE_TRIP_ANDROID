@@ -28,6 +28,7 @@ fun IncentiveCard(card: HomeIncentiveCard, onClick: () -> Unit, modifier: Modifi
     val isClosingSoon = card.dday != null && card.dday in 0..14
     val stateColor = if (isClosingSoon) LbColors.Warning else LbColors.GreenDk
     val stateBackground = if (isClosingSoon) Color(0xFFF7EFD9) else LbColors.GreenTint2
+    val stateBorder = if (isClosingSoon) Color(0xFFE6D5A8) else LbColors.GreenLine
 
     Column(
         verticalArrangement = Arrangement.spacedBy(7.dp),
@@ -39,15 +40,19 @@ fun IncentiveCard(card: HomeIncentiveCard, onClick: () -> Unit, modifier: Modifi
             .clickable(onClick = onClick)
             .padding(16.dp),
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(7.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(7.dp), modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = card.regionName,
                 color = LbColors.GreenDk,
                 fontSize = 10.5.sp,
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
+                    .weight(1f, fill = false)
                     .clip(RoundedCornerShape(6.dp))
                     .background(LbColors.GreenTint)
+                    .border(1.dp, LbColors.GreenLine, RoundedCornerShape(6.dp))
                     .padding(horizontal = 8.dp, vertical = 3.dp),
             )
             Text(
@@ -55,9 +60,12 @@ fun IncentiveCard(card: HomeIncentiveCard, onClick: () -> Unit, modifier: Modifi
                 color = stateColor,
                 fontSize = 10.sp,
                 fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .clip(RoundedCornerShape(100.dp))
                     .background(stateBackground)
+                    .border(1.dp, stateBorder, RoundedCornerShape(100.dp))
                     .padding(horizontal = 9.dp, vertical = 3.dp),
             )
         }

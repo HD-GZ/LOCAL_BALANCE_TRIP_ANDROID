@@ -11,7 +11,7 @@ fun instagramStoryShare(
     context: Context,
     backgroundImage: Uri?,
     stickerImage: Uri?
-) {
+): Boolean {
     val facebookAppId = EntryPointAccessors.fromApplication(
         context.applicationContext,
         FacebookAppIdEntryPoint::class.java,
@@ -30,7 +30,7 @@ fun instagramStoryShare(
 
     context.grantUriPermission("com.instagram.android", stickerImage, Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
-    if (intent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(intent)
-    }
+    if (intent.resolveActivity(context.packageManager) == null) return false
+    context.startActivity(intent)
+    return true
 }

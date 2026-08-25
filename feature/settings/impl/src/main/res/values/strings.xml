@@ -6,7 +6,6 @@
     <string name="settings_stat_saved_courses">Saved Courses</string>
     <string name="settings_stat_count_template">%1$d</string>
 
-    <string name="settings_group_label">Settings</string>
     <string name="settings_menu_retake_diagnosis">Travel Profile · Retake Test</string>
     <string name="settings_menu_licenses">Open Source Licenses</string>
     <string name="settings_menu_terms">Terms of Service</string>
@@ -28,6 +27,7 @@
     <string name="settings_error_load">Couldn\'t load your info. Please try again in a moment.</string>
     <string name="settings_action_retry">Retry</string>
     <string name="settings_profile_updated">Your info has been updated.</string>
+    <string name="settings_error_no_email_app">No email app is installed. Please install one and try again.</string>
 
     <string name="edit_profile_title">Edit Info</string>
     <string name="edit_profile_back_cd">Back</string>
@@ -55,7 +55,7 @@
     <string name="edit_profile_gender_female">Female</string>
     <string name="edit_profile_gender_not_specified">Prefer not to say</string>
 
-    <string name="edit_profile_withdraw_link">Want to leave? Delete account ›</string>
+    <string name="edit_profile_withdraw_link">Want to leave?</string>
     <string name="edit_profile_withdraw_dialog_title">Delete your account?</string>
     <string name="edit_profile_withdraw_dialog_body">Deleting your account will remove all your data. Are you sure you want to continue?</string>
     <string name="edit_profile_withdraw_cancel">Cancel</string>

@@ -9,12 +9,16 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -60,6 +64,7 @@ internal fun PasswordResetEmailScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp),
         ) {
             Spacer(modifier = Modifier.height(6.dp))
@@ -98,6 +103,7 @@ internal fun PasswordResetEmailScreen(
         LbBottomActionBar(
             verticalArrangement = Arrangement.spacedBy(11.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
+            windowInsets = WindowInsets.navigationBars.union(WindowInsets.ime),
         ) {
             LbBottomActionButton(
                 text = stringResource(R.string.password_reset_get_code),

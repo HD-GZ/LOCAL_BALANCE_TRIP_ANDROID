@@ -72,6 +72,7 @@ import live.lb_trip.feature.savedcourses.components.SavedCourseReceiptTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseReportTab
 import live.lb_trip.feature.savedcourses.components.SavedCourseShareSheet
 import live.lb_trip.feature.savedcourses.components.createReceiptImageUri
+import live.lb_trip.feature.savedcourses.components.rememberReportCarbonSavingLabel
 import live.lb_trip.feature.savedcourses.components.rememberReportDistanceValueLabel
 import live.lb_trip.feature.savedcourses.components.rememberReportMetaLabel
 
@@ -85,6 +86,7 @@ internal fun SavedCourseDetailScreen(
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
     tourEnded: Boolean,
+    tourEndedShowReport: Boolean,
     onTourEndedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     showBackButton: Boolean = true,
@@ -104,6 +106,7 @@ internal fun SavedCourseDetailScreen(
     val reportErrorMessage = stringResource(R.string.savedcourses_detail_error_report)
     val retryActionLabel = stringResource(R.string.savedcourses_detail_action_retry)
     val kakaoShareFailedMessage = stringResource(R.string.savedcourses_detail_kakao_share_failed)
+    val openUrlFailedMessage = stringResource(R.string.savedcourses_detail_error_open_url_failed)
     val context = LocalContext.current
 
     val sideEffectMessages = remember(
@@ -114,6 +117,7 @@ internal fun SavedCourseDetailScreen(
         reportErrorMessage,
         retryActionLabel,
         kakaoShareFailedMessage,
+        openUrlFailedMessage,
     ) {
         SavedCourseDetailMessages(
             loadError = loadErrorMessage,
@@ -123,6 +127,7 @@ internal fun SavedCourseDetailScreen(
             reportError = reportErrorMessage,
             retryAction = retryActionLabel,
             kakaoShareFailed = kakaoShareFailedMessage,
+            openUrlFailed = openUrlFailedMessage,
         )
     }
 
@@ -155,9 +160,11 @@ internal fun SavedCourseDetailScreen(
         }
     }
 
-    LaunchedEffect(tourEnded) {
+    LaunchedEffect(tourEnded, tourEndedShowReport) {
         if (tourEnded) {
             onIntent(SavedCourseDetailIntent.Retry)
+            val targetTab = if (tourEndedShowReport) SavedCourseDetailTab.REPORT else SavedCourseDetailTab.COURSE
+            onIntent(SavedCourseDetailIntent.TabSelected(targetTab))
             onTourEndedConsumed()
         }
     }
@@ -191,6 +198,7 @@ private data class SavedCourseDetailMessages(
     val reportError: String,
     val retryAction: String,
     val kakaoShareFailed: String,
+    val openUrlFailed: String,
 )
 
 private suspend fun handleSavedCourseDetailSideEffect(
@@ -216,7 +224,10 @@ private suspend fun handleSavedCourseDetailSideEffect(
         }
         SavedCourseDetailSideEffect.ShowReceiptsLoadError -> snackbarHostState.showSnackbar(messages.receiptsError)
         SavedCourseDetailSideEffect.ShowReportLoadError -> snackbarHostState.showSnackbar(messages.reportError)
-        is SavedCourseDetailSideEffect.OpenBenefitUrl -> uriHandler.openUri(effect.url)
+        is SavedCourseDetailSideEffect.OpenBenefitUrl -> {
+            runCatching { uriHandler.openUri(effect.url) }
+                .onFailure { snackbarHostState.showSnackbar(messages.openUrlFailed) }
+        }
         is SavedCourseDetailSideEffect.NavigateToTour -> onNavigateToTour(effect.savedCourseId)
         is SavedCourseDetailSideEffect.LaunchKakaoShare -> {
             val feed = kakaoShareReportFeed(
@@ -226,7 +237,9 @@ private suspend fun handleSavedCourseDetailSideEffect(
                 imageUrl = effect.imageUrl,
                 shareToken = effect.shareToken,
             )
-            kakaoShare(context, feed)
+            if (!kakaoShare(context, feed)) {
+                snackbarHostState.showSnackbar(messages.kakaoShareFailed)
+            }
         }
         SavedCourseDetailSideEffect.ShowKakaoShareError -> snackbarHostState.showSnackbar(messages.kakaoShareFailed)
     }
@@ -258,15 +271,18 @@ private fun SavedCourseDetailScreenContent(
     val showReceiptSourceSheet = rememberReceiptSourcePicker(
         savedCourseId = state.savedCourseId,
         onNavigateToReceiptCapture = onNavigateToReceiptCapture,
+        onShowSnackbar = onShowSnackbar,
     )
     val shareSavedMessage = stringResource(R.string.savedcourses_detail_share_saved_toast)
     val shareFailedMessage = stringResource(R.string.savedcourses_detail_share_failed)
+    val instagramUnavailableMessage = stringResource(R.string.savedcourses_detail_instagram_unavailable)
     val reportMetaLabel = rememberReportMetaLabel(state.reportTourEndedAt)
     val reportPlacesLabel =
         stringResource(R.string.savedcourses_detail_report_places_template, state.reportVisitedPlaceCount)
     val reportAmountLabel =
         stringResource(R.string.savedcourses_detail_receipt_amount_template, state.reportTotalSpentAmount)
     val reportDistanceValueLabel = rememberReportDistanceValueLabel(state.reportDistanceWalkedMeters)
+    val reportCarbonSavingLabel = rememberReportCarbonSavingLabel(state.reportDistanceWalkedMeters)
     val currentDate = remember {
         val formatter = SimpleDateFormat("yyyy. MM. dd", Locale.getDefault())
         formatter.format(Date())
@@ -290,7 +306,6 @@ private fun SavedCourseDetailScreenContent(
         modifier = modifier,
         topBar = {
             SavedCourseDetailAppBar(
-                regionName = state.regionName,
                 title = state.title,
                 onBackClick = onBack,
                 showBackButton = showBackButton,
@@ -345,6 +360,7 @@ private fun SavedCourseDetailScreenContent(
                             placesLabel = reportPlacesLabel,
                             amountLabel = reportAmountLabel,
                             distanceValueLabel = reportDistanceValueLabel,
+                            carbonSavingLabel = reportCarbonSavingLabel,
                         )
                     }
                 }
@@ -403,8 +419,9 @@ private fun SavedCourseDetailScreenContent(
                             .toContentUri(context, ImageCompressLevel.PNG, "lbt_${state.savedCourseId}_sticker")
                     }
 
-                    instagramStoryShare(context, uri.await(), sticker.await())
+                    val shared = instagramStoryShare(context, uri.await(), sticker.await())
                     setLoading(false)
+                    if (!shared) onShowSnackbar(instagramUnavailableMessage)
                 }
             }
         )
@@ -416,8 +433,11 @@ private fun SavedCourseDetailScreenContent(
 private fun rememberReceiptSourcePicker(
     savedCourseId: Long,
     onNavigateToReceiptCapture: (Long, Uri) -> Unit,
+    onShowSnackbar: suspend (String) -> Unit,
 ): () -> Unit {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val cameraUnavailableMessage = stringResource(R.string.savedcourses_detail_camera_unavailable)
     var showSheet by remember { mutableStateOf(false) }
     var pendingCameraUri by remember { mutableStateOf<Uri?>(null) }
     val pickReceiptImage = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
@@ -439,7 +459,8 @@ private fun rememberReceiptSourcePicker(
                 showSheet = false
                 val uri = createReceiptImageUri(context)
                 pendingCameraUri = uri
-                takeReceiptPicture.launch(uri)
+                runCatching { takeReceiptPicture.launch(uri) }
+                    .onFailure { coroutineScope.launch { onShowSnackbar(cameraUnavailableMessage) } }
             },
         )
     }

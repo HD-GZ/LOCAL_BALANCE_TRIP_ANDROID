@@ -70,7 +70,8 @@ class TourViewModel @Inject constructor(
             is TourIntent.StopSelected -> selectStop(intent.index)
             TourIntent.PlaybackToggled -> toggleAudioPlayback()
             is TourIntent.BenefitClicked -> postSideEffect(TourSideEffect.OpenBenefitUrl(intent.url))
-            TourIntent.FinishAcknowledged -> postSideEffect(TourSideEffect.NavigateBack)
+            TourIntent.FinishAcknowledged -> postSideEffect(TourSideEffect.NavigateBack(showReport = false))
+            TourIntent.ViewReportClicked -> postSideEffect(TourSideEffect.NavigateBack(showReport = true))
             TourIntent.Retry -> viewModelScope.launch { loadCourseDetail() }
             TourIntent.LocationTrackingStarted -> setLocationTracking(active = true)
             TourIntent.LocationTrackingStopped -> setLocationTracking(active = false)
@@ -127,7 +128,7 @@ class TourViewModel @Inject constructor(
 
             detailResult
                 .onSuccess { detail ->
-                    val stops = detail.places.map { it.toTourStop(visitsByOrder[it.order]?.placeId) }
+                    val stops = detail.places.toTourStops(visitsByOrder)
                     val initialIndex = restoredStopIndex(visitsByOrder, stops.lastIndex)
                     val initialShownIndex = (initialIndex + 1).coerceAtMost(stops.lastIndex.coerceAtLeast(0))
                     furthestStopIndex = initialIndex
@@ -269,17 +270,20 @@ internal fun restoredStopIndex(visitsByOrder: Map<Int, TourPlaceVisit>, lastInde
     return index.coerceIn(0, lastIndex)
 }
 
-private fun CoursePlace.toTourStop(placeId: Long?): TourStop = TourStop(
-    order = order,
-    name = name,
-    description = description,
-    latitude = latitude,
-    longitude = longitude,
-    walkMinutesToNext = walkMinutes,
-    hasAudioGuide = hasAudio,
-    audioUrl = audioUrl,
-    placeId = placeId,
-)
+private fun List<CoursePlace>.toTourStops(visitsByOrder: Map<Int, TourPlaceVisit>): List<TourStop> =
+    mapIndexed { index, place ->
+        TourStop(
+            order = place.order,
+            name = place.name,
+            description = place.description,
+            latitude = place.latitude,
+            longitude = place.longitude,
+            walkMinutesToNext = getOrNull(index + 1)?.walkMinutes,
+            hasAudioGuide = place.hasAudio,
+            audioUrl = place.audioUrl,
+            placeId = visitsByOrder[place.order]?.placeId,
+        )
+    }
 
 private fun CourseBenefit.toTourBenefit(): TourBenefit = TourBenefit(title = title, description = description, url = url)
 

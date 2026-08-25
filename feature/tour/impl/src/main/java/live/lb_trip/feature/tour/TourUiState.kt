@@ -40,7 +40,7 @@ data class TourBenefit(
 sealed interface TourSideEffect {
     data class ShowLoadError(val reason: TourLoadErrorReason) : TourSideEffect
     data object ShowEndTourError : TourSideEffect
-    data object NavigateBack : TourSideEffect
+    data class NavigateBack(val showReport: Boolean = false) : TourSideEffect
     data object CollapseSheet : TourSideEffect
     data class OpenBenefitUrl(val url: String) : TourSideEffect
 }

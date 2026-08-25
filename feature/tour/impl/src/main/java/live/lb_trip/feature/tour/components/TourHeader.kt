@@ -29,7 +29,6 @@ private val StartedAtFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
 @Composable
 internal fun TourHeader(
-    regionName: String,
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -38,7 +37,6 @@ internal fun TourHeader(
         onBackClick = onBackClick,
         backContentDescription = stringResource(R.string.tour_back_content_description),
         title = title,
-        subtitle = regionName.ifEmpty { null },
         modifier = modifier,
     )
 }

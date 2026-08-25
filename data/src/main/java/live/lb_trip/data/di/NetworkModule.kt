@@ -16,13 +16,16 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.client.statement.request
+import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
 import io.ktor.serialization.kotlinx.json.json
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
 import live.lb_trip.data.di.qualifier.BaseUrl
+import live.lb_trip.data.di.qualifier.Language
 import live.lb_trip.data.di.qualifier.NoAuth
 import live.lb_trip.data.dto.response.ApiResponse
 import live.lb_trip.domain.exception.ApiException
@@ -36,8 +39,9 @@ object NetworkModule {
     @NoAuth
     fun provideNoAuthHttpClient(
         @BaseUrl baseUrl: String,
+        @Language language: String,
     ): HttpClient = HttpClient(OkHttp) {
-        installCommon(baseUrl)
+        installCommon(baseUrl, language)
     }
 }
 
@@ -47,8 +51,11 @@ private val validatorJson = Json { ignoreUnknownKeys = true }
 
 private const val REQUEST_TIMEOUT_MILLIS = 60_000L
 
-internal fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String) {
-    defaultRequest { url(baseUrl) }
+internal fun HttpClientConfig<OkHttpConfig>.installCommon(baseUrl: String, language: String) {
+    defaultRequest {
+        url(baseUrl)
+        header(HttpHeaders.AcceptLanguage, language)
+    }
     install(HttpTimeout) {
         requestTimeoutMillis = REQUEST_TIMEOUT_MILLIS
         connectTimeoutMillis = REQUEST_TIMEOUT_MILLIS

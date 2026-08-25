@@ -32,10 +32,18 @@ import live.lb_trip.feature.savedcourses.R
 import live.lb_trip.feature.savedcourses.SavedCourseDetailUiState
 
 private val REPORT_DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+private const val CARBON_SAVED_KG_PER_KM = 0.21f
+private const val METERS_PER_KM = 1000f
 
 @Composable
 internal fun rememberReportDistanceValueLabel(distanceMeters: Float?): String? = distanceMeters?.let {
     stringResource(R.string.savedcourses_detail_report_distance_template, it.roundToInt())
+}
+
+@Composable
+internal fun rememberReportCarbonSavingLabel(distanceMeters: Float?): String? = distanceMeters?.let {
+    val carbonSavedKg = it / METERS_PER_KM * CARBON_SAVED_KG_PER_KM
+    stringResource(R.string.savedcourses_detail_report_carbon_template, carbonSavedKg)
 }
 
 @Composable
@@ -53,6 +61,7 @@ internal fun SavedCourseReportTab(
     placesLabel: String,
     amountLabel: String,
     distanceValueLabel: String?,
+    carbonSavingLabel: String?,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
@@ -126,6 +135,13 @@ internal fun SavedCourseReportTab(
                 label = stringResource(R.string.savedcourses_detail_report_amount_label),
                 modifier = Modifier.weight(1f),
             )
+            if (carbonSavingLabel != null) {
+                SavedCourseReportSubStat(
+                    value = carbonSavingLabel,
+                    label = stringResource(R.string.savedcourses_detail_report_carbon_label),
+                    modifier = Modifier.weight(1f),
+                )
+            }
         }
     }
 }

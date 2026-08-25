@@ -7,4 +7,9 @@
     <string name="main_brand_suffix">" 트립"</string>
     <string name="main_tab_main">메인</string>
     <string name="main_tab_my_info">나의 정보</string>
+
+    <string name="shortcut_saved_courses_short_label">코스 목록</string>
+    <string name="shortcut_saved_courses_long_label">저장한 코스 목록</string>
+    <string name="shortcut_policy_list_short_label">여행자 혜택</string>
+    <string name="shortcut_policy_list_long_label">여행자 혜택 보기</string>
 </resources>

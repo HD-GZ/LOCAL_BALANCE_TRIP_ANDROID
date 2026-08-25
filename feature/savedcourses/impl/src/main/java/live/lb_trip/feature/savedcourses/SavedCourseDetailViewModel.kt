@@ -114,7 +114,7 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
                         regionName = detail.regionName,
                         title = detail.title,
                         status = detail.status,
-                        stops = detail.places.map(CoursePlace::toSavedCourseStop).toPersistentList(),
+                        stops = detail.places.toSavedCourseStops().toPersistentList(),
                         benefits = detail.benefits.map(CourseBenefit::toSavedCourseBenefit).toPersistentList(),
                     )
                 }
@@ -256,14 +256,16 @@ class SavedCourseDetailViewModel @AssistedInject constructor(
     }
 }
 
-private fun CoursePlace.toSavedCourseStop(): SavedCourseStop = SavedCourseStop(
-    order = order,
-    name = name,
-    hasAudioGuide = hasAudio,
-    walkDuration = walkMinutes?.toString(),
-    description = description,
-    audioUrl = audioUrl,
-)
+private fun List<CoursePlace>.toSavedCourseStops(): List<SavedCourseStop> = mapIndexed { index, place ->
+    SavedCourseStop(
+        order = place.order,
+        name = place.name,
+        hasAudioGuide = place.hasAudio,
+        walkDuration = getOrNull(index + 1)?.walkMinutes?.toString(),
+        description = place.description,
+        audioUrl = place.audioUrl,
+    )
+}
 
 private fun CourseBenefit.toSavedCourseBenefit(): SavedCourseBenefit =
     SavedCourseBenefit(title = title, description = description, url = url)

@@ -18,6 +18,7 @@ import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import live.lb_trip.core.designsystem.LbColors
@@ -39,7 +40,9 @@ fun LbNavigationSuiteScaffold(
                     selected = item.selected,
                     onClick = item.onClick,
                     icon = { Icon(imageVector = item.icon, contentDescription = item.label) },
-                    label = { Text(text = item.label, fontSize = 11.sp) },
+                    label = {
+                        Text(text = item.label, fontSize = 11.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    },
                     navigationSuiteType = navigationSuiteType,
                     colors = itemColors,
                 )

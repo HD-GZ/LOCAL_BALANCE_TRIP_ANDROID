@@ -61,7 +61,7 @@ import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 @Composable
 internal fun TourScreen(
     onBack: () -> Unit,
-    onTourFinished: () -> Unit,
+    onTourFinished: (showReport: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TourViewModel = hiltViewModel(),
     onIntent: (TourIntent) -> Unit = viewModel::onIntent,
@@ -163,7 +163,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
     scaffoldState: BottomSheetScaffoldState,
     messages: TourSideEffectMessages,
     onIntent: (TourIntent) -> Unit,
-    onTourFinished: () -> Unit,
+    onTourFinished: (showReport: Boolean) -> Unit,
     onOpenBenefitUrl: (String) -> Unit,
 ) {
     when (effect) {
@@ -191,7 +191,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
         }
 
         is TourSideEffect.OpenBenefitUrl -> onOpenBenefitUrl(effect.url)
-        TourSideEffect.NavigateBack -> onTourFinished()
+        is TourSideEffect.NavigateBack -> onTourFinished(effect.showReport)
         TourSideEffect.CollapseSheet -> if (!isTwoPane) {
             launch { scaffoldState.bottomSheetState.partialExpand() }
         }
@@ -251,7 +251,7 @@ private fun TourCompactContent(
     var topBarHeightPx by remember { mutableIntStateOf(0) }
     val topBarHeight = with(density) { topBarHeightPx.toDp() }
 
-    BoxWithConstraints(modifier = modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = modifier.fillMaxSize().background(LbColors.Paper)) {
         val sheetMaxHeight = (maxHeight - topBarHeight - actionBarHeight).coerceAtLeast(0.dp)
 
         BottomSheetScaffold(
@@ -268,6 +268,7 @@ private fun TourCompactContent(
             },
             sheetPeekHeight = SheetPeekHeight,
             sheetContainerColor = LbColors.Paper,
+            sheetShadowElevation = 0.dp,
             sheetContent = {
                 Box(modifier = Modifier.heightIn(max = sheetMaxHeight)) {
                     TourStopsContent(state = state, onIntent = onIntent)
@@ -288,6 +289,7 @@ private fun TourCompactContent(
             state = state,
             onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
             onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
+            onViewReportClick = { onIntent(TourIntent.ViewReportClicked) },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .onSizeChanged { actionBarHeightPx = it.height },
@@ -299,7 +301,6 @@ private fun TourCompactContent(
 private fun TourTopBar(state: TourUiState, onBackClick: () -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         TourHeader(
-            regionName = state.regionName,
             title = state.title,
             onBackClick = onBackClick,
         )
@@ -368,6 +369,7 @@ private fun TourTwoPaneContent(
                                 state = state,
                                 onNextStopClick = { onIntent(TourIntent.NextStopArrived) },
                                 onFinishAcknowledged = { onIntent(TourIntent.FinishAcknowledged) },
+                                onViewReportClick = { onIntent(TourIntent.ViewReportClicked) },
                                 modifier = Modifier
                                     .align(Alignment.BottomCenter)
                                     .onSizeChanged { actionBarHeightPx = it.height },

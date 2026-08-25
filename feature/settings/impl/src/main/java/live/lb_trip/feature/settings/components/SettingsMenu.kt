@@ -67,19 +67,11 @@ data class SettingsMenuItem(val label: String, val onClick: () -> Unit)
 
 @Composable
 fun SettingsMenuGroup(
-    label: String,
     items: List<SettingsMenuItem>,
     versionName: String,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        Text(
-            text = label,
-            color = LbColors.Ink3,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()

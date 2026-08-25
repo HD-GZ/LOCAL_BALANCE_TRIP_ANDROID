@@ -16,7 +16,6 @@
     <string name="signup_existing_account">"이미 회원이신가요? "</string>
     <string name="signup_signin">로그인</string>
     <string name="signup_personal_heading">기본 정보를 입력해요</string>
-    <string name="signup_personal_description">생년월일은 청년 혜택 판별에 쓰여요.</string>
     <string name="signup_name">이름</string>
     <string name="signup_name_placeholder">홍길동</string>
     <string name="signup_birth_date">생년월일</string>
