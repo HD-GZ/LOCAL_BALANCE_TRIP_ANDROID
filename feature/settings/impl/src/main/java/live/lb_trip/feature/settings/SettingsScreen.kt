@@ -46,6 +46,8 @@ fun MyInfoTabContent(
     profileUpdated: Boolean,
     onProfileUpdatedConsumed: () -> Unit,
     modifier: Modifier = Modifier,
+    needsRefresh: Boolean = false,
+    onRefreshConsumed: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel(),
     onIntent: (SettingsIntent) -> Unit = viewModel::onIntent,
 ) {
@@ -56,6 +58,13 @@ fun MyInfoTabContent(
     val profileUpdatedMessage = stringResource(R.string.settings_profile_updated)
     val noEmailAppMessage = stringResource(R.string.settings_error_no_email_app)
     val uriHandler = LocalUriHandler.current
+
+    LaunchedEffect(needsRefresh) {
+        if (needsRefresh) {
+            onIntent(SettingsIntent.Refresh)
+            onRefreshConsumed()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->

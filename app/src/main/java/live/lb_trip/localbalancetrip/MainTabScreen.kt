@@ -65,6 +65,10 @@ internal fun MainTabScreen(
     onNavigateToPopularCourseDetail: (Long) -> Unit,
     onNavigateToRecommendedRegion: (Long, String) -> Unit,
     modifier: Modifier = Modifier,
+    homeNeedsRefresh: Boolean = false,
+    onHomeRefreshConsumed: () -> Unit = {},
+    myInfoNeedsRefresh: Boolean = false,
+    onMyInfoRefreshConsumed: () -> Unit = {},
 ) {
     var selectedTab by rememberSaveable { mutableStateOf(MainTab.HOME) }
     val snackbarHostState = remember { SnackbarHostState() }
@@ -158,6 +162,8 @@ internal fun MainTabScreen(
                         onPolicyAllClick = onNavigateToPolicyList,
                         onNavigateToRecommendedRegion = onNavigateToRecommendedRegion,
                         snackbarHostState = snackbarHostState,
+                        needsRefresh = homeNeedsRefresh,
+                        onRefreshConsumed = onHomeRefreshConsumed,
                         modifier = Modifier
                             .padding(innerPadding)
                             .consumeWindowInsets(innerPadding),
@@ -168,6 +174,8 @@ internal fun MainTabScreen(
                         onNavigateToDiagnosis = onRetakeDiagnosis,
                         onNavigateToSignin = onNavigateToSignin,
                         librariesRawResId = R.raw.aboutlibraries,
+                        needsRefresh = myInfoNeedsRefresh,
+                        onRefreshConsumed = onMyInfoRefreshConsumed,
                         modifier = Modifier
                             .padding(innerPadding)
                             .consumeWindowInsets(innerPadding),

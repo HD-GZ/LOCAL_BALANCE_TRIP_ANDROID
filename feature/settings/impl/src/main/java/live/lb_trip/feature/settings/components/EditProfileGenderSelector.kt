@@ -4,9 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -38,6 +40,9 @@ internal fun EditProfileGenderSelector(selected: Gender, onSelect: (Gender) -> U
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 52.dp)
+            // 부모가 세로 스크롤이라 들어오는 maxHeight 가 무한대다. IntrinsicSize.Min 으로
+            // 높이를 확정해야 칸 배경/구분선의 fillMaxHeight 가 실제로 행 높이를 채운다.
+            .height(IntrinsicSize.Min)
             .border(1.dp, LbColors.Line, RoundedCornerShape(12.dp))
             .clip(RoundedCornerShape(12.dp)),
     ) {

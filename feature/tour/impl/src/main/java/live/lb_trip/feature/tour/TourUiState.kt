@@ -41,6 +41,9 @@ sealed interface TourSideEffect {
     data class ShowLoadError(val reason: TourLoadErrorReason) : TourSideEffect
     data object ShowEndTourError : TourSideEffect
     data class NavigateBack(val showReport: Boolean = false) : TourSideEffect
+
+    /** 여행 시작 API 가 성공해 코스 상태가 바뀌었음을 알린다(홈/저장한 코스 갱신용). */
+    data object TourStarted : TourSideEffect
     data object CollapseSheet : TourSideEffect
     data class OpenBenefitUrl(val url: String) : TourSideEffect
 }

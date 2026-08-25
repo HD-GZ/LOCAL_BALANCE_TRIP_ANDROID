@@ -150,6 +150,7 @@ class TourViewModel @Inject constructor(
                         startData != null -> {
                             distanceRecording.onTourStarted(savedCourseId)
                             startElapsedTicker(startData.tourStartedAt)
+                            postSideEffect(TourSideEffect.TourStarted)
                         }
                         else -> postSideEffect(TourSideEffect.ShowLoadError(TourLoadErrorReason.TourStartFailed))
                     }

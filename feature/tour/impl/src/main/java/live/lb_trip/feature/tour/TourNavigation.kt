@@ -3,8 +3,12 @@ package live.lb_trip.feature.tour
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 
-fun NavGraphBuilder.tourScreen(onBack: () -> Unit, onTourFinished: (showReport: Boolean) -> Unit) {
+fun NavGraphBuilder.tourScreen(
+    onBack: () -> Unit,
+    onTourFinished: (showReport: Boolean) -> Unit,
+    onTourStarted: () -> Unit,
+) {
     composable<TourRoute> {
-        TourScreen(onBack = onBack, onTourFinished = onTourFinished)
+        TourScreen(onBack = onBack, onTourFinished = onTourFinished, onTourStarted = onTourStarted)
     }
 }

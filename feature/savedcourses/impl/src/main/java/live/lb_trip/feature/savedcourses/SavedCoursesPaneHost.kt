@@ -26,9 +26,12 @@ internal fun SavedCoursesPaneHost(
     onNavigateToReceiptDetail: (Long, Long) -> Unit,
     receiptRegistered: Boolean,
     onReceiptRegisteredConsumed: () -> Unit,
+    tourStarted: Boolean,
     tourEnded: Boolean,
     tourEndedShowReport: Boolean,
-    onTourEndedConsumed: () -> Unit,
+    onTourResultConsumed: () -> Unit,
+    listNeedsRefresh: Boolean,
+    onListRefreshConsumed: () -> Unit,
     modifier: Modifier = Modifier,
     initialSavedCourseId: Long? = null,
 ) {
@@ -61,6 +64,8 @@ internal fun SavedCoursesPaneHost(
                     onCourseClick = { savedCourseId ->
                         scope.launch { navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, savedCourseId) }
                     },
+                    needsRefresh = listNeedsRefresh,
+                    onRefreshConsumed = onListRefreshConsumed,
                 )
             }
         },
@@ -76,9 +81,10 @@ internal fun SavedCoursesPaneHost(
                         onNavigateToReceiptDetail = onNavigateToReceiptDetail,
                         receiptRegistered = receiptRegistered,
                         onReceiptRegisteredConsumed = onReceiptRegisteredConsumed,
+                        tourStarted = tourStarted,
                         tourEnded = tourEnded,
                         tourEndedShowReport = tourEndedShowReport,
-                        onTourEndedConsumed = onTourEndedConsumed,
+                        onTourResultConsumed = onTourResultConsumed,
                         showBackButton = !isTwoPane,
                     )
                 } else {

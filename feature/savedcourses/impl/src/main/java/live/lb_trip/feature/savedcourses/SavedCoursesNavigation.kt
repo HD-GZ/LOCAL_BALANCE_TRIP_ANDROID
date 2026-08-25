@@ -19,8 +19,14 @@ fun NavGraphBuilder.savedCoursesScreen(
         val receiptRegistered by backStackEntry.savedStateHandle
             .getStateFlow(RECEIPT_REGISTERED_RESULT_KEY, false)
             .collectAsStateWithLifecycle()
+        val tourStarted by backStackEntry.savedStateHandle
+            .getStateFlow(TOUR_STARTED_RESULT_KEY, false)
+            .collectAsStateWithLifecycle()
         val tourEnded by backStackEntry.savedStateHandle
             .getStateFlow(TOUR_ENDED_RESULT_KEY, false)
+            .collectAsStateWithLifecycle()
+        val listNeedsRefresh by backStackEntry.savedStateHandle
+            .getStateFlow(SAVED_COURSES_REFRESH_RESULT_KEY, false)
             .collectAsStateWithLifecycle()
         val tourEndedShowReport by backStackEntry.savedStateHandle
             .getStateFlow(TOUR_ENDED_SHOW_REPORT_RESULT_KEY, false)
@@ -34,11 +40,17 @@ fun NavGraphBuilder.savedCoursesScreen(
             onReceiptRegisteredConsumed = {
                 backStackEntry.savedStateHandle[RECEIPT_REGISTERED_RESULT_KEY] = false
             },
+            tourStarted = tourStarted,
             tourEnded = tourEnded,
             tourEndedShowReport = tourEndedShowReport,
-            onTourEndedConsumed = {
+            onTourResultConsumed = {
+                backStackEntry.savedStateHandle[TOUR_STARTED_RESULT_KEY] = false
                 backStackEntry.savedStateHandle[TOUR_ENDED_RESULT_KEY] = false
                 backStackEntry.savedStateHandle[TOUR_ENDED_SHOW_REPORT_RESULT_KEY] = false
+            },
+            listNeedsRefresh = listNeedsRefresh,
+            onListRefreshConsumed = {
+                backStackEntry.savedStateHandle[SAVED_COURSES_REFRESH_RESULT_KEY] = false
             },
             initialSavedCourseId = route.initialSavedCourseId,
         )

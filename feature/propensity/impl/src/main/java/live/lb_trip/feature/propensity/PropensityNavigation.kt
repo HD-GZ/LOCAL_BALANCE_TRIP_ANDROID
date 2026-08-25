@@ -17,35 +17,57 @@ fun NavGraphBuilder.propensityScreen(
     onBack: () -> Unit,
     onNavigateToRecommendation: () -> Unit,
     onNavigateToSignin: () -> Unit,
+    onDiagnosisSubmitted: () -> Unit,
 ) {
     navigation<PropensityRoute>(startDestination = PreferenceRoute) {
         composable<PreferenceRoute> { entry ->
-            PreferenceStepDestination(navController = navController, entry = entry, onBack = onBack)
+            PreferenceStepDestination(
+                navController = navController,
+                entry = entry,
+                onBack = onBack,
+                onDiagnosisSubmitted = onDiagnosisSubmitted,
+            )
         }
         composable<ValueConsumptionRoute> { entry ->
-            ValueConsumptionStepDestination(navController = navController, entry = entry, onNavigateToSignin = onNavigateToSignin)
+            ValueConsumptionStepDestination(
+                navController = navController,
+                entry = entry,
+                onNavigateToSignin = onNavigateToSignin,
+                onDiagnosisSubmitted = onDiagnosisSubmitted,
+            )
         }
         composable<ResultRoute> { entry ->
             ResultStepDestination(
                 navController = navController,
                 entry = entry,
                 onNavigateToRecommendation = onNavigateToRecommendation,
+                onDiagnosisSubmitted = onDiagnosisSubmitted,
             )
         }
     }
 }
 
 @Composable
-private fun PreferenceStepDestination(navController: NavController, entry: NavBackStackEntry, onBack: () -> Unit) {
+private fun PreferenceStepDestination(
+    navController: NavController,
+    entry: NavBackStackEntry,
+    onBack: () -> Unit,
+    onDiagnosisSubmitted: () -> Unit,
+) {
     val viewModel = propensitySharedViewModel(navController, entry)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
-            if (sideEffect == PropensitySideEffect.NavigateToResult) {
-                navController.navigate(ResultRoute) {
+            when (sideEffect) {
+                PropensitySideEffect.NavigateToResult -> navController.navigate(ResultRoute) {
                     popUpTo(PreferenceRoute) { inclusive = true }
                 }
+                PropensitySideEffect.DiagnosisSubmitted -> onDiagnosisSubmitted()
+                PropensitySideEffect.NavigateToRecommendation,
+                PropensitySideEffect.NavigateToSignin,
+                PropensitySideEffect.RestartToPreference,
+                -> Unit
             }
         }
     }
@@ -63,6 +85,7 @@ private fun ValueConsumptionStepDestination(
     navController: NavController,
     entry: NavBackStackEntry,
     onNavigateToSignin: () -> Unit,
+    onDiagnosisSubmitted: () -> Unit,
 ) {
     val viewModel = propensitySharedViewModel(navController, entry)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,6 +95,7 @@ private fun ValueConsumptionStepDestination(
             when (sideEffect) {
                 PropensitySideEffect.NavigateToResult -> navController.navigate(ResultRoute)
                 PropensitySideEffect.NavigateToSignin -> onNavigateToSignin()
+                PropensitySideEffect.DiagnosisSubmitted -> onDiagnosisSubmitted()
                 PropensitySideEffect.NavigateToRecommendation,
                 PropensitySideEffect.RestartToPreference,
                 -> Unit
@@ -91,6 +115,7 @@ private fun ResultStepDestination(
     navController: NavController,
     entry: NavBackStackEntry,
     onNavigateToRecommendation: () -> Unit,
+    onDiagnosisSubmitted: () -> Unit,
 ) {
     val viewModel = propensitySharedViewModel(navController, entry)
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -104,6 +129,7 @@ private fun ResultStepDestination(
                         popUpTo<PropensityRoute>()
                     }
                 }
+                PropensitySideEffect.DiagnosisSubmitted -> onDiagnosisSubmitted()
                 PropensitySideEffect.NavigateToResult,
                 PropensitySideEffect.NavigateToSignin,
                 -> Unit

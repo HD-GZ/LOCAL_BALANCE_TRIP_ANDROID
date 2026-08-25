@@ -22,6 +22,9 @@ data class PropensityUiState(
 sealed interface PropensitySideEffect {
     data object NavigateToRecommendation : PropensitySideEffect
     data object NavigateToResult : PropensitySideEffect
+
+    /** 진단 제출이 실제로 성공했을 때만 발행한다(기존 결과 조회 시에는 발행하지 않음). */
+    data object DiagnosisSubmitted : PropensitySideEffect
     data object RestartToPreference : PropensitySideEffect
     data object NavigateToSignin : PropensitySideEffect
 }

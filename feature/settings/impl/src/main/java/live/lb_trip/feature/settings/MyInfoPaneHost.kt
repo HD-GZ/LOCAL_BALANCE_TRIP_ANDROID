@@ -40,6 +40,8 @@ fun MyInfoPaneHost(
     onNavigateToSignin: () -> Unit,
     @RawRes librariesRawResId: Int,
     modifier: Modifier = Modifier,
+    needsRefresh: Boolean = false,
+    onRefreshConsumed: () -> Unit = {},
     onDetailPaneVisibleChange: (Boolean) -> Unit = {},
 ) {
     val directive = calculateLbListDetailDirective()
@@ -89,6 +91,8 @@ fun MyInfoPaneHost(
                         onNavigateToSignin = onNavigateToSignin,
                         profileUpdated = profileUpdated,
                         onProfileUpdatedConsumed = { profileUpdated = false },
+                        needsRefresh = needsRefresh,
+                        onRefreshConsumed = onRefreshConsumed,
                         modifier = Modifier.weight(1f),
                     )
                 }

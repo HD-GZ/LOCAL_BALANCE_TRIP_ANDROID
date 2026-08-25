@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import live.lb_trip.core.designsystem.LocalBalanceTripTheme
+import live.lb_trip.feature.home.HOME_REFRESH_RESULT_KEY
 import live.lb_trip.feature.home.HomeRoute
 import live.lb_trip.feature.home.PolicyListRoute
 import live.lb_trip.feature.home.PopularCourseDetailRoute
@@ -37,16 +38,19 @@ import live.lb_trip.feature.recommendation.CourseRoute
 import live.lb_trip.feature.recommendation.RecommendationRoute
 import live.lb_trip.feature.recommendation.recommendationScreen
 import live.lb_trip.feature.savedcourses.RECEIPT_REGISTERED_RESULT_KEY
+import live.lb_trip.feature.savedcourses.SAVED_COURSES_REFRESH_RESULT_KEY
 import live.lb_trip.feature.savedcourses.ReceiptCaptureRoute
 import live.lb_trip.feature.savedcourses.ReceiptDetailRoute
 import live.lb_trip.feature.savedcourses.SavedCoursesRoute
 import live.lb_trip.feature.savedcourses.SharedCourseRoute
 import live.lb_trip.feature.savedcourses.TOUR_ENDED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.TOUR_ENDED_SHOW_REPORT_RESULT_KEY
+import live.lb_trip.feature.savedcourses.TOUR_STARTED_RESULT_KEY
 import live.lb_trip.feature.savedcourses.receiptCaptureScreen
 import live.lb_trip.feature.savedcourses.receiptDetailScreen
 import live.lb_trip.feature.savedcourses.savedCoursesScreen
 import live.lb_trip.feature.savedcourses.sharedCourseDetailScreen
+import live.lb_trip.feature.settings.MY_INFO_REFRESH_RESULT_KEY
 import live.lb_trip.feature.settings.TermsRoute
 import live.lb_trip.feature.settings.termsScreen
 import live.lb_trip.feature.signin.SigninRoute
@@ -154,6 +158,25 @@ private fun MainNavGraph(
         }
     }
 
+    // 홈 밖에서 진단/코스 저장을 마치고 돌아왔을 때 홈이 다시 로드하도록 남기는 신호.
+    // HomeRoute 는 startDestination 이라 항상 백스택에 있지만, entry 는 NavHost 가 만든 뒤에야
+    // 존재하므로 반드시 콜백 안에서 조회한다.
+    val markHomeNeedsRefresh = {
+        navController.getBackStackEntry<HomeRoute>().savedStateHandle[HOME_REFRESH_RESULT_KEY] = true
+    }
+    // 코스 저장은 홈 피드와 '나의 정보'의 저장 코스 개수를 동시에 바꾼다. 두 탭은 서로 다른
+    // 시점에 합성되므로 신호를 하나로 공유하면 먼저 합성된 쪽이 소비해 버린다 - 키를 나눈다.
+    val markCourseSaved = {
+        markHomeNeedsRefresh()
+        navController.getBackStackEntry<HomeRoute>().savedStateHandle[MY_INFO_REFRESH_RESULT_KEY] = true
+    }
+    // 여행 시작/종료는 코스의 여행 상태를 바꾼다. 저장한 코스의 목록/상세 두 창도 소비자가
+    // 달라 키를 나눠 둔다. 이 시점에는 여행 화면이 위에 있어 아래 화면들은 합성돼 있지 않다.
+    val markTourStateChanged = {
+        markHomeNeedsRefresh()
+        navController.previousBackStackEntry?.savedStateHandle?.set(SAVED_COURSES_REFRESH_RESULT_KEY, true)
+    }
+
     NavHost(
         navController = navController,
         startDestination = HomeRoute,
@@ -162,9 +185,19 @@ private fun MainNavGraph(
         popEnterTransition = appPopEnterTransition,
         popExitTransition = appPopExitTransition,
     ) {
-        composable<HomeRoute> {
+        composable<HomeRoute> { backStackEntry ->
+            val homeNeedsRefresh by backStackEntry.savedStateHandle
+                .getStateFlow(HOME_REFRESH_RESULT_KEY, false)
+                .collectAsStateWithLifecycle()
+            val myInfoNeedsRefresh by backStackEntry.savedStateHandle
+                .getStateFlow(MY_INFO_REFRESH_RESULT_KEY, false)
+                .collectAsStateWithLifecycle()
             MainTabScreen(
                 isLoggedIn = isLoggedIn,
+                homeNeedsRefresh = homeNeedsRefresh,
+                onHomeRefreshConsumed = { backStackEntry.savedStateHandle[HOME_REFRESH_RESULT_KEY] = false },
+                myInfoNeedsRefresh = myInfoNeedsRefresh,
+                onMyInfoRefreshConsumed = { backStackEntry.savedStateHandle[MY_INFO_REFRESH_RESULT_KEY] = false },
                 onStartDiagnosis = { navController.navigate(PropensityRoute()) },
                 onNavigateToSignin = { navController.navigate(SigninRoute) },
                 onNavigateToSavedCourseDetail = { savedCourseId ->
@@ -215,10 +248,12 @@ private fun MainNavGraph(
             onBack = navController::popBackStack,
             onNavigateToRecommendation = { navController.navigate(RecommendationRoute) },
             onNavigateToSignin = { navController.navigate(SigninRoute) },
+            onDiagnosisSubmitted = markHomeNeedsRefresh,
         )
         recommendationScreen(
             navController = navController,
             onBack = navController::popBackStack,
+            onCourseSaved = markCourseSaved,
         )
         tourScreen(
             onBack = navController::popBackStack,
@@ -227,7 +262,12 @@ private fun MainNavGraph(
                 if (showReport) {
                     navController.previousBackStackEntry?.savedStateHandle?.set(TOUR_ENDED_SHOW_REPORT_RESULT_KEY, true)
                 }
+                markTourStateChanged()
                 navController.popBackStack()
+            },
+            onTourStarted = {
+                navController.previousBackStackEntry?.savedStateHandle?.set(TOUR_STARTED_RESULT_KEY, true)
+                markTourStateChanged()
             },
         )
         signinScreen(

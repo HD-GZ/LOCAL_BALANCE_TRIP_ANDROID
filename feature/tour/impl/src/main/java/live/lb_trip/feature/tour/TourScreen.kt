@@ -62,6 +62,7 @@ import live.lb_trip.feature.tour.location.rememberFineLocationPermissionGranted
 internal fun TourScreen(
     onBack: () -> Unit,
     onTourFinished: (showReport: Boolean) -> Unit,
+    onTourStarted: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TourViewModel = hiltViewModel(),
     onIntent: (TourIntent) -> Unit = viewModel::onIntent,
@@ -96,6 +97,7 @@ internal fun TourScreen(
                 ),
                 onIntent = onIntent,
                 onTourFinished = onTourFinished,
+                onTourStarted = onTourStarted,
                 onOpenBenefitUrl = uriHandler::openUri,
             )
         }
@@ -164,6 +166,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
     messages: TourSideEffectMessages,
     onIntent: (TourIntent) -> Unit,
     onTourFinished: (showReport: Boolean) -> Unit,
+    onTourStarted: () -> Unit,
     onOpenBenefitUrl: (String) -> Unit,
 ) {
     when (effect) {
@@ -192,6 +195,7 @@ private suspend fun CoroutineScope.handleTourSideEffect(
 
         is TourSideEffect.OpenBenefitUrl -> onOpenBenefitUrl(effect.url)
         is TourSideEffect.NavigateBack -> onTourFinished(effect.showReport)
+        TourSideEffect.TourStarted -> onTourStarted()
         TourSideEffect.CollapseSheet -> if (!isTwoPane) {
             launch { scaffoldState.bottomSheetState.partialExpand() }
         }
